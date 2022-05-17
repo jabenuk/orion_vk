@@ -14,7 +14,3 @@
 #include "orion.h"
 
 #include <stdio.h>
-
-void oriTestFunc(const char *str) {
-    printf(str);
-}

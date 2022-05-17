@@ -27,7 +27,7 @@ set(ORION_EXAMPLES_DIR "${CMAKE_CURRENT_LIST_DIR}/examples/")
 set(ORION_DOCS_DIR "${CMAKE_CURRENT_LIST_DIR}/docs/")
 set(ORION_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include/")
 
-set(ORION_VENDOR_DIR "${CMAKE_CURRENT_LIST_DIR}/deps/")
+set(ORION_CORE_VENDOR_DIR "${CMAKE_CURRENT_LIST_DIR}/deps/core/")
 set(ORION_DEVEL_VENDOR_DIR "${CMAKE_CURRENT_LIST_DIR}/deps/devel/") # dependencies for development (tests + examples
 
 #

@@ -34,8 +34,6 @@
     extern "C" {
 #endif // __cplusplus
 
-void oriTestFunc(const char *str);
-
 #ifdef __cplusplus
     }
 #endif // __cplusplus

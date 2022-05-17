@@ -3,25 +3,19 @@
     "configurations": [
         {
             "name": "launch",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
 
             "program": "${workspaceFolder}/build/tests/main",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/tests",
 
             "externalConsole": false,
 
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "build project",
+            "env": {
+                "VK_ICD_FILENAMES": "/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
+            },
 
-            "MIMode": "gdb",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "preLaunchTask": "build project",
         }
     ]
 }

@@ -26,6 +26,6 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
         "${ORION_INCLUDE_DIR}"
-        "${ORION_VENDOR_DIR}"
+        "${ORION_CORE_VENDOR_DIR}"
         "${CMAKE_CURRENT_LIST_DIR}"
 )
