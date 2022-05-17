@@ -1,0 +1,18 @@
+# ========================================================
+#            Orion git repository ignore list.           #
+# ========================================================
+
+#
+# build results.
+
+[Bb]uild/
+[Bb]in/
+
+#
+# editor-specific files.
+# (add other editor files here if necessary)
+
+# .. for VSCode:
+.vscode/*.json
+!.vscode/launch.json
+!.vscode/tasks.json
