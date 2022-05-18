@@ -8,6 +8,7 @@
 set(
     SRC
         "init.c"
+        "internal.h"
 )
 
 #
@@ -27,5 +28,6 @@ target_include_directories(
     PUBLIC
         "${ORION_INCLUDE_DIR}"
         "${ORION_CORE_VENDOR_DIR}"
-        "${CMAKE_CURRENT_LIST_DIR}"
+    PRIVATE
+        "${ORION_SRC_DIR}"
 )

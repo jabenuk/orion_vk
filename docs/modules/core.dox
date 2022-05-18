@@ -1,0 +1,11 @@
+/**
+ * @defgroup group_Core Core Orion functionality
+ *
+ * @brief All functionality shipped with the core Orion library
+ *
+ * This is the module in which most of the library's content can be found. It holds all functions, types, members, etc.
+ * that are included in the base Orion library.
+ *
+ * This module is split up into further submodules, which can be seen in the @b Modules page section above.
+ *
+ */

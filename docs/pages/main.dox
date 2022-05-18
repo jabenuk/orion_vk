@@ -1,0 +1,32 @@
+/**
+ * @mainpage Home
+ *
+ * @section section_main_Summary Summary
+ *
+ * The original goal of Orion was to run OpenGL without the annoyances of raw OpenGL code, but it
+ * wasn't (and still isn't) really intended to be used in production or actual development. It's just
+ * a fun project for me to work on in my own time.
+ *
+ * Now, I'm shifting my focus towards Vulkan, due to its (somewhat ridiculous, in a fun way)
+ * explicit-ness and its priority on performance and optimisation. I also think the Vulkan specification
+ * is lightyears ahead of the OpenGL specification - which is pretty abysmal at times - so hopefully
+ * development will be a little less painful. Plus, the new Vulkan design is nice for me - I prefer
+ * having structs with decent names and organisation than having a bunch of functions (although the OpenGL
+ * functions were definitely more simple).
+ *
+ * Something else I want to have is actually decent documentation - so we'll see how that goes.
+ *
+ * @section section_main_IncludeFile Including
+ *
+ * There is one file to be included to make use of the 'core' library: @link orion.h @endlink.
+ *
+ * This is the public header for including Orion. All public library functionality is declared here, so the
+ * page for this header will have all core functionality documented, pretty much.
+ *
+ * @section section_main_Modules Modules
+ *
+ * @ref group_Core "Core library" functions have been organised into the following modules:
+ *  - @ref group_Meta "Library management": <i>functions that handle the initialisation, management, and
+ * eventual termination of the library.</i>
+ *
+ */
