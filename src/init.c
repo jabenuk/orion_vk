@@ -77,6 +77,9 @@ void oriFreeState(oriState *state) {
  *
  * The @c apiVersion parameter of the application info is set in oriCreateState().
  *
+ * It is not required to use this function (and hence VkApplicationInfo), but it is recommended so as to support what Vulkan calls 'driver optimisations'.
+ * Whatever that means.
+ *
  * @param state the state the object is to be registered into
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
  * @param name NULL, or a string containing the name of the application.
