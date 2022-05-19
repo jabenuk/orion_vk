@@ -62,11 +62,11 @@
 
 // error severities (bit field):
 typedef enum oriErrorSeverity {
-    ORION_ERROR_SEVERITY_FATAL =    0x00001,
-    ORION_ERROR_SEVERITY_ERROR =    0x00010,
-    ORION_ERROR_SEVERITY_WARNING =  0x00100,
-    ORION_ERROR_SEVERITY_NOTIF =    0x01000,
-    ORION_ERROR_SEVERITY_VERBOSE =  0x10000
+    ORION_ERROR_SEVERITY_FATAL =    0x000000001,
+    ORION_ERROR_SEVERITY_ERROR =    0x000000010,
+    ORION_ERROR_SEVERITY_WARNING =  0x000000100,
+    ORION_ERROR_SEVERITY_NOTIF =    0x000001000,
+    ORION_ERROR_SEVERITY_VERBOSE =  0x000010000
 } oriErrorSeverity;
 
 /**
@@ -139,7 +139,7 @@ void oriSuppressDebugMessages(oriErrorSeverity severities);
 // library flags
 
 typedef enum oriLibraryFlag {
-    ORION_DISABLE_ERROR_CALLBACK = 0x01
+    ORION_DISABLE_ERROR_CALLBACK = 0x00000001
 } oriLibraryFlag;
 
 /**
