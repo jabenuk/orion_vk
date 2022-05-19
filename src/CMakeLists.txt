@@ -7,6 +7,7 @@
 
 set(
     SRC
+        "error.c"
         "init.c"
         "internal.h"
 )

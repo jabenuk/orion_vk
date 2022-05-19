@@ -1,13 +1,23 @@
 {
     "version": "0.2.0",
+    "inputs": [
+        {
+            "id": "application",
+            "type": "pickString",
+            "description": "path to the application to run",
+            "options": [
+                "${workspaceFolder}/build/tests/main"
+            ]
+        }
+    ],
     "configurations": [
         {
-            "name": "launch",
+            "name": "launch_lldb",
             "type": "lldb",
             "request": "launch",
 
-            "program": "${workspaceFolder}/build/tests/main",
-            "cwd": "${workspaceFolder}/build/tests",
+            "program": "${input:application}",
+            "cwd": "${workspaceFolder}",
 
             "externalConsole": false,
 
@@ -15,7 +25,34 @@
                 "VK_ICD_FILENAMES": "/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
             },
 
+            "preLaunchTask": "build project"
+        },
+        {
+            "name": "launch_gdb",
+            "type": "cppdbg",
+            "request": "launch",
+
+            "program": "${input:application}",
+            "cwd": "${workspaceFolder}",
+
+            "externalConsole": false,
+
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+
+            "env": {
+                "VK_ICD_FILENAMES": "/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
+            },
+
             "preLaunchTask": "build project",
+
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb"
         }
     ]
 }

@@ -1,0 +1,12 @@
+/**
+ * @defgroup group_Errors Error handling
+ * @ingroup group_Core
+ *
+ * @brief Functions to help catch errors thrown by Orion.
+ *
+ * Functionality found in this module is related to catching and debugging errors thrown by the library
+ * at runtime.
+ *
+ * It is part of the @ref group_Core "core Orion library interface".
+ *
+ */

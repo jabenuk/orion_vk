@@ -28,5 +28,6 @@
  * @ref group_Core "Core library" functions have been organised into the following modules:
  *  - @ref group_Meta "Library management": <i>functions that handle the initialisation, management, and
  * eventual termination of the library.</i>
+ *  - @ref group_Errors "Error handling": <i>functionality to catch errors thrown by Orion at runtime.</i>
  *
  */

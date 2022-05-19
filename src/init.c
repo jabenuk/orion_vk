@@ -18,12 +18,57 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
+// ============================================================================
+// ----------------------------------------------------------------------------
+// *****        ORION PRIVATE FUNCTIONALITY                               *****
+// ----------------------------------------------------------------------------
+// ============================================================================
+
+// ============================================================================
+// *****        STATIC INTERNAL STATE                                     *****
+// ============================================================================
+
+_ori_LibState _orion = { NULL };
 
 // ============================================================================
 // ----------------------------------------------------------------------------
 // *****        ORION PUBLIC INTERFACE                                    *****
 // ----------------------------------------------------------------------------
 // ============================================================================
+
+// ============================================================================
+// *****        LIBRARY MANAGEMENT                                        *****
+// ============================================================================
+
+/**
+ * @brief Set a library-wide flag or value
+ *
+ * This function can be used to set a library-wide flag to configure your application.
+ * The flags that can be set can be seen below. (in header)
+ *
+ * @param flag the flag to update
+ * @param val the value to set the flag to
+ *
+ * @ingroup group_Meta
+ *
+ */
+void oriSetFlag(oriLibraryFlag flag, unsigned int val) {
+    char flagstr[128];
+
+    switch (flag) {
+        default:
+            _ori_ThrowError(ORERR_INVALID_LIB_FLAG);
+            return;
+        case ORION_DISABLE_ERROR_CALLBACK:
+            _orion.suppressErrorCallback = (val) ? 1 : 0;
+            strncpy(flagstr, "ORION_DISABLE_ERROR_CALLBACK", 128);
+            break;
+    }
+
+    _ori_DebugLog("flag %s set to %d", flagstr, val);
+}
 
 // ============================================================================
 // *****        STATE                                                     *****
@@ -52,6 +97,8 @@ oriState *oriCreateState(unsigned int apiVersion) {
     memset(r, 0, sizeof(oriState));
 
     r->apiVersion = apiVersion;
+
+    _ori_DebugLog("state object created at API version %d.%d.%d", VK_VERSION_MAJOR(apiVersion), VK_VERSION_MINOR(apiVersion), VK_VERSION_PATCH(apiVersion));
 
     return r;
 }
@@ -104,4 +151,18 @@ void oriSetStateApplicationInfo(oriState *state, const void *ext, const char *na
         engineVersion,
         state->apiVersion
     };
+
+    _ori_DebugLog(
+        "application info of state object at %p updated:\n"
+        "\tname : %s\n"
+        "\tversion : %d.%d.%d\n"
+        "\tengine name : %s\n"
+        "\tengine version : %d.%d.%d\n"
+        "\textensive structure : at %p\n",
+        state, name,
+        VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version),
+        engineName,
+        VK_VERSION_MAJOR(engineVersion), VK_VERSION_MINOR(engineVersion), VK_VERSION_PATCH(engineVersion),
+        ext
+    );
 }

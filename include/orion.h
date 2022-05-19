@@ -53,6 +53,108 @@
 // ============================================================================
 
 // ============================================================================
+// *****        LIBRARY ERROR HANDLING                                    *****
+// ============================================================================
+
+// error severities (bit field):
+typedef enum oriErrorSeverity {
+    ORION_ERROR_SEVERITY_FATAL =    0x00001,
+    ORION_ERROR_SEVERITY_ERROR =    0x00010,
+    ORION_ERROR_SEVERITY_WARNING =  0x00100,
+    ORION_ERROR_SEVERITY_NOTIF =    0x01000,
+    ORION_ERROR_SEVERITY_VERBOSE =  0x10000
+} oriErrorSeverity;
+
+/**
+ * @brief Callback function for general runtime errors
+ *
+ * This function signature must be followed when creating an error callback for debugging.
+ * The global error callback is set in oriSetErrorCallback().
+ *
+ * | List of available error severities | Description                                                           |
+ * | ---------------------------------- | --------------------------------------------------------------------- |
+ * | @c ORION_ERROR_SEVERITY_FATAL      | errors that the program @b cannot @b recover @b from.                 |
+ * | @c ORION_ERROR_SEVERITY_ERROR      | significant but recoverable errors.                                   |
+ * | @c ORION_ERROR_SEVERITY_WARNING    | events that may cause problems, but are not directly too significant. |
+ * | @c ORION_ERROR_SEVERITY_NOTIF      | general events, no problems reported.                                 |
+ * | @c ORION_ERROR_SEVERITY_VERBOSE    | @b every event that is happening.                                     |
+ *
+ * @param name the name of the error ID
+ * @param code the error ID / code
+ * @param message a message for debugging
+ * @param severity the severity of the error
+ * @param pointer NULL or a user-specified pointer (can be defined in oriSetErrorCallback())
+ *
+ * @sa oriSetErrorCallback()
+ *
+ * @ingroup group_Errors
+ *
+ */
+typedef void (* oriErrorCallback)(const char *name, unsigned int code, const char *message, oriErrorSeverity severity, void *pointer);
+
+/**
+ * @brief Set the global Orion error callback function.
+ *
+ * User data can be passed to the callback function (@ref oriErrorCallback) through the @c pointer
+ * parameter. This will be recieved in the callback with the parameter of the same name.
+ *
+ * Pass NULL to the @c callback parameter to use the default, built-in error callback.
+ *
+ * Pass NULL to the @c pointer parameter if you do not want to pass any data to the callback.
+ *
+ * @param callback the callback function to use.
+ * @param pointer NULL or specified user data that will be sent to the callback.
+ *
+ * @sa oriErrorCallback
+ *
+ * @ingroup group_Errors
+ *
+ */
+void oriSetErrorCallback(oriErrorCallback callback, void *pointer);
+
+/**
+ * @brief Suppress any debug messages that fall under the specified criteria.
+ *
+ * A list of error severities can be seen in the description of @ref oriErrorCallback.
+ *
+ * @param severities a bit field of severities to suppress
+ *
+ * @sa oriErrorCallback
+ *
+ * @ingroup group_Errors
+ *
+ */
+void oriSuppressDebugMessages(oriErrorSeverity severities);
+
+// ============================================================================
+// *****        LIBRARY MANAGEMENT                                        *****
+// ============================================================================
+
+// library flags
+
+typedef enum oriLibraryFlag {
+    ORION_DISABLE_ERROR_CALLBACK = 0x01
+} oriLibraryFlag;
+
+/**
+ * @brief Set a library-wide flag or value
+ *
+ * This function can be used to set a library-wide flag to configure your application.
+ * The flags that can be set can be seen below.
+ *
+ * | Flag name                       | Description                                                | Available values | Default value |
+ * | ------------------------------- | ---------------------------------------------------------- | ---------------- | ------------- |
+ * | @c ORION_DISABLE_ERROR_CALLBACK | Completely disable error callback calls, default or custom | Boolean          | false         |
+ *
+ * @param flag the flag to update
+ * @param val the value to set the flag to
+ *
+ * @ingroup group_Meta
+ *
+ */
+void oriSetFlag(oriLibraryFlag flag, unsigned int val);
+
+// ============================================================================
 // *****        STATE                                                     *****
 // ============================================================================
 
@@ -107,6 +209,9 @@ void oriFreeState(oriState *state);
  * @brief Set application info for a state object.
  *
  * The @c apiVersion parameter of the application info is set in oriCreateState().
+ *
+ * @note The @c version and @c engineVersion parameters must be formatted as in the
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Vulkan Specification</a>.
  *
  * @param state the state the object is to be registered into
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
