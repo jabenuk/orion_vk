@@ -74,12 +74,12 @@ void __DefaultErrorCallback(const char *name, unsigned int code, const char *mes
 
 void _ori_ThrowError(const char *name, unsigned int code, const char *message, oriErrorSeverity severity) {
     // don't bother with all this if the error callback's being suppressed anyways
-    if (_orion.suppressErrorCallback) {
+    if (!_orion.displayedErrorSeverities) {
         return;
     }
 
-    // also check if the error's severity is suppressed
-    if ((_orion.suppressedErrorSeverities & severity) == severity) {
+    // also check if the error's severity is to be displayed
+    if ((_orion.displayedErrorSeverities & severity) != severity) {
         return;
     }
 
@@ -134,17 +134,20 @@ void oriSetErrorCallback(oriErrorCallback callback, void *pointer) {
 }
 
 /**
- * @brief Suppress any debug messages that fall under the specified criteria.
+ * @brief Recieve any debug messages that fall under the specified criteria.
  *
  * A list of error severities can be seen in the description of @ref oriErrorCallback.
  *
- * @param severities a bit field of severities to suppress
+ * The specified error callback (if none is given, then the default one) will be called when a debug message
+ * that matches the specified criteria is enqueued by the Orion library.
+ *
+ * @param severities a bit field of severities to enable
  *
  * @sa oriErrorCallback
  *
  * @ingroup group_Errors
  *
  */
-void oriSuppressDebugMessages(oriErrorSeverity severities) {
-    _orion.suppressedErrorSeverities |= severities;
+void oriEnableDebugMessages(oriErrorSeverity severities) {
+    _orion.displayedErrorSeverities |= severities;
 }

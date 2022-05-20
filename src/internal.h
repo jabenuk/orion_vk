@@ -42,8 +42,7 @@ typedef struct _ori_LibState {
         void *errorCallbackUserData;
     } callbacks;
 
-    bool suppressErrorCallback;
-    oriErrorSeverity suppressedErrorSeverities;
+    oriErrorSeverity displayedErrorSeverities;
 } _ori_LibState;
 
 extern _ori_LibState _orion;
@@ -70,7 +69,7 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
 
 #define _ori_DebugLog(format, ...) \
     { \
-        if (!_orion.suppressErrorCallback) { /* we should avoid string manipulation if it isn't necessary */ \
+        if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
             char str[256]; \
             snprintf(str, 256, format, __VA_ARGS__); \
             _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_VERBOSE); \
@@ -79,7 +78,7 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
 
 #define _ori_Warning(format, ...) \
     { \
-        if (!_orion.suppressErrorCallback) { /* we should avoid string manipulation if it isn't necessary */ \
+        if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
             char str[256]; \
             snprintf(str, 256, format, __VA_ARGS__); \
             _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_WARNING); \
@@ -88,48 +87,12 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
 
 #define _ori_Notification(format, ...) \
     { \
-        if (!_orion.suppressErrorCallback) { /* we should avoid string manipulation if it isn't necessary */ \
+        if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
             char str[256]; \
             snprintf(str, 256, format, __VA_ARGS__); \
             _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_NOTIF); \
         } \
     }
-
-
-
-// ============================================================================
-// ----------------------------------------------------------------------------
-// *****        ORION PUBLIC INTERFACE                                    *****
-// ----------------------------------------------------------------------------
-// ============================================================================
-
-
-
-// ============================================================================
-// *****        STATE                                                     *****
-// ============================================================================
-
-/**
- * @brief An opaque structure that holds all public state.
- *
- * This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().
- *
- * However, it also holds state related to Vulkan, such as the application info.
- *
- * @sa oriCreateState()
- * @sa oriFreeState()
- *
- * @ingroup group_Meta
- *
- */
-typedef struct oriState {
-    // struct of all global linked lists
-    struct {
-    } listHeads;
-
-    VkApplicationInfo appInfo;
-    unsigned int apiVersion;
-} oriState;
 
 #ifdef __cplusplus
     }

@@ -69,10 +69,6 @@ void oriSetFlag(oriLibraryFlag flag, unsigned int val) {
         default:
             _ori_ThrowError(ORERR_INVALID_LIB_FLAG);
             return;
-        case ORION_DISABLE_ERROR_CALLBACK:
-            _orion.suppressErrorCallback = (val) ? 1 : 0;
-            strncpy(flagstr, "ORION_DISABLE_ERROR_CALLBACK", 128);
-            break;
     }
 
     _ori_DebugLog("flag %s set to %d", flagstr, val);
@@ -83,6 +79,28 @@ void oriSetFlag(oriLibraryFlag flag, unsigned int val) {
 // ============================================================================
 // *****        STATE                                                     *****
 // ============================================================================
+
+/**
+ * @brief An opaque structure that holds all public state.
+ *
+ * This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().
+ *
+ * However, it also holds state related to Vulkan, such as the application info.
+ *
+ * @sa oriCreateState()
+ * @sa oriFreeState()
+ *
+ * @ingroup group_Meta
+ *
+ */
+typedef struct oriState {
+    // struct of all global linked lists
+    struct {
+    } listHeads;
+
+    VkApplicationInfo appInfo;
+    unsigned int apiVersion;
+} oriState;
 
 /**
  * @brief Create an Orion state object and return its handle.
@@ -168,7 +186,7 @@ void oriSetStateApplicationInfo(oriState *state, const void *ext, const char *na
         "\tversion : %d.%d.%d\n"
         "\tengine name : %s\n"
         "\tengine version : %d.%d.%d\n"
-        "\textensive structure : at %p\n",
+        "\textensive structure : at %p",
         state, name,
         VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version),
         engineName,

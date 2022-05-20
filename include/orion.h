@@ -47,7 +47,6 @@
 #include <vulkan/vulkan.h>
 
 
-
 // ============================================================================
 // ----------------------------------------------------------------------------
 // *****        ORION PUBLIC INTERFACE                                    *****
@@ -62,6 +61,7 @@
 
 // error severities (bit field):
 typedef enum oriErrorSeverity {
+    ORION_ERROR_SEVERITY_MAX_BIT =  0xFF,   // 0b11111111
     ORION_ERROR_SEVERITY_FATAL =    0x01,   // 0b00000001
     ORION_ERROR_SEVERITY_ERROR =    0x02,   // 0b00000010
     ORION_ERROR_SEVERITY_WARNING =  0x04,   // 0b00000100
@@ -117,18 +117,21 @@ typedef void (* oriErrorCallback)(const char *name, unsigned int code, const cha
 void oriSetErrorCallback(oriErrorCallback callback, void *pointer);
 
 /**
- * @brief Suppress any debug messages that fall under the specified criteria.
+ * @brief Recieve any debug messages that fall under the specified criteria.
  *
  * A list of error severities can be seen in the description of @ref oriErrorCallback.
  *
- * @param severities a bit field of severities to suppress
+ * The specified error callback (if none is given, then the default one) will be called when a debug message
+ * that matches the specified criteria is enqueued by the Orion library.
+ *
+ * @param severities a bit field of severities to enable
  *
  * @sa oriErrorCallback
  *
  * @ingroup group_Errors
  *
  */
-void oriSuppressDebugMessages(oriErrorSeverity severities);
+void oriEnableDebugMessages(oriErrorSeverity severities);
 
 
 
@@ -139,7 +142,7 @@ void oriSuppressDebugMessages(oriErrorSeverity severities);
 // library flags
 
 typedef enum oriLibraryFlag {
-    ORION_DISABLE_ERROR_CALLBACK = 0x00000001
+    TEMP = 0x0
 } oriLibraryFlag;
 
 /**
@@ -148,9 +151,9 @@ typedef enum oriLibraryFlag {
  * This function can be used to set a library-wide flag to configure your application.
  * The flags that can be set can be seen below.
  *
- * | Flag name                       | Description                                                | Available values | Default value |
- * | ------------------------------- | ---------------------------------------------------------- | ---------------- | ------------- |
- * | @c ORION_DISABLE_ERROR_CALLBACK | Completely disable error callback calls, default or custom | Boolean          | false         |
+ * | Flag name  | Description  | Available values | Default value |
+ * | ---------- | ------------ | ---------------- | ------------- |
+ * | @c temp    | temp         | temp             | temp          |
  *
  * @param flag the flag to update
  * @param val the value to set the flag to
