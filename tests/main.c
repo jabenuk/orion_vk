@@ -11,7 +11,7 @@ int main() {
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     GLFWwindow *window = glfwCreateWindow(640, 480, "Vulkan-Orion application", NULL, NULL);
 
-    oriEnableDebugMessages(ORION_ERROR_SEVERITY_WARNING_BIT);
+    oriEnableDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
 
     oriState *state = oriCreateState(VK_API_VERSION_1_3);
     oriDefineStateApplicationInfo(state, NULL, "Orion-Vulkan application", VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));

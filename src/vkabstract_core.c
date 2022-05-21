@@ -73,10 +73,10 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
             layerNames[i] = malloc(sizeof(char) * strlen(cur->data) + 1); // + 1 for null term.
             strncpy(layerNames[i], cur->data, strlen(cur->data) + 1);
 
-            strncat(logstr, "\t - name '", 256);
-            strncat(logstr, layerNames[i], 256);
-            strncat(logstr, "'", 256);
-            if (i < createInfo.enabledLayerCount - 1) strncat(logstr, "'\n", 256);
+            strncat(logstr, "\t - name '", 255);
+            strncat(logstr, layerNames[i], 255);
+            strncat(logstr, "'", 255);
+            if (i < createInfo.enabledLayerCount - 1) strncat(logstr, "'\n", 255);
 
             cur = cur->next;
             i++;
@@ -166,10 +166,10 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
             extNames[i] = malloc(sizeof(char) * strlen(cur->data) + 1); // + 1 for null term.
             strncpy(extNames[i], cur->data, strlen(cur->data) + 1);
 
-            strncat(logstr, "\t - name '", 256);
-            strncat(logstr, extNames[i], 256);
-            strncat(logstr, "'", 256);
-            if (i < createInfo.enabledExtensionCount - 1) strncat(logstr, "\n", 256);
+            strncat(logstr, "\t - name '", 255);
+            strncat(logstr, extNames[i], 255);
+            strncat(logstr, "'", 255);
+            if (i < createInfo.enabledExtensionCount - 1) strncat(logstr, "\n", 255);
 
             cur = cur->next;
             i++;
