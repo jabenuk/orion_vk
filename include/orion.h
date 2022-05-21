@@ -45,6 +45,7 @@
 #endif // __cplusplus
 
 #include <vulkan/vulkan.h>
+#include <stdbool.h>
 
 
 // ============================================================================
@@ -56,18 +57,159 @@
 
 
 // ============================================================================
-// *****        LIBRARY ERROR HANDLING                                    *****
+// *****        STRUCTURES                                                *****
+// ============================================================================
+
+
+
+/**
+ * @brief An opaque structure that holds all public state.
+ *
+ * This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().
+ *
+ * However, it also holds state related to Vulkan, such as the application info.
+ *
+ * @sa oriCreateState()
+ * @sa oriFreeState()
+ *
+ * @ingroup group_Meta
+ *
+ */
+typedef struct oriState oriState;
+
+
+
+// ============================================================================
+// *****        ENUMS                                                     *****
 // ============================================================================
 
 // error severities (bit field):
 typedef enum oriErrorSeverity {
-    ORION_ERROR_SEVERITY_MAX_BIT =  0xFF,   // 0b11111111
-    ORION_ERROR_SEVERITY_FATAL =    0x01,   // 0b00000001
-    ORION_ERROR_SEVERITY_ERROR =    0x02,   // 0b00000010
-    ORION_ERROR_SEVERITY_WARNING =  0x04,   // 0b00000100
-    ORION_ERROR_SEVERITY_NOTIF =    0x08,   // 0b00001000
-    ORION_ERROR_SEVERITY_VERBOSE =  0x10    // 0b00010000
+    ORION_ERROR_SEVERITY_ALL_BIT =      0xFF,   // 0b11111111
+    ORION_ERROR_SEVERITY_FATAL_BIT =    0x01,   // 0b00000001
+    ORION_ERROR_SEVERITY_ERROR_BIT =    0x02,   // 0b00000010
+    ORION_ERROR_SEVERITY_WARNING_BIT =  0x04,   // 0b00000100
+    ORION_ERROR_SEVERITY_NOTIF_BIT =    0x08,   // 0b00001000
+    ORION_ERROR_SEVERITY_VERBOSE_BIT =  0x10    // 0b00010000
 } oriErrorSeverity;
+
+// library flags
+typedef enum oriLibraryFlag {
+    TEMP = 0x0
+} oriLibraryFlag;
+
+
+
+// ============================================================================
+// *****        CORE VULKAN API ABSTRACTIONS                              *****
+// ============================================================================
+
+/**
+ * @brief Apply all previous properties set to the given @c state and create a VkInstance object, stored in @c state.
+ *
+ * Properties previously passed to @c state in functions such as oriDefineStateApplicationInfo(), and features specified in functions like oriFlagLayerEnabled(), will
+ * be applied and used to create a <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">VkInstance</a> object.
+ *
+ * The resulting instance object will be managed by the state.
+ *
+ * @param state the state object from which properties will be used, and to which the resulting VkInstance will be tied.
+ * @param instancePtr a pointer to the structure to which the instance will be returned.
+ * @return true if the function executed successfully
+ * @return false if there was an error (see the @ref group_Errors "debug output" for more information in this case)
+ *
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a>
+ *
+ * @ingroup group_VkAbstractions_Core
+ *
+ */
+bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr);
+
+
+
+// ============================================================================
+// *****        FEATURE LOADING AND ENABLING                              *****
+// ============================================================================
+
+/**
+ * @brief Flag the specified Vulkan layer to be enabled when creating the state's instance with oriCreateStateVkInstance().
+ *
+ * @param state the state to enable the layer on.
+ * @param layer a UTF-8, null-terminated string holding the name of the desired layer.
+ * @return true if the function executed successfully.
+ * @return false if there was an error, such as if the desired layer was not supported (see the @ref group_Errors "debug output" for more information in this case)
+ *
+ * @sa oriCheckLayerAvailability()
+ *
+ * @ingroup group_VkAbstractions_Layers
+ *
+ */
+bool oriFlagLayerEnabled(oriState *state, const char *layer);
+
+/**
+ * @brief Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriCreateStateVkInstance().
+ *
+ * For information regarding the difference between 'instance extensions' and 'device extensions' in Vulkan, you should see
+ * <a href="https://stackoverflow.com/a/53050492/12980669">this</a> answer on StackOverflow.
+ *
+ * @note If the given extension is provided by a layer, make sure to flag the layer as enabled with oriFlagLayerEnabled() as well before creating
+ * the state instance.
+ *
+ * @param state the state the enable the extension on.
+ * @param extension a UTF-8, null-terminated string holding the name of the desired extension.
+ * @return true if the function executed successfully.
+ * @return false if there was an error, such as if the desired instance extension was not supported (see the @ref group_Errors "debug output" for more information in this case)
+ *
+ * @ingroup group_VkAbstractions_Layers
+ *
+ */
+bool oriFlagInstanceExtensionEnabled(oriState *state, const char *extension);
+
+
+
+// ============================================================================
+// *****        COMPATIBILITY CHECKS                                      *****
+// ============================================================================
+
+/**
+ * @brief Return the availability of the specified Vulkan layer.
+ *
+ * @param layer a UTF-8, null-terminated string holding the name of the desired layer.
+ * @return true if the layer is available
+ * @return false if the layer is not available
+ *
+ * @sa oriFlagLayerEnabled()
+ *
+ * @ingroup group_VkAbstractions_Layers
+ *
+ */
+bool oriCheckLayerAvailability(const char *layer);
+
+/**
+ * @brief Return the availability of the specified Vulkan instance extension.
+ *
+ * The @c layer parameter is equivalent to the @c pLayerName parameter in the
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkEnumerateInstanceExtensionProperties.html">VkEnumerateInstanceExtensionProperties</a>
+ * Vulkan function. This is described in the Specification as the following:
+ *  > When pLayerName parameter is NULL, only extensions provided by the Vulkan implementation or by implicitly enabled layers are returned. When pLayerName is the
+ *  > name of a layer, the instance extensions provided by that layer are returned.
+ *
+ * @param extension a UTF-8, null-terminated string holding the name of the desired instance extension.
+ * @param layer NULL or a UTF-8 null-terminated string holding the name of the layer to query the extension from.
+ * @return true if the instance extension is available
+ * @return false if the instance extension is not available
+ *
+ * @sa oriFlagInstanceExtensionEnabled()
+ *
+ * @ingroup group_VkAbstractions_Layers
+ *
+ */
+bool oriCheckInstanceExtensionAvailability(const char *extension, const char *layer);
+
+
+
+// ============================================================================
+// *****        LIBRARY ERROR HANDLING                                    *****
+// ============================================================================
 
 /**
  * @brief Callback function for general runtime errors
@@ -106,7 +248,7 @@ typedef void (* oriErrorCallback)(const char *name, unsigned int code, const cha
  *
  * Pass NULL to the @c pointer parameter if you do not want to pass any data to the callback.
  *
- * @param callback the callback function to use.
+ * @param callback NULL or the callback function to use.
  * @param pointer NULL or specified user data that will be sent to the callback.
  *
  * @sa oriErrorCallback
@@ -139,12 +281,6 @@ void oriEnableDebugMessages(oriErrorSeverity severities);
 // *****        LIBRARY MANAGEMENT                                        *****
 // ============================================================================
 
-// library flags
-
-typedef enum oriLibraryFlag {
-    TEMP = 0x0
-} oriLibraryFlag;
-
 /**
  * @brief Set a library-wide flag or value
  *
@@ -168,21 +304,6 @@ void oriSetFlag(oriLibraryFlag flag, unsigned int val);
 // ============================================================================
 // *****        STATE                                                     *****
 // ============================================================================
-
-/**
- * @brief An opaque structure that holds all public state.
- *
- * This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().
- *
- * However, it also holds state related to Vulkan, such as the application info.
- *
- * @sa oriCreateState()
- * @sa oriFreeState()
- *
- * @ingroup group_Meta
- *
- */
-typedef struct oriState oriState;
 
 /**
  * @brief Create an Orion state object and return its handle.
@@ -236,7 +357,7 @@ void oriFreeState(oriState *state);
  * @ingroup group_Meta
  *
  */
-void oriSetStateApplicationInfo(oriState *state, const void *ext, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion);
+void oriDefineStateApplicationInfo(oriState *state, const void *ext, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion);
 
 #ifdef __cplusplus
     }

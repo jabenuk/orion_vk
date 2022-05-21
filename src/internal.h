@@ -20,7 +20,7 @@
 #endif // __cplusplus
 
 #include "orion.h"
-#include <stdbool.h>
+#include "structs.h"
 
 
 
@@ -29,23 +29,6 @@
 // *****        ORION PRIVATE FUNCTIONALITY                               *****
 // ----------------------------------------------------------------------------
 // ============================================================================
-
-
-
-// ============================================================================
-// *****        STATIC INTERNAL STATE                                     *****
-// ============================================================================
-
-typedef struct _ori_LibState {
-    struct {
-        oriErrorCallback errorCallback;
-        void *errorCallbackUserData;
-    } callbacks;
-
-    oriErrorSeverity displayedErrorSeverities;
-} _ori_LibState;
-
-extern _ori_LibState _orion;
 
 
 
@@ -63,7 +46,7 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
     "ERR_INVALID_LIB_FLAG", \
     0x01, \
     "An invalid flag was given to oriSetFlag(); nothing was updated.", \
-    ORION_ERROR_SEVERITY_WARNING
+    ORION_ERROR_SEVERITY_WARNING_BIT
 
 // helper functions for specific 'error' types (improves on readability)
 
@@ -72,7 +55,7 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
         if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
             char str[256]; \
             snprintf(str, 256, format, __VA_ARGS__); \
-            _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_VERBOSE); \
+            _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_VERBOSE_BIT); \
         } \
     }
 
@@ -81,7 +64,7 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
         if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
             char str[256]; \
             snprintf(str, 256, format, __VA_ARGS__); \
-            _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_WARNING); \
+            _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_WARNING_BIT); \
         } \
     }
 
@@ -90,7 +73,7 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
         if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
             char str[256]; \
             snprintf(str, 256, format, __VA_ARGS__); \
-            _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_NOTIF); \
+            _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_NOTIF_BIT); \
         } \
     }
 

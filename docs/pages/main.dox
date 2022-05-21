@@ -29,5 +29,6 @@
  *  - @ref group_Meta "Library management": <i>functions that handle the initialisation, management, and
  * eventual termination of the library.</i>
  *  - @ref group_Errors "Error handling": <i>functionality to catch errors thrown by Orion at runtime.</i>
+ *  - @ref group_VkAbstractions "Vulkan abstractions": <i>abstractions of the Vulkan API.</i>
  *
  */

@@ -14,8 +14,6 @@
 #include "orion.h"
 #include "internal.h"
 
-#include <vulkan/vulkan.h>
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -31,11 +29,10 @@
 
 
 // ============================================================================
-// *****        STATIC INTERNAL STATE                                     *****
+// *****        STATE                                                     *****
 // ============================================================================
 
 _ori_LibState _orion = { NULL };
-
 
 
 // ============================================================================
@@ -47,60 +44,8 @@ _ori_LibState _orion = { NULL };
 
 
 // ============================================================================
-// *****        LIBRARY MANAGEMENT                                        *****
-// ============================================================================
-
-/**
- * @brief Set a library-wide flag or value
- *
- * This function can be used to set a library-wide flag to configure your application.
- * The flags that can be set can be seen below. (in header)
- *
- * @param flag the flag to update
- * @param val the value to set the flag to
- *
- * @ingroup group_Meta
- *
- */
-void oriSetFlag(oriLibraryFlag flag, unsigned int val) {
-    char flagstr[128];
-
-    switch (flag) {
-        default:
-            _ori_ThrowError(ORERR_INVALID_LIB_FLAG);
-            return;
-    }
-
-    _ori_DebugLog("flag %s set to %d", flagstr, val);
-}
-
-
-
-// ============================================================================
 // *****        STATE                                                     *****
 // ============================================================================
-
-/**
- * @brief An opaque structure that holds all public state.
- *
- * This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().
- *
- * However, it also holds state related to Vulkan, such as the application info.
- *
- * @sa oriCreateState()
- * @sa oriFreeState()
- *
- * @ingroup group_Meta
- *
- */
-typedef struct oriState {
-    // struct of all global linked lists
-    struct {
-    } listHeads;
-
-    VkApplicationInfo appInfo;
-    unsigned int apiVersion;
-} oriState;
 
 /**
  * @brief Create an Orion state object and return its handle.
@@ -168,7 +113,7 @@ void oriFreeState(oriState *state) {
  * @ingroup group_Meta
  *
  */
-void oriSetStateApplicationInfo(oriState *state, const void *ext, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion) {
+void oriDefineStateApplicationInfo(oriState *state, const void *ext, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion) {
     // using a compound literal should (?) be far less expensive than constantly dereferencing state to redefine the properties separately.
     state->appInfo = (VkApplicationInfo) {
         VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -193,4 +138,34 @@ void oriSetStateApplicationInfo(oriState *state, const void *ext, const char *na
         VK_VERSION_MAJOR(engineVersion), VK_VERSION_MINOR(engineVersion), VK_VERSION_PATCH(engineVersion),
         ext
     );
+}
+
+
+
+// ============================================================================
+// *****        LIBRARY MANAGEMENT                                        *****
+// ============================================================================
+
+/**
+ * @brief Set a library-wide flag or value
+ *
+ * This function can be used to set a library-wide flag to configure your application.
+ * The flags that can be set can be seen below. (in header)
+ *
+ * @param flag the flag to update
+ * @param val the value to set the flag to
+ *
+ * @ingroup group_Meta
+ *
+ */
+void oriSetFlag(oriLibraryFlag flag, unsigned int val) {
+    char flagstr[128];
+
+    switch (flag) {
+        default:
+            _ori_ThrowError(ORERR_INVALID_LIB_FLAG);
+            return;
+    }
+
+    _ori_DebugLog("flag %s set to %d", flagstr, val);
 }

@@ -36,13 +36,13 @@ void __DefaultErrorCallback(const char *name, unsigned int code, const char *mes
     char severitystr[15];
 
     switch (severity) {
-        case ORION_ERROR_SEVERITY_WARNING:
+        case ORION_ERROR_SEVERITY_WARNING_BIT:
             strncpy(severitystr, "WARNING", 15);
             break;
-        case ORION_ERROR_SEVERITY_ERROR:
+        case ORION_ERROR_SEVERITY_ERROR_BIT:
             strncpy(severitystr, "ERROR", 15);
             break;
-        case ORION_ERROR_SEVERITY_FATAL:
+        case ORION_ERROR_SEVERITY_FATAL_BIT:
             strncpy(severitystr, "FATAL!", 15);
             break;
         default:
@@ -53,11 +53,11 @@ void __DefaultErrorCallback(const char *name, unsigned int code, const char *mes
     // style messages differently if they aren't indicating any problems
     // (errors and fatal errors are normally standardised, with codes and such, but messages and warnings are not)
     switch (severity) {
-        case ORION_ERROR_SEVERITY_VERBOSE:
-        case ORION_ERROR_SEVERITY_NOTIF:
+        case ORION_ERROR_SEVERITY_VERBOSE_BIT:
+        case ORION_ERROR_SEVERITY_NOTIF_BIT:
             printf("[orion] %s\n", message);
             break;
-        case ORION_ERROR_SEVERITY_WARNING:
+        case ORION_ERROR_SEVERITY_WARNING_BIT:
             printf("[orion] (%s) %s\n", severitystr, message);
             break;
         default:

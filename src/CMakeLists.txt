@@ -10,6 +10,7 @@ set(
         "error.c"
         "init.c"
         "internal.h"
+        "vkabstract_core.c"
 )
 
 #
@@ -22,6 +23,12 @@ else()
 endif()
 
 #
+# link to vulkan SDK
+
+find_package(Vulkan REQUIRED)
+target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
+
+#
 # include directories
 
 target_include_directories(
@@ -29,6 +36,7 @@ target_include_directories(
     PUBLIC
         "${ORION_INCLUDE_DIR}"
         "${ORION_CORE_VENDOR_DIR}"
+        "${Vulkan_INCLUDE_DIRS}"
     PRIVATE
         "${ORION_SRC_DIR}"
 )
