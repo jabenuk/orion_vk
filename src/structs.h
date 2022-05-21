@@ -47,7 +47,7 @@ typedef struct _ori_LibState {
         void *errorCallbackUserData;
     } callbacks;
 
-    oriErrorSeverity displayedErrorSeverities;
+    oriErrorSeverityBit displayedErrorSeverities;
 } _ori_LibState;
 
 extern _ori_LibState _orion;

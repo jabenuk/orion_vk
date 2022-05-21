@@ -17,7 +17,6 @@ int main() {
     oriDefineStateApplicationInfo(state, NULL, "Orion-Vulkan application", VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));
 
     oriFlagLayerEnabled(state, "VK_LAYER_KHRONOS_validation");
-    oriFlagLayerEnabled(state, "VK_LAYER_KHRONOS_vsdafgdfgalidation");
 
     const char **extensions;
     unsigned int extensionCount;

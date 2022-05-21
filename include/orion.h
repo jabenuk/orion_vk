@@ -83,20 +83,20 @@ typedef struct oriState oriState;
 // *****        ENUMS                                                     *****
 // ============================================================================
 
+// library flags
+typedef enum oriLibraryFlag {
+    TEMP = 0x0
+} oriLibraryFlag;
+
 // error severities (bit field):
-typedef enum oriErrorSeverity {
+typedef enum oriErrorSeverityBit {
     ORION_ERROR_SEVERITY_ALL_BIT =      0xFF,   // 0b11111111
     ORION_ERROR_SEVERITY_FATAL_BIT =    0x01,   // 0b00000001
     ORION_ERROR_SEVERITY_ERROR_BIT =    0x02,   // 0b00000010
     ORION_ERROR_SEVERITY_WARNING_BIT =  0x04,   // 0b00000100
     ORION_ERROR_SEVERITY_NOTIF_BIT =    0x08,   // 0b00001000
     ORION_ERROR_SEVERITY_VERBOSE_BIT =  0x10    // 0b00010000
-} oriErrorSeverity;
-
-// library flags
-typedef enum oriLibraryFlag {
-    TEMP = 0x0
-} oriLibraryFlag;
+} oriErrorSeverityBit;
 
 
 
@@ -236,7 +236,7 @@ bool oriCheckInstanceExtensionAvailability(const char *extension, const char *la
  * @ingroup group_Errors
  *
  */
-typedef void (* oriErrorCallback)(const char *name, unsigned int code, const char *message, oriErrorSeverity severity, void *pointer);
+typedef void (* oriErrorCallback)(const char *name, unsigned int code, const char *message, oriErrorSeverityBit severity, void *pointer);
 
 /**
  * @brief Set the global Orion error callback function.
@@ -273,7 +273,7 @@ void oriSetErrorCallback(oriErrorCallback callback, void *pointer);
  * @ingroup group_Errors
  *
  */
-void oriEnableDebugMessages(oriErrorSeverity severities);
+void oriEnableDebugMessages(oriErrorSeverityBit severities);
 
 
 

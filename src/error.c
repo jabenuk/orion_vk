@@ -32,7 +32,7 @@
 // ============================================================================
 
 // default error callback (will be set in oriDefaultCallbacks())
-void __DefaultErrorCallback(const char *name, unsigned int code, const char *message, oriErrorSeverity severity, void *pointer) {
+void __DefaultErrorCallback(const char *name, unsigned int code, const char *message, oriErrorSeverityBit severity, void *pointer) {
     char severitystr[15];
 
     switch (severity) {
@@ -72,7 +72,7 @@ void __DefaultErrorCallback(const char *name, unsigned int code, const char *mes
 // *****        LIBRARY ERROR HANDLING                                    *****
 // ============================================================================
 
-void _ori_ThrowError(const char *name, unsigned int code, const char *message, oriErrorSeverity severity) {
+void _ori_ThrowError(const char *name, unsigned int code, const char *message, oriErrorSeverityBit severity) {
     // don't bother with all this if the error callback's being suppressed anyways
     if (!_orion.displayedErrorSeverities) {
         return;
@@ -148,6 +148,6 @@ void oriSetErrorCallback(oriErrorCallback callback, void *pointer) {
  * @ingroup group_Errors
  *
  */
-void oriEnableDebugMessages(oriErrorSeverity severities) {
+void oriEnableDebugMessages(oriErrorSeverityBit severities) {
     _orion.displayedErrorSeverities |= severities;
 }

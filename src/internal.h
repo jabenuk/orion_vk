@@ -37,7 +37,7 @@
 // ============================================================================
 
 // calls the global error callback in _orion with the given parameters.
-void _ori_ThrowError(const char *name, unsigned int code, const char *message, oriErrorSeverity severity);
+void _ori_ThrowError(const char *name, unsigned int code, const char *message, oriErrorSeverityBit severity);
 
 // standardised error kits:
 // these should be used when calling the _ori_ThrowError() function.
