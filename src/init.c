@@ -158,14 +158,15 @@ void oriDefineStateApplicationInfo(oriState *state, const void *ext, const char 
  * @ingroup group_Meta
  *
  */
-void oriSetFlag(oriLibraryFlag flag, unsigned int val) {
+oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
     char flagstr[128];
 
     switch (flag) {
         default:
             _ori_ThrowError(ORERR_INVALID_LIB_FLAG);
-            return;
+            return ORION_RETURN_STATUS_ERROR_INVALID_ENUM;
     }
 
     _ori_DebugLog("flag %s set to %d", flagstr, val);
+    return ORION_RETURN_STATUS_OK;
 }

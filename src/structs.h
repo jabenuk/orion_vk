@@ -84,7 +84,7 @@ typedef struct oriState {
     // pointer to the associated instance structure
     VkInstance *instance;
 
-    // this struct is freed after VkCreateInstance().
+    // this struct is freed after oriCreateStateVkInstance().
     struct {
         // enabled Vulkan layers
         unsigned int enabledLayerCount;

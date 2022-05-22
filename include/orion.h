@@ -60,8 +60,6 @@
 // *****        STRUCTURES                                                *****
 // ============================================================================
 
-
-
 /**
  * @brief An opaque structure that holds all public state.
  *
@@ -90,13 +88,21 @@ typedef enum oriLibraryFlag {
 
 // error severities (bit field):
 typedef enum oriErrorSeverityBit {
-    ORION_ERROR_SEVERITY_ALL_BIT =      0x7FFFFFFF,   // 0b11111111
-    ORION_ERROR_SEVERITY_FATAL_BIT =    0x00000001,   // 0b00000001
-    ORION_ERROR_SEVERITY_ERROR_BIT =    0x00000002,   // 0b00000010
-    ORION_ERROR_SEVERITY_WARNING_BIT =  0x00000004,   // 0b00000100
-    ORION_ERROR_SEVERITY_NOTIF_BIT =    0x00000008,   // 0b00001000
-    ORION_ERROR_SEVERITY_VERBOSE_BIT =  0x00000010    // 0b00010000
+    ORION_ERROR_SEVERITY_ALL_BIT =      0xFF,   // 0b11111111
+    ORION_ERROR_SEVERITY_FATAL_BIT =    0x01,   // 0b00000001
+    ORION_ERROR_SEVERITY_ERROR_BIT =    0x02,   // 0b00000010
+    ORION_ERROR_SEVERITY_WARNING_BIT =  0x04,   // 0b00000100
+    ORION_ERROR_SEVERITY_NOTIF_BIT =    0x08,   // 0b00001000
+    ORION_ERROR_SEVERITY_VERBOSE_BIT =  0x10    // 0b00010000
 } oriErrorSeverityBit;
+
+// function return statuses
+typedef enum oriReturnStatus {
+    ORION_RETURN_STATUS_OK = 0, // no error was reported
+    ORION_RETURN_STATUS_ERROR_NOT_FOUND = 1, // a requested feature was not available
+    ORION_RETURN_STATUS_ERROR_VULKAN_ERROR = 2, // a Vulkan function failed, debug this with Vulkan
+    ORION_RETURN_STATUS_ERROR_INVALID_ENUM = 3 // an invalid value was given
+} oriReturnStatus;
 
 
 
@@ -114,15 +120,15 @@ typedef enum oriErrorSeverityBit {
  *
  * @param state the state object from which properties will be used, and to which the resulting VkInstance will be tied.
  * @param instancePtr a pointer to the structure to which the instance will be returned.
- * @return true if the function executed successfully
- * @return false if there was an error (see the @ref group_Errors "debug output" for more information in this case)
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
  *
  * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a>
  *
  * @ingroup group_VkAbstractions_Core
  *
  */
-bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr);
+oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr);
 
 
 
@@ -135,15 +141,15 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr);
  *
  * @param state the state to enable the layer on.
  * @param layer a UTF-8, null-terminated string holding the name of the desired layer.
- * @return true if the function executed successfully.
- * @return false if there was an error, such as if the desired layer was not supported (see the @ref group_Errors "debug output" for more information in this case)
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
  *
  * @sa oriCheckLayerAvailability()
  *
  * @ingroup group_VkAbstractions_Layers
  *
  */
-bool oriFlagLayerEnabled(oriState *state, const char *layer);
+oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer);
 
 /**
  * @brief Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriCreateStateVkInstance().
@@ -156,13 +162,13 @@ bool oriFlagLayerEnabled(oriState *state, const char *layer);
  *
  * @param state the state the enable the extension on.
  * @param extension a UTF-8, null-terminated string holding the name of the desired extension.
- * @return true if the function executed successfully.
- * @return false if there was an error, such as if the desired instance extension was not supported (see the @ref group_Errors "debug output" for more information in this case)
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
  *
  * @ingroup group_VkAbstractions_Layers
  *
  */
-bool oriFlagInstanceExtensionEnabled(oriState *state, const char *extension);
+oriReturnStatus oriFlagInstanceExtensionEnabled(oriState *state, const char *extension);
 
 
 
@@ -293,11 +299,13 @@ void oriEnableDebugMessages(oriErrorSeverityBit severities);
  *
  * @param flag the flag to update
  * @param val the value to set the flag to
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
  *
  * @ingroup group_Meta
  *
  */
-void oriSetFlag(oriLibraryFlag flag, unsigned int val);
+oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val);
 
 
 

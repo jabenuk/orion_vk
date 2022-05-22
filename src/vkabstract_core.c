@@ -48,8 +48,8 @@
  * @ingroup group_VkAbstractions_Core
  *
  */
-bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
-    bool status = true; // will be returned at the end
+oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
+    oriReturnStatus r = ORION_RETURN_STATUS_OK;
 
     VkInstanceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -59,9 +59,11 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
     // specify layers to be enabled
     createInfo.enabledLayerCount = state->instanceCreateInfo.enabledLayerCount;
 
+    // this is stored here as it needs to be freed AFTER instance creation
+    char *layerNames[createInfo.enabledLayerCount]; // we access from createInfo instead of state as no dereference is necessary
+
     // the support of these layers was already checked in oriFlagLayerEnabled().
     if (state->instanceCreateInfo.enabledLayerListHead) {
-        char *layerNames[createInfo.enabledLayerCount]; // we access from createInfo instead of state as no dereference is necessary
         unsigned int i = 0;
 
         char logstr[256] = "vulkan layers enabled:\n";
@@ -84,17 +86,16 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
 
         _ori_Notification(logstr, 0);
 
-        createInfo.ppEnabledLayerNames = (const char *const *) layerNames;
-
-        for (unsigned int j = 0; j < createInfo.enabledLayerCount; j++) {
-            free(layerNames[j]);
-        }
+        createInfo.ppEnabledLayerNames = layerNames;
     } else {
         createInfo.ppEnabledLayerNames = NULL;
     }
 
     // now for extensions
     createInfo.enabledExtensionCount = state->instanceCreateInfo.enabledExtCount;
+
+    // stored in this scope for same reasons as layerNames
+    char *extNames[createInfo.enabledExtensionCount]; // we access from createInfo instead of state as no dereference is necessary
 
     // unlike layers, the support of the specified extensions has not yet been checked
     // this is because the layers that provide some extensions might not yet have been specified
@@ -137,7 +138,7 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
                 // so we know the extension is not available
 
                 _ori_Warning("specified instance extension `%s` was not found", cur->data);
-                status = false;
+                r = ORION_RETURN_STATUS_ERROR_NOT_FOUND;
 
                 // remove the extension from the list
                 if (prev && next)       prev->next = next;
@@ -156,7 +157,6 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
 
         // any unsupported extensions have now been removed from the list, so we can traverse through it again
         // this time, we add each extension to an array which is then passed to the create info struct.
-        char *extNames[createInfo.enabledExtensionCount]; // we access from createInfo instead of state as no dereference is necessary
         unsigned int i = 0;
 
         char logstr[256] = "vulkan instance extensions enabled:\n";
@@ -178,13 +178,15 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
         _ori_Notification(logstr, 0);
 
         createInfo.ppEnabledExtensionNames = (const char *const *) extNames;
-
-        for (unsigned int j = 0; j < createInfo.enabledExtensionCount; j++) {
-            free(extNames[j]);
-        }
     } else {
         createInfo.ppEnabledExtensionNames = NULL;
     }
+
+    if (vkCreateInstance(&createInfo, NULL, instancePtr)) {
+        r = ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
+        _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
+    }
+    state->instance = instancePtr;
 
     // we no longer need the data used for the create info struct so we can free it all
     {
@@ -195,6 +197,7 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
             free(*cur);
             *cur = next;
         }
+        state->instanceCreateInfo.enabledLayerCount = NULL;
     }
     {
         _ori_StrList **cur = &state->instanceCreateInfo.enabledExtListHead;
@@ -204,12 +207,19 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
             free(*cur);
             *cur = next;
         }
+        state->instanceCreateInfo.enabledExtCount = NULL;
     }
 
-    status = vkCreateInstance(&createInfo, NULL, instancePtr) ? 0 : 1;
-    state->instance = instancePtr;
+    // also free arrays of malloc'd strings
+    // this is done after creating the instance as they are referenced by the create info
+    for (unsigned int i = 0; i < createInfo.enabledLayerCount; i++) {
+        free(layerNames[i]);
+    }
+    for (unsigned int i = 0; i < createInfo.enabledExtensionCount; i++) {
+        free(extNames[i]);
+    }
 
-    return status;
+    return r;
 }
 
 
@@ -228,10 +238,10 @@ bool oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
  * @ingroup group_VkAbstractions_Layers
  *
  */
-bool oriFlagLayerEnabled(oriState *state, const char *layer) {
+oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
     if (!oriCheckLayerAvailability(layer)) {
         _ori_Warning("specified layer '%s' was not found", layer);
-        return false;
+        return ORION_RETURN_STATUS_ERROR_NOT_FOUND;
     }
 
     state->instanceCreateInfo.enabledLayerCount++;
@@ -243,7 +253,7 @@ bool oriFlagLayerEnabled(oriState *state, const char *layer) {
     l->next = state->instanceCreateInfo.enabledLayerListHead;
     state->instanceCreateInfo.enabledLayerListHead = l;
 
-    return true;
+    return ORION_RETURN_STATUS_OK;
 }
 
 /**
@@ -257,7 +267,7 @@ bool oriFlagLayerEnabled(oriState *state, const char *layer) {
  * @return true if the function executed successfully.
  * @return false if there was an error, such as if the desired instance extension was not supported (see the @ref group_Errors "debug output" for more information in this case)
  */
-bool oriFlagInstanceExtensionEnabled(oriState *state, const char *extension) {
+oriReturnStatus oriFlagInstanceExtensionEnabled(oriState *state, const char *extension) {
     // since the extension might be provided by a layer, and layers might not yet be specified, we don't
     // check for the extension's availability.
     // this will be done in oriCreateStateVkInstance() instead.
@@ -272,7 +282,7 @@ bool oriFlagInstanceExtensionEnabled(oriState *state, const char *extension) {
     state->instanceCreateInfo.enabledExtListHead = e;
 
     // there technically isn't any need to have a return type but it is there for consistency with other functions
-    return true;
+    return ORION_RETURN_STATUS_OK;
 }
 
 

@@ -47,6 +47,11 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
     0x01, \
     "An invalid flag was given to oriSetFlag(); nothing was updated.", \
     ORION_ERROR_SEVERITY_WARNING_BIT
+#define ORERR_VULKAN_RETURN_ERROR \
+    "ERR_VULKAN_RETURN_ERROR", \
+    0x02, \
+    "A Vulkan function returned a VkResult other than VK_SUCCESS.", \
+    ORION_ERROR_SEVERITY_ERROR_BIT
 
 // helper functions for specific 'error' types (improves on readability)
 
