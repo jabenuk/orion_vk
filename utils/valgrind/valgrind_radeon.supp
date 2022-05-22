@@ -1,0 +1,75 @@
+{
+    radeon-vkcreateinstance-malloc
+    Memcheck:Leak
+    match-leak-kinds: possible
+    fun:malloc
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan.so.1.3.213
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:UnknownInlinedFun
+    fun:_ZN22ValidationStateTracker28PostCallRecordCreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T8VkResult
+    fun:_ZN20vulkan_layer_chassis14CreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:vkCreateInstance
+    fun:oriCreateStateVkInstance
+    fun:main
+}
+
+{
+    radeon-vkcreateinstance-malloc
+    Memcheck:Leak
+    match-leak-kinds: possible
+    fun:malloc
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan.so.1.3.213
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:UnknownInlinedFun
+    fun:_ZN22ValidationStateTracker28PostCallRecordCreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T8VkResult
+    fun:_ZN20vulkan_layer_chassis14CreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:vkCreateInstance
+}
+
+{
+    radeon-vkcreateinstance-malloc
+    Memcheck:Leak
+    match-leak-kinds: possible
+    fun:malloc
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan.so.1.3.213
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:UnknownInlinedFun
+    fun:_ZN22ValidationStateTracker28PostCallRecordCreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T8VkResult
+    fun:_ZN20vulkan_layer_chassis14CreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:vkCreateInstance
+    fun:oriCreateStateVkInstance
+}
+
+{
+    radeon-vkcreateinstance-calloc
+    Memcheck:Leak
+    match-leak-kinds: possible
+    fun:calloc
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan_radeon.so
+    obj:/usr/lib/libvulkan.so.1.3.213
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:UnknownInlinedFun
+    fun:_ZN22ValidationStateTracker28PostCallRecordCreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T8VkResult
+    fun:_ZN20vulkan_layer_chassis14CreateInstanceEPK20VkInstanceCreateInfoPK21VkAllocationCallbacksPP12VkInstance_T
+    obj:/usr/lib/libvulkan.so.1.3.213
+    fun:vkCreateInstance
+    fun:oriCreateStateVkInstance
+    fun:main
+}
