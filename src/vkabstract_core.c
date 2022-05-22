@@ -66,7 +66,7 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
     snprintf(logstr, 768, "vulkan instance created and will be managed by state object at location %p...", state);
     // don't add a new line unless necessary
     if (state->instanceCreateInfo.enabledLayerListHead || state->instanceCreateInfo.enabledExtListHead) {
-        strncat(logstr, "\n", 1);
+        strncat(logstr, "\n", 2); // more than the source length to get rid of GCC warnings
     }
 
     // the support of these layers was already checked in oriFlagLayerEnabled().
@@ -84,8 +84,8 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
             strncpy(layerNames[i], cur->data, strlen(cur->data) + 1);
 
             char s[768];
-            snprintf(s, 767, "\t\t- name '%s'\n", layerNames[i]);
-            strncat(logstr_layer, s, 767);
+            snprintf(s, 768, "\t\t- name '%s'\n", layerNames[i]);
+            strncat(logstr_layer, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
 
             cur = cur->next;
             i++;
@@ -175,7 +175,7 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
             strncpy(extNames[i], cur->data, strlen(cur->data) + 1);
 
             char s[768];
-            snprintf(s, 767, "\t\t- name '%s'", extNames[i]);
+            snprintf(s, 768, "\t\t- name '%s'", extNames[i]);
             if (i < createInfo.enabledExtensionCount - 1) strncat(s, "\n", 767); // we don't want a newline at the end of the string
             strncat(logstr_extension, s, 767);
 

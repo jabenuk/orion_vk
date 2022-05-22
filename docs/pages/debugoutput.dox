@@ -68,11 +68,11 @@
  *
  * | List of available error severities     | Description                                                           |
  * | -------------------------------------- | --------------------------------------------------------------------- |
- * | @c ORION_ERROR_SEVERITY_FATAL_BIT      | Errors that the program @b cannot @b recover @b from.                 |
- * | @c ORION_ERROR_SEVERITY_ERROR_BIT      | Significant but recoverable errors.                                   |
- * | @c ORION_ERROR_SEVERITY_WARNING_BIT    | Events that may cause problems, but are not directly too significant. |
- * | @c ORION_ERROR_SEVERITY_NOTIF_BIT      | General events, no problems reported.                                 |
- * | @c ORION_ERROR_SEVERITY_VERBOSE_BIT    | Almost @b every event that is happening.                              |
+ * | ORION_ERROR_SEVERITY_FATAL_BIT         | Errors that the program @b cannot @b recover @b from.                 |
+ * | ORION_ERROR_SEVERITY_ERROR_BIT         | Significant but recoverable errors.                                   |
+ * | ORION_ERROR_SEVERITY_WARNING_BIT       | Events that may cause problems, but are not directly too significant. |
+ * | ORION_ERROR_SEVERITY_NOTIF_BIT         | General events, no problems reported.                                 |
+ * | ORION_ERROR_SEVERITY_VERBOSE_BIT       | Almost @b every event that is happening.                              |
  *
  * These severity enums can (and should) be bit-masked when passing them to oriEnableDebugMessages().
  * No reported debug messages will have more than one severity bit enabled.

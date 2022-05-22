@@ -5,6 +5,8 @@
 #include "orion.h"
 
 int main() {
+    oriSetFlag(ORION_FLAG_DEBUG_MESSAGE_ONELINE, true);
+
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);

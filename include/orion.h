@@ -66,12 +66,29 @@ typedef struct oriState oriState;
 // *****        ENUMS                                                     *****
 // ============================================================================
 
-// library flags
+/**
+ * @brief Library flag that can be set to a desired value.
+ *
+ * Library flags can be updated with oriSetFlag() or an equivalent function for other types.
+ *
+ * For a comprehensive list of available library flags, see the @ref section_main_Config "Home/Configuration" section.
+ *
+ * @ingroup group_Meta
+ *
+ */
 typedef enum oriLibraryFlag {
-    TEMP = 0x0
+    ORION_FLAG_DEBUG_MESSAGE_ONELINE =  0x01
 } oriLibraryFlag;
 
-// error severities (bit field):
+/**
+ * @brief The severity of a debug message.
+ *
+ * See the @ref section_Debugging_ErrorCallback "Debugging/Error callback" section for more information about how
+ * Orion errors and other debug messages are categorised.
+ *
+ * @ingroup group_Errors
+ *
+ */
 typedef enum oriErrorSeverityBit {
     ORION_ERROR_SEVERITY_ALL_BIT =      0xFF,   // 0b11111111
     ORION_ERROR_SEVERITY_FATAL_BIT =    0x01,   // 0b00000001
@@ -284,11 +301,8 @@ void oriEnableDebugMessages(oriErrorSeverityBit severities);
  * @brief Set a library-wide flag or value
  *
  * This function can be used to set a library-wide flag to configure your application.
- * The flags that can be set can be seen below.
  *
- * | Flag name  | Description  | Available values | Default value |
- * | ---------- | ------------ | ---------------- | ------------- |
- * | @c temp    | temp         | temp             | temp          |
+ * For a comprehensive list of available library flags, see the @ref section_main_Config "Home/Configuration" section.
  *
  * @param flag the flag to update
  * @param val the value to set the flag to

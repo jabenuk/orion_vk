@@ -73,6 +73,29 @@ void __DefaultErrorCallback(const char *name, unsigned int code, const char *mes
 // ============================================================================
 
 void _ori_ThrowError(const char *name, unsigned int code, const char *message, oriErrorSeverityBit severity) {
+    // if the debugMessageOneLine flag is set to true, replace all \n characters in the message with spaces
+
+
+
+
+
+
+
+
+
+
+    // TODO: implement this
+
+
+
+
+
+
+
+
+
+
+
     // don't bother with all this if the error callback's being suppressed anyways
     if (!_orion.displayedErrorSeverities) {
         return;

@@ -43,4 +43,14 @@
  * See the @ref page_Debugging "debugging" page for more information.
  * You should also see the @ref page_ErrorList "error index" for a comprehensive list of library errors.
  *
+ * @section section_main_Config Configuration
+ *
+ * Global library @b flags can be set to change the behaviour of the library. To set these flags, use oriSetFlag().
+ *
+ * A list of library flags and what they do can be found below:
+ *
+ * | Flag name | Description | Additional notes |
+ * | --------- | ----------- | ---------------- |
+ * | ORION_FLAG_DEBUG_MESSAGE_ONELINE | If true, debug messages (those sent to the @ref section_Debugging_ErrorCallback "error callback") will be condensed into one line. | Takes a boolean value. |
+ *
  */
