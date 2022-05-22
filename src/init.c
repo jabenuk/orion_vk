@@ -95,6 +95,7 @@ oriState *oriCreateState(unsigned int apiVersion) {
  */
 void oriFreeState(oriState *state) {
     free(state);
+    state = NULL;
 }
 
 /**

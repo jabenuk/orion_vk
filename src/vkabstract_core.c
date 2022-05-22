@@ -201,8 +201,11 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
         _ori_StrList **cur = &state->instanceCreateInfo.enabledLayerListHead;
         while (*cur) {
             _ori_StrList *next = (*cur)->next;
+
             free((*cur)->data); // since the data was malloc'd as well we need to explicitly free it too
-            free(*cur);
+            (*cur)->data = NULL;
+
+            free(*cur); // *cur will be NULL by the end of this while loop
             *cur = next;
         }
         state->instanceCreateInfo.enabledLayerCount = 0;
@@ -212,7 +215,9 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
         while (*cur) {
             _ori_StrList *next = (*cur)->next;
             free((*cur)->data); // since the data was malloc'd as well we need to explicitly free it too
-            free(*cur);
+            (*cur)->data = NULL;
+
+            free(*cur); // *cur will be NULL by the end of this while loop
             *cur = next;
         }
         state->instanceCreateInfo.enabledExtCount = 0;
@@ -224,9 +229,11 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
     // this is done after creating the instance as they are referenced by the create info
     for (unsigned int i = 0; i < createInfo.enabledLayerCount; i++) {
         free(layerNames[i]);
+        layerNames[i] = NULL;
     }
     for (unsigned int i = 0; i < createInfo.enabledExtensionCount; i++) {
         free(extNames[i]);
+        extNames[i] = NULL;
     }
 
     return r;
@@ -329,6 +336,8 @@ bool oriCheckLayerAvailability(const char *layer) {
     }
 
     free(availableLayers);
+    availableLayers = NULL;
+
     return found;
 }
 
@@ -369,5 +378,7 @@ bool oriCheckInstanceExtensionAvailability(const char *extension, const char *la
     }
 
     free(availableExts);
+    availableExts = NULL;
+
     return found;
 }
