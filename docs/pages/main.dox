@@ -51,6 +51,6 @@
  *
  * | Flag name | Description | Additional notes |
  * | --------- | ----------- | ---------------- |
- * | ORION_FLAG_DEBUG_MESSAGE_ONELINE | If true, debug messages (those sent to the @ref section_Debugging_ErrorCallback "error callback") will be condensed into one line. | Takes a boolean value. |
+ * | TEMP      | TEMP        | TEMP             |
  *
  */

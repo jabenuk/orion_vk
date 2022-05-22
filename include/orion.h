@@ -77,7 +77,7 @@ typedef struct oriState oriState;
  *
  */
 typedef enum oriLibraryFlag {
-    ORION_FLAG_DEBUG_MESSAGE_ONELINE =  0x01
+    TEMP = 0x00 // empty enums aren't allowed
 } oriLibraryFlag;
 
 /**

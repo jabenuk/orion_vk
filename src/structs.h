@@ -46,7 +46,6 @@ typedef struct _ori_LibState {
 extern _ori_LibState _orion;
 
 typedef struct _ori_LibFlags {
-    bool debugMessageOneLine; // set with ORION_FLAG_DEBUG_MESSAGE_ONELINE
 } _ori_LibFlags;
 extern _ori_LibFlags _orionflags;
 

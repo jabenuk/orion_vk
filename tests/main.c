@@ -28,11 +28,11 @@ int main() {
 
     // terminate program
     Terminate();
+
     return 0;
 }
 
 void Initialise() {
-    oriSetFlag(ORION_FLAG_DEBUG_MESSAGE_ONELINE, true);
     oriEnableDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
 
     glfwInit();

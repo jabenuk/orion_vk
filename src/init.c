@@ -171,10 +171,6 @@ oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
         default:
             _ori_Warning("An invalid flag was given to oriSetFlag(); nothing was updated.", 0);
             return ORION_RETURN_STATUS_ERROR_INVALID_ENUM;
-        case ORION_FLAG_DEBUG_MESSAGE_ONELINE:
-            _orionflags.debugMessageOneLine = val;
-            strncpy(flagstr, "DEBUG_MESSAGE_ONELINE", 128);
-            break;
     }
 
     _ori_DebugLog("flag %s set to %d", flagstr, val);
