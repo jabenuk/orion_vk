@@ -27,7 +27,7 @@ int main() {
     }
 
     VkInstance instance;
-    //oriCreateStateVkInstance(state, &instance);
+    oriCreateStateVkInstance(state, &instance);
 
     oriFreeState(state);
 

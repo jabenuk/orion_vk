@@ -20,11 +20,11 @@ fi
 
 TEST_EXEC="$(readlink -f "${1}")"
 VALGRIND_CMD="valgrind"
-SCRIPT_PATH="$(dirname -- "$(dirname -- "$(readlink -f "${BASH_SOURCE}")")")"
+PROJECT_PATH="$(dirname -- "$(dirname -- "$(readlink -f "${BASH_SOURCE}")")")"
 SUPPRESSION_FILES=(
-    "${SCRIPT_PATH}/valgrind/valgrind_amd64.supp"
-    "${SCRIPT_PATH}/valgrind/valgrind_glfw.supp"
-    "${SCRIPT_PATH}/valgrind/valgrind_radeon.supp"
+    "${PROJECT_PATH}/valgrind/valgrind_amd64.supp"
+    "${PROJECT_PATH}/valgrind/valgrind_glfw.supp"
+    "${PROJECT_PATH}/valgrind/valgrind_radeon.supp"
 )
 
 # write the command (arguments)
