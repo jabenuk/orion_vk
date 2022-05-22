@@ -1,2 +1,4 @@
+# I don't include tests and examples as part of the project's source code as
+# most people don't bother using them anyways
 **tests/* linguist-vendored
 **examples/* linguist-vendored
