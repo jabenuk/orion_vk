@@ -1,6 +1,8 @@
 /**
  * @mainpage Home
  *
+ * Source code: <a href="https://github.com/jabenuk/orion_vk">jabenuk/<b>orion</b></a>
+ *
  * @section section_main_Summary Summary
  *
  * The original goal of Orion was to run OpenGL without the annoyances of raw OpenGL code, but it
