@@ -35,9 +35,7 @@
 _ori_LibState _orion = { NULL };
 
 // initialise library flags to their default values
-_ori_LibFlags _orionflags = {
-    false // debugMessageOneLine (set with ORION_FLAG_DEBUG_MESSAGE_ONELINE)
-};
+_ori_LibFlags _orionflags = {};
 
 
 // ============================================================================
