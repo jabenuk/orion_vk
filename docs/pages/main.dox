@@ -31,4 +31,14 @@
  *  - @ref group_Errors "Error handling": <i>functionality to catch errors thrown by Orion at runtime.</i>
  *  - @ref group_VkAbstractions "Vulkan abstractions": <i>abstractions of the Vulkan API.</i>
  *
+ * @section section_main_Debugging Debugging
+ *
+ *  > Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc.
+ *  > Despite the name, this callback is not just used for errors, but also debug log messages, notifications, and warnings, so it's
+ *  > wise to consider it a 'debug callback' instead of specifically an 'error callback'. <i>(Although it is referred to as an 'error
+ *  > callback' in this documentation)</i>.
+ *
+ * See the @ref page_Debugging "debugging" page for more information.
+ * You should also see the @ref page_ErrorList "error index" for a comprehensive list of library errors.
+ *
  */
