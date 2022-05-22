@@ -11,21 +11,6 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
-/*********************************************************/
-/*                                                       */
-/*                          88                           */
-/*                          ""                           */
-/*                                                       */
-/*    ,adPPYba,  8b,dPPYba, 88  ,adPPYba,  8b,dPPYba,    */
-/*   a8"     "8a 88P'   "Y8 88 a8"     "8a 88P'   `"8a   */
-/*   8b       d8 88         88 8b       d8 88       88   */
-/*   "8a,   ,a8" 88         88 "8a,   ,a8" 88       88   */
-/*    `"YbbdP"'  88         88  `"YbbdP"'  88       88   */
-/*                                                       */
-/*                                                       */
-/*                                                       */
-/*********************************************************/
-
 /**
  * @file orion.h
  * @brief The public header of the core Orion library.
@@ -96,12 +81,24 @@ typedef enum oriErrorSeverityBit {
     ORION_ERROR_SEVERITY_VERBOSE_BIT =  0x10    // 0b00010000
 } oriErrorSeverityBit;
 
-// function return statuses
+/**
+ * @brief The return status of an Orion function.
+ *
+ * All Orion functions (that could result in errors) return an oriReturnStatus enum.
+ * If the function returns any value other than @c ORION_RETURN_STATUS_OK (0), something has gone wrong. The name of the returned enum will
+ * give some information, but this is generally vague and you should check the @ref group_Errors "debug output" for more information.
+ *
+ * This can be used to manage errors in your program.
+ *
+ * @ingroup group_Errors
+ *
+ */
 typedef enum oriReturnStatus {
-    ORION_RETURN_STATUS_OK = 0, // no error was reported
-    ORION_RETURN_STATUS_ERROR_NOT_FOUND = 1, // a requested feature was not available
-    ORION_RETURN_STATUS_ERROR_VULKAN_ERROR = 2, // a Vulkan function failed, debug this with Vulkan
-    ORION_RETURN_STATUS_ERROR_INVALID_ENUM = 3 // an invalid value was given
+    ORION_RETURN_STATUS_ERROR_GOOD_LUCK = -1,
+    ORION_RETURN_STATUS_OK = 0,
+    ORION_RETURN_STATUS_ERROR_NOT_FOUND = 1,
+    ORION_RETURN_STATUS_ERROR_VULKAN_ERROR = 2,
+    ORION_RETURN_STATUS_ERROR_INVALID_ENUM = 3
 } oriReturnStatus;
 
 
@@ -223,13 +220,7 @@ bool oriCheckInstanceExtensionAvailability(const char *extension, const char *la
  * This function signature must be followed when creating an error callback for debugging.
  * The global error callback is set in oriSetErrorCallback().
  *
- * | List of available error severities | Description                                                           |
- * | ---------------------------------- | --------------------------------------------------------------------- |
- * | @c ORION_ERROR_SEVERITY_FATAL      | errors that the program @b cannot @b recover @b from.                 |
- * | @c ORION_ERROR_SEVERITY_ERROR      | significant but recoverable errors.                                   |
- * | @c ORION_ERROR_SEVERITY_WARNING    | events that may cause problems, but are not directly too significant. |
- * | @c ORION_ERROR_SEVERITY_NOTIF      | general events, no problems reported.                                 |
- * | @c ORION_ERROR_SEVERITY_VERBOSE    | @b every event that is happening.                                     |
+ * For a list of possible error severities, see the @ref page_Debugging "debugging" page.
  *
  * @param name the name of the error ID
  * @param code the error ID / code
@@ -271,6 +262,8 @@ void oriSetErrorCallback(oriErrorCallback callback, void *pointer);
  *
  * The specified error callback (if none is given, then the default one) will be called when a debug message
  * that matches the specified criteria is enqueued by the Orion library.
+ *
+ * You can pass the @c ORION_ERROR_SEVERITY_ALL_BIT enum to the @c severities parameter to enable all debug messages.
  *
  * @param severities a bit field of severities to enable
  *

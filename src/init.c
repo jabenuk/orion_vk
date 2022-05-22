@@ -163,7 +163,7 @@ oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
 
     switch (flag) {
         default:
-            _ori_ThrowError(ORERR_INVALID_LIB_FLAG);
+            _ori_Warning("An invalid flag was given to oriSetFlag(); nothing was updated.", 0);
             return ORION_RETURN_STATUS_ERROR_INVALID_ENUM;
     }
 

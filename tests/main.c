@@ -14,6 +14,7 @@ int main() {
     oriEnableDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
 
     oriState *state = oriCreateState(VK_API_VERSION_1_3);
+
     oriDefineStateApplicationInfo(state, NULL, "Orion-Vulkan application", VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));
 
     oriFlagLayerEnabled(state, "VK_LAYER_KHRONOS_validation");

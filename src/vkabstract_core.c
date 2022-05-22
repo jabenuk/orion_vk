@@ -62,11 +62,19 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
     // this is stored here as it needs to be freed AFTER instance creation
     char *layerNames[createInfo.enabledLayerCount]; // we access from createInfo instead of state as no dereference is necessary
 
+    char logstr[768];
+    snprintf(logstr, 768, "vulkan instance created and will be managed by state object at location %p...", state);
+    // don't add a new line unless necessary
+    if (state->instanceCreateInfo.enabledLayerListHead || state->instanceCreateInfo.enabledExtListHead) {
+        strncat(logstr, "\n", 1);
+    }
+
     // the support of these layers was already checked in oriFlagLayerEnabled().
     if (state->instanceCreateInfo.enabledLayerListHead) {
         unsigned int i = 0;
 
-        char logstr[256] = "vulkan layers enabled:\n";
+        char logstr_layer[768];
+        snprintf(logstr_layer, 768, "\t...layers enabled for this instance:\n");
 
         // traverse through the layer linked list, adding each element to the layerNames array
         // this array is then passed into the createInfo structure
@@ -75,16 +83,15 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
             layerNames[i] = malloc(sizeof(char) * strlen(cur->data) + 1); // + 1 for null term.
             strncpy(layerNames[i], cur->data, strlen(cur->data) + 1);
 
-            strncat(logstr, "\t - name '", 255);
-            strncat(logstr, layerNames[i], 255);
-            strncat(logstr, "'", 255);
-            if (i < createInfo.enabledLayerCount - 1) strncat(logstr, "'\n", 255);
+            char s[768];
+            snprintf(s, 767, "\t\t- name '%s'\n", layerNames[i]);
+            strncat(logstr_layer, s, 767);
 
             cur = cur->next;
             i++;
         }
 
-        _ori_Notification(logstr, 0);
+        strncat(logstr, logstr_layer, 767);
 
         createInfo.ppEnabledLayerNames = (const char *const *) layerNames;
     } else {
@@ -159,23 +166,24 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
         // this time, we add each extension to an array which is then passed to the create info struct.
         unsigned int i = 0;
 
-        char logstr[256] = "vulkan instance extensions enabled:\n";
+        char logstr_extension[768];
+        snprintf(logstr_extension, 768, "\t...instance extensions enabled for this instance:\n");
 
         cur = state->instanceCreateInfo.enabledExtListHead;
         while (cur) {
             extNames[i] = malloc(sizeof(char) * strlen(cur->data) + 1); // + 1 for null term.
             strncpy(extNames[i], cur->data, strlen(cur->data) + 1);
 
-            strncat(logstr, "\t - name '", 255);
-            strncat(logstr, extNames[i], 255);
-            strncat(logstr, "'", 255);
-            if (i < createInfo.enabledExtensionCount - 1) strncat(logstr, "\n", 255);
+            char s[768];
+            snprintf(s, 767, "\t\t- name '%s'", extNames[i]);
+            if (i < createInfo.enabledExtensionCount - 1) strncat(s, "\n", 767); // we don't want a newline at the end of the string
+            strncat(logstr_extension, s, 767);
 
             cur = cur->next;
             i++;
         }
 
-        _ori_Notification(logstr, 0);
+        strncat(logstr, logstr_extension, 767);
 
         createInfo.ppEnabledExtensionNames = (const char *const *) extNames;
     } else {
@@ -209,6 +217,8 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
         }
         state->instanceCreateInfo.enabledExtCount = 0;
     }
+
+    _ori_Notification(logstr, 0);
 
     // also free arrays of malloc'd strings
     // this is done after creating the instance as they are referenced by the create info
