@@ -86,7 +86,7 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
 
         _ori_Notification(logstr, 0);
 
-        createInfo.ppEnabledLayerNames = layerNames;
+        createInfo.ppEnabledLayerNames = (const char *const *) layerNames;
     } else {
         createInfo.ppEnabledLayerNames = NULL;
     }
@@ -197,7 +197,7 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
             free(*cur);
             *cur = next;
         }
-        state->instanceCreateInfo.enabledLayerCount = NULL;
+        state->instanceCreateInfo.enabledLayerCount = 0;
     }
     {
         _ori_StrList **cur = &state->instanceCreateInfo.enabledExtListHead;
@@ -207,7 +207,7 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
             free(*cur);
             *cur = next;
         }
-        state->instanceCreateInfo.enabledExtCount = NULL;
+        state->instanceCreateInfo.enabledExtCount = 0;
     }
 
     // also free arrays of malloc'd strings
