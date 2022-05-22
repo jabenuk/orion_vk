@@ -42,24 +42,18 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
 // standardised error kits:
 // these should be used when calling the _ori_ThrowError() function.
 
-#define ORERR_INVALID_LIB_FLAG \
-    "ERR_INVALID_LIB_FLAG", \
-    0x01, \
-    "An invalid flag was given to oriSetFlag(); nothing was updated.", \
-    ORION_ERROR_SEVERITY_WARNING_BIT
 #define ORERR_VULKAN_RETURN_ERROR \
     "ERR_VULKAN_RETURN_ERROR", \
-    0x02, \
+    0x01, \
     "A Vulkan function returned a VkResult other than VK_SUCCESS.", \
     ORION_ERROR_SEVERITY_ERROR_BIT
 
 // helper functions for specific 'error' types (improves on readability)
-
 #define _ori_DebugLog(format, ...) \
     { \
         if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
-            char str[256]; \
-            snprintf(str, 256, format, __VA_ARGS__); \
+            char str[768]; \
+            snprintf(str, 768, format, __VA_ARGS__); \
             _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_VERBOSE_BIT); \
         } \
     }
@@ -67,8 +61,8 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
 #define _ori_Warning(format, ...) \
     { \
         if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
-            char str[256]; \
-            snprintf(str, 256, format, __VA_ARGS__); \
+            char str[768]; \
+            snprintf(str, 768, format, __VA_ARGS__); \
             _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_WARNING_BIT); \
         } \
     }
@@ -76,8 +70,8 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
 #define _ori_Notification(format, ...) \
     { \
         if (_orion.displayedErrorSeverities) { /* we should avoid string manipulation if it isn't necessary */ \
-            char str[256]; \
-            snprintf(str, 256, format, __VA_ARGS__); \
+            char str[768]; \
+            snprintf(str, 768, format, __VA_ARGS__); \
             _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_NOTIF_BIT); \
         } \
     }
