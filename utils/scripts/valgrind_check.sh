@@ -10,6 +10,14 @@
 # places, etc. So if they don't work for you, feel free to add suppressions to the existing files, or if
 # there are any unrelated issues that Valgrind whines about, then create new .supp files for them.
 
+# requires a binary file to be executed
+if [ -z "${1}" ]
+then
+    echo -e "\e[1mvalgrind_check.sh: \e[31;1mfatal error: \e[0mno input file"
+    echo -e "script terminated."
+    exit
+fi
+
 TEST_EXEC="$(readlink -f "${1}")"
 VALGRIND_CMD="valgrind"
 SCRIPT_PATH="$(dirname -- "$(dirname -- "$(readlink -f "${BASH_SOURCE}")")")"
