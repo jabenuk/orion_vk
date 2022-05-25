@@ -11,6 +11,22 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
+/**
+ * @file error.c
+ * @author jack bennett
+ * @brief Error handling functions
+ *
+ * @copyright Copyright (c) 2022
+ *
+ * This file contains functions related to error handling.
+ *
+ * It should be noted that this mostly refers to library debugging - that is to say, debugging aspects of the
+ * Orion library rather than the Vulkan API specifically. Although some functionality related to Vulkan
+ * debugging is indeed located in this file, but this is generally when it is directly tied to creation of state
+ * or other library features.
+ *
+ */
+
 #include "orion.h"
 #include "internal.h"
 

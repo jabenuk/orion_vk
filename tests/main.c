@@ -33,7 +33,7 @@ int main() {
 }
 
 void Initialise() {
-    oriEnableDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
+    oriEnableDebugMessages(ORION_ERROR_SEVERITY_WARNING_BIT | ORION_ERROR_SEVERITY_ERROR_BIT | ORION_ERROR_SEVERITY_FATAL_BIT);
 
     glfwInit();
 }
@@ -61,6 +61,7 @@ void CreateState() {
 
     // specify layers to be enabled
     oriFlagLayerEnabled(state, "VK_LAYER_KHRONOS_validation");
+    oriFlagLayerEnabled(state, "VK_LAYER_LUNARG_screenshot");
 }
 
 void CreateInstance() {

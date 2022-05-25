@@ -8,9 +8,10 @@
 set(
     SRC
         "error.c"
+        "extension.c"
         "init.c"
+
         "internal.h"
-        "vkabstract_core.c"
 )
 
 #

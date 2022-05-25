@@ -11,6 +11,24 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
+/**
+ * @file structs.h
+ * @author jack bennett
+ * @brief Internal header file defining public opaque structures.
+ *
+ * @copyright Copyright (c) 2022
+ *
+ * This is an internal header.
+ *
+ * This file defines the members of public, but opaque, library structures.
+ *
+ * As these structures are widely referred to throughout the library, their definitions have
+ * been merged into this one header file as opposed to, for example, defining a 'buffer' struct
+ * in some sort of 'buffer.c' source file (in that case, it could only be directly modified in
+ * said 'buffer.c' file).
+ *
+ */
+
 #pragma once
 #ifndef __ORION_STRUCTS_H
 #define __ORION_STRUCTS_H

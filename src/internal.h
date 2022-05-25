@@ -11,6 +11,24 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
+/**
+ * @file internal.h
+ * @author jack bennett
+ * @brief Internal shared header file
+ *
+ * @copyright Copyright (c) 2022
+ *
+ * This is an internal header.
+ *
+ * This file declares functions and macros, mostly helpers, that are widely used
+ * within the internal scope of the Orion library - normally to reduce code reuse and
+ * improve readability and therefore maintainability.
+ *
+ * This header is NOT to be included by the user, and is certainly not included as
+ * part of the interface orion.h header.
+ *
+ */
+
 #pragma once
 #ifndef __ORION_INTERNAL_H
 #define __ORION_INTERNAL_H

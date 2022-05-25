@@ -13,10 +13,13 @@
 
 /**
  * @file orion.h
+ * @author jack bennett
  * @brief The public header of the core Orion library.
  *
- * @details
+ * @copyright Copyright (c) 2022
+ *
  * This is the public header for including Orion.
+ *
  * All core public library functionality is declared here.
  *
  */
