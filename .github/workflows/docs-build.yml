@@ -16,8 +16,7 @@ jobs:
           run: sudo apt install doxygen
 
         - name: Configure
-          run: pwd
-            && cmake . -B build/ -DORION_BUILD_CORE=OFF
+          run: cmake . -B build/ -DORION_BUILD_CORE=OFF
 
         - name: Build
           run: cmake --build build/
