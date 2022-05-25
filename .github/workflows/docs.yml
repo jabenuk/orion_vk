@@ -1,9 +1,9 @@
 name: Build and deploy HTML documentation
 on:
     push:
-        branches: [ main ]
+        branches: [ main, workflow-devel ]
     pull_request:
-        branches: [ main ]
+        branches: [ main, workflow-devel ]
 
 jobs:
     build:
