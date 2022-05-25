@@ -1,6 +1,5 @@
 var orion_8h =
 [
-    [ "__ORION_H", "d6/d3e/orion_8h.html#aef50abe7c695ac71bbd0c6f4f9defa8d", null ],
     [ "oriErrorCallback", "d2/d8c/group__group__Errors.html#ga2c1ef70b93a3e5922ad6780890f5e6ed", null ],
     [ "oriState", "db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0", null ],
     [ "oriErrorSeverityBit", "d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d", [
@@ -23,7 +22,7 @@ var orion_8h =
     ] ],
     [ "oriCheckInstanceExtensionAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c", null ],
     [ "oriCheckLayerAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034", null ],
-    [ "oriCreateState", "db/de0/group__group__Meta.html#ga0e673063b7f02b7be6206cfb9769fbd4", null ],
+    [ "oriCreateState", "db/de0/group__group__Meta.html#ga8e397c9fad866def2c7d8a8e4c3cd287", null ],
     [ "oriCreateStateVkInstance", "d3/d73/group__group__VkAbstractions__Core.html#gab64bd922a2f2e2b8a11ba787d46a2ee1", null ],
     [ "oriDefineStateApplicationInfo", "db/de0/group__group__Meta.html#ga6abb12bde1b48ba499d9a685ce812730", null ],
     [ "oriEnableDebugMessages", "d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe", null ],
