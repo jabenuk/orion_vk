@@ -16,3 +16,8 @@
 .vscode/*.json
 !.vscode/launch.json
 !.vscode/tasks.json
+
+#
+# everything in the GitHub folder should be tracked
+
+!.github/**
