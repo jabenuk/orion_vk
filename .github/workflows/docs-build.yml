@@ -11,6 +11,9 @@ jobs:
 
         steps:
         - uses: actions/checkout@v3
+        
+        - name: Install dependencies
+          run: sudo apt-get install -y doxygen
 
         - name: Generate Doxyfile through CMake
           run: cd /home/runner/work/orion_vk/orion_vk && cmake . -B build/ -DORION_BUILD_CORE=OFF
