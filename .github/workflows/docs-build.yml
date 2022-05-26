@@ -1,9 +1,9 @@
 name: Build HTML documentation
 on:
     push:
-        branches: [ main, workflow-devel ]
+        branches: [ main ]
     pull_request:
-        branches: [ main, workflow-devel ]
+        branches: [ main]
 
 jobs:
     build:
