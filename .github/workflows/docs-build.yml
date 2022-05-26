@@ -13,13 +13,12 @@ jobs:
         - uses: actions/checkout@v3
 
         - name: Generate Doxyfile through CMake
-          run: cmake . -B build/ -DORION_BUILD_CORE=OFF
+          run: cd /home/runner/work/orion_vk/orion_vk && cmake . -B build/ -DORION_BUILD_CORE=OFF
           
         - name: Build HTML documentation
           uses: mattnotmitt/doxygen-action@1.9.1
           with:
-            doxyfile-path: ./build/docs/Doxyfile
-            working-directory: orion_vk
+            doxyfile-path: /home/runner/work/orion_vk/orion_vk/build/docs/Doxyfile
 
         - name: Deploy resulting HTML
           uses: JamesIves/github-pages-deploy-action@releases/v3
