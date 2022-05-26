@@ -13,7 +13,8 @@ jobs:
         - uses: actions/checkout@v3
 
         - name: Prerequisites
-          run: sudo apt install doxygen
+          run: sudo apt update
+            && sudo apt install doxygen
 
         - name: Configure
           run: cmake . -B build/ -DORION_BUILD_CORE=OFF
