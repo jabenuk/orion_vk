@@ -12,28 +12,20 @@ jobs:
         steps:
         - uses: actions/checkout@v3
 
-        - name: Prerequisites
+        - name: Install dependencies
           run: sudo apt install doxygen
 
-        - name: Configure
+        - name: Generate Doxyfile through CMake
           run: cmake . -B build/ -DORION_BUILD_CORE=OFF
+          
+        - name: Build HTML documentation
+          uses: mattnotmitt/doxygen-action@1.9.1
+          with:
+            doxygen-path: build/docs/Doxyfile
 
-        - name: Build
-          run: cmake --build build/
-            && cd build/docs/html
-            && touch .nojekyll
-
-        - name: Deploy
+        - name: Deploy resulting HTML
           uses: JamesIves/github-pages-deploy-action@releases/v3
           with:
             GITHUB_TOKEN: ${{ github.token }}
             BRANCH: gh-pages
             FOLDER: build/docs/html
-
-        - name: Delete workflow runs
-          uses: Mattraks/delete-workflow-runs@v2
-          with:
-            token: ${{ github.token }}
-            repository: ${{ github.repository }}
-            retain_days: 0
-            keep_minimum_runs: 0
