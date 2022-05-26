@@ -20,7 +20,7 @@ jobs:
           run: cmake . -B build/ -DORION_BUILD_CORE=OFF
 
         - name: Build
-          run: git switch gh-pages
+          run: pwd && git switch gh-pages
 
         - name: Deploy
           uses: JamesIves/github-pages-deploy-action@releases/v3
