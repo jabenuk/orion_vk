@@ -12,16 +12,16 @@ jobs:
         steps:
         - uses: actions/checkout@v3
 
-        - name: Prerequisites
-          run: sudo apt install doxygen
+        - name: Install dependencies
+          run: sudo apt install graphviz doxygen
 
-        - name: Configure
+        - name: Generate Doxyfile
           run: cmake . -B build/ -DORION_BUILD_CORE=OFF
 
-        - name: Build
-          run: cmake --build build/
-            && cd build/docs/html
-            && touch .nojekyll
+        - name: Build HTML documentation
+          run: cd .github/workflows
+            && chmod +x doxygen
+            && ./doxygen ../../build/docs/Doxyfile
 
         - name: Deploy
           uses: JamesIves/github-pages-deploy-action@releases/v3
@@ -29,11 +29,3 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
             BRANCH: gh-pages
             FOLDER: build/docs/html
-
-        - name: Delete workflow runs
-          uses: Mattraks/delete-workflow-runs@v2
-          with:
-            token: ${{ github.token }}
-            repository: ${{ github.repository }}
-            retain_days: 0
-            keep_minimum_runs: 0
