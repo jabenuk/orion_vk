@@ -21,7 +21,7 @@ jobs:
         - name: Build HTML documentation
           uses: mattnotmitt/doxygen-action@1.9.1
           with:
-            working-directory: /home/runner/work/orion_vk/orion_vk/build
+            working-directory: /home/runner/work/orion_vk/orion_vk/
 
         - name: Deploy resulting HTML
           uses: JamesIves/github-pages-deploy-action@releases/v3
