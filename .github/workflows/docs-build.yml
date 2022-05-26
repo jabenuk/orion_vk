@@ -16,12 +16,12 @@ jobs:
           run: sudo apt-get install -y doxygen graphviz
 
         - name: Generate Doxyfile through CMake
-          run: cd /home/runner/work/orion_vk/orion_vk && cmake . -B build/ -DORION_BUILD_CORE=OFF && ls /home/runner/work/orion_vk/orion_vk/build && cat /home/runner/work/orion_vk/orion_vk/build/docs/Doxyfile
+          run: cd /home/runner/work/orion_vk/orion_vk && cmake . -B build/ -DORION_BUILD_CORE=OFF && ls /home/runner/work/orion_vk/orion_vk/build
           
         - name: Build HTML documentation
           uses: mattnotmitt/doxygen-action@1.9.1
           with:
-            working-directory: /home/runner/work/orion_vk/orion_vk/build/docs
+            working-directory: /home/runner/work/orion_vk/orion_vk/build
 
         - name: Deploy resulting HTML
           uses: JamesIves/github-pages-deploy-action@releases/v3
