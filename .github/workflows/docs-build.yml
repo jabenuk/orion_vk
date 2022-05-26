@@ -12,16 +12,13 @@ jobs:
         steps:
         - uses: actions/checkout@v3
 
-        - name: Install dependencies
-          run: sudo apt install doxygen
-
         - name: Generate Doxyfile through CMake
           run: cmake . -B build/ -DORION_BUILD_CORE=OFF
           
         - name: Build HTML documentation
           uses: mattnotmitt/doxygen-action@1.9.1
           with:
-            doxygen-path: build/docs/Doxyfile
+            doxyfile-path: build/docs/Doxyfile
 
         - name: Deploy resulting HTML
           uses: JamesIves/github-pages-deploy-action@releases/v3
