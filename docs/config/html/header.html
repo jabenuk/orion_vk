@@ -23,6 +23,18 @@
         $mathjax
         <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
         $extrastylesheet
+        <script type="text/javascript" src="$relpath^theme-toggle.js"></script>
+        <script type="text/javascript">
+            DoxygenAwesomeDarkModeToggle.init()
+        </script>
+        <script type="text/javascript" src="$relpath^fragment-copy.js"></script>
+        <script type="text/javascript">
+            DoxygenAwesomeFragmentCopyButton.init()
+        </script>
+        <script type="text/javascript" src="$relpath^paragraph-link.js"></script>
+        <script type="text/javascript">
+            DoxygenAwesomeParagraphLink.init()
+        </script>
     </head>
 
     <body>
@@ -40,7 +52,7 @@
                 <tbody>
                     <tr id="projectrow">
                         <!--BEGIN PROJECT_LOGO-->
-                        <td id="projectlogo"><img alt="Logo" src="$relpath^$projectlogo"/></td>
+                        <td id="projectlogo"><a href=""><img alt="Logo" src="$relpath^$projectlogo"/></a></td>
                         <!--END PROJECT_LOGO-->
                         <!--BEGIN PROJECT_NAME-->
                         <td id="projectalign">

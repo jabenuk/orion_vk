@@ -38,13 +38,13 @@ PROJECT_NAME           = "Orion"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = ""
+PROJECT_NUMBER         = "devel"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = ""
+PROJECT_BRIEF          = "Vulkan graphics library"
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -1220,7 +1220,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @PROJECT_SOURCE_DIR@/docs/style/header.html
+HTML_HEADER            = "@PROJECT_SOURCE_DIR@/docs/config/html/header.html"
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1230,7 +1230,7 @@ HTML_HEADER            = @PROJECT_SOURCE_DIR@/docs/style/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            =
+HTML_FOOTER            = "@PROJECT_SOURCE_DIR@/docs/config/html/footer.html"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1255,7 +1255,7 @@ HTML_STYLESHEET        =
 # list). For an example see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = @PROJECT_SOURCE_DIR@/docs/style/doxygen-awesome.css @PROJECT_SOURCE_DIR@/docs/style/doxygen-awesome-sidebar-only.css
+HTML_EXTRA_STYLESHEET  = "@PROJECT_SOURCE_DIR@/docs/config/style/general.css" "@PROJECT_SOURCE_DIR@/docs/config/style/sidebar.css" "@PROJECT_SOURCE_DIR@/docs/config/ext/theme-toggle.css"
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1265,7 +1265,7 @@ HTML_EXTRA_STYLESHEET  = @PROJECT_SOURCE_DIR@/docs/style/doxygen-awesome.css @PR
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = @PROJECT_SOURCE_DIR@/.github/graphic/icon_small.png
+HTML_EXTRA_FILES       = "@PROJECT_SOURCE_DIR@/.github/graphic/icon_small.png" "@PROJECT_SOURCE_DIR@/docs/config/ext/theme-toggle.js" "@PROJECT_SOURCE_DIR@/docs/config/ext/fragment-copy.js" "@PROJECT_SOURCE_DIR@/docs/config/ext/paragraph-link.js"
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to

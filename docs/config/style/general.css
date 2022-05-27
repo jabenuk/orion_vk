@@ -386,8 +386,7 @@ a.anchor {
 }
 
 #projectlogo img {
-    max-height: calc(var(--title-font-size) * 2);
-    margin-right: var(--spacing-small);
+    max-height: calc(var(--title-font-size) * 1.8);
 }
 
 .sm-dox, .tabs, .tabs2, .tabs3 {
