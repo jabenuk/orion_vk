@@ -120,7 +120,9 @@ Function return statuses</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">ORION_RETURN_STATUS_ERROR_VULKAN_ERROR   </td><td class="markdownTableBodyNone">2   </td><td class="markdownTableBodyNone">Vulkan reported an error, you should debug this using Vulkan tools.    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">ORION_RETURN_STATUS_ERROR_INVALID_ENUM   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">An invalid value (not always an enum) was passed to the function.   </td></tr>
+<td class="markdownTableBodyNone">ORION_RETURN_STATUS_ERROR_INVALID_ENUM   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">An invalid value (not always an enum) was passed to the function.    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">ORION_RETURN_STATUS_MEMORY_ERROR   </td><td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">A memory error (i.e. allocation, deallocation, out of memory, etc) occurred.   </td></tr>
 </table>
 <h1><a class="anchor" id="section_ErrorList_Errors"></a>
 Errors</h1>
@@ -130,7 +132,9 @@ Errors</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Code   </th><th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Severity   </th><th class="markdownTableHeadNone">Description    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0x01   </td><td class="markdownTableBodyNone">ERR_VULKAN_RETURN_ERROR   </td><td class="markdownTableBodyNone">Error   </td><td class="markdownTableBodyNone">A Vulkan function returned a VkResult other than VK_SUCCESS, you should debug further.   </td></tr>
+<td class="markdownTableBodyNone">0x01   </td><td class="markdownTableBodyNone">ERR_VULKAN_RETURN_ERROR   </td><td class="markdownTableBodyNone">Error   </td><td class="markdownTableBodyNone">A Vulkan function returned a VkResult other than VK_SUCCESS, you should debug further.    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">0x02   </td><td class="markdownTableBodyNone">ERR_MEMORY_ERROR   </td><td class="markdownTableBodyNone">Error   </td><td class="markdownTableBodyNone">A function encountered a memory-related error.   </td></tr>
 </table>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -139,7 +143,7 @@ Errors</h1>
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
                 <li class="navelem"><a class="el" href="../../db/d82/page_Debugging.html">Debugging</a></li>
-                <li class="footer">Doxygen <b>1.9.3</b>. Documentation last updated on <b>Fri May 27 2022</b>.</li>
+                <li class="footer">Doxygen <b>1.9.3</b>. Documentation last updated on <b>Sat May 28 2022</b>.</li>
             </ul>
         </div>
     </body>

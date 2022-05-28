@@ -18,13 +18,14 @@ var orion_8h =
       [ "ORION_RETURN_STATUS_OK", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda34ea585246a920b20bc47644e4f802ff", null ],
       [ "ORION_RETURN_STATUS_ERROR_NOT_FOUND", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdaff2c529c44e84d96ec48971ed010a3a0", null ],
       [ "ORION_RETURN_STATUS_ERROR_VULKAN_ERROR", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda0ed391da95f81b794938aec6f38f41e2", null ],
-      [ "ORION_RETURN_STATUS_ERROR_INVALID_ENUM", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdabfcf47859c06c9437b1ab758b9a676ea", null ]
+      [ "ORION_RETURN_STATUS_ERROR_INVALID_ENUM", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdabfcf47859c06c9437b1ab758b9a676ea", null ],
+      [ "ORION_RETURN_STATUS_MEMORY_ERROR", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda3f29c7c4df529d5eb02cfc9fa4a6d432", null ]
     ] ],
     [ "oriCheckInstanceExtensionAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c", null ],
     [ "oriCheckLayerAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034", null ],
-    [ "oriCreateState", "db/de0/group__group__Meta.html#ga8e397c9fad866def2c7d8a8e4c3cd287", null ],
+    [ "oriCreateState", "db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b", null ],
     [ "oriCreateStateVkInstance", "d3/d73/group__group__VkAbstractions__Core.html#gab64bd922a2f2e2b8a11ba787d46a2ee1", null ],
-    [ "oriDefineStateApplicationInfo", "db/de0/group__group__Meta.html#ga6abb12bde1b48ba499d9a685ce812730", null ],
+    [ "oriDefineStateApplicationInfo", "db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a", null ],
     [ "oriEnableDebugMessages", "d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe", null ],
     [ "oriFlagInstanceExtensionEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0", null ],
     [ "oriFlagLayerEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331", null ],

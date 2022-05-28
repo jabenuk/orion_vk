@@ -2,9 +2,9 @@ var searchData=
 [
   ['oricheckinstanceextensionavailability_0',['oriCheckInstanceExtensionAvailability',['../d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c',1,'orion.h']]],
   ['orichecklayeravailability_1',['oriCheckLayerAvailability',['../d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034',1,'orion.h']]],
-  ['oricreatestate_2',['oriCreateState',['../db/de0/group__group__Meta.html#ga8e397c9fad866def2c7d8a8e4c3cd287',1,'orion.h']]],
+  ['oricreatestate_2',['oriCreateState',['../db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b',1,'orion.h']]],
   ['oricreatestatevkinstance_3',['oriCreateStateVkInstance',['../d3/d73/group__group__VkAbstractions__Core.html#gab64bd922a2f2e2b8a11ba787d46a2ee1',1,'orion.h']]],
-  ['oridefinestateapplicationinfo_4',['oriDefineStateApplicationInfo',['../db/de0/group__group__Meta.html#ga6abb12bde1b48ba499d9a685ce812730',1,'orion.h']]],
+  ['oridefinestateapplicationinfo_4',['oriDefineStateApplicationInfo',['../db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a',1,'orion.h']]],
   ['orienabledebugmessages_5',['oriEnableDebugMessages',['../d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe',1,'orion.h']]],
   ['orierrorcallback_6',['oriErrorCallback',['../d2/d8c/group__group__Errors.html#ga2c1ef70b93a3e5922ad6780890f5e6ed',1,'orion.h']]],
   ['orierrorseveritybit_7',['oriErrorSeverityBit',['../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d',1,'orion.h']]],

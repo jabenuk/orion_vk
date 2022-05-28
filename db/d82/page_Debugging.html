@@ -104,7 +104,8 @@ $(document).ready(function(){initNavTree('db/d82/page_Debugging.html','../../');
   <div class="headertitle"><div class="title">Debugging </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="section_Debugging_ErrorCallback"></a>
+<div class="textblock"><p >For more function-specific documentation, see <a class="el" href="../../d2/d8c/group__group__Errors.html">Core Orion functionality/Error handling</a>.</p>
+<h1><a class="anchor" id="section_Debugging_ErrorCallback"></a>
 Error callback</h1>
 <p >Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc. Despite the name, this callback is not just used for errors, but also debug log messages, notifications, and warnings, so it's wise to consider it a 'debug callback' instead of specifically an 'error callback'. <em>(Although it is referred to as an 'error callback' in this documentation)</em>.</p>
 <p >To enable the debug callback, you need to specify the types of messages you want to see with <a class="el" href="../../d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe" title="Recieve any debug messages that fall under the specified criteria.">oriEnableDebugMessages()</a>. There is a default, built-in callback function which will be implicitly enabled, but you can set your own callback function with <a class="el" href="../../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0" title="Set the global Orion error callback function.">oriSetErrorCallback()</a>.</p>
@@ -138,7 +139,7 @@ Error callback</h1>
 <div class="line"> </div>
 <div class="line">    printf(<span class="stringliteral">&quot;-----\nmessage: %s\ncode: %d (%s)\nseverity: %s\n&quot;</span>, message, code, name, severitystr);</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup__group__Errors_html_ga46ca29226d89a2b852dc639fb351a61d"><div class="ttname"><a href="../../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">oriErrorSeverityBit</a></div><div class="ttdeci">oriErrorSeverityBit</div><div class="ttdoc">The severity of a debug message.</div><div class="ttdef"><b>Definition:</b> orion.h:95</div></div>
+<div class="ttc" id="agroup__group__Errors_html_ga46ca29226d89a2b852dc639fb351a61d"><div class="ttname"><a href="../../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">oriErrorSeverityBit</a></div><div class="ttdeci">oriErrorSeverityBit</div><div class="ttdoc">The severity of a debug message.</div><div class="ttdef"><b>Definition:</b> orion.h:102</div></div>
 </div><!-- fragment --><p >Note that debug messages of type <code>VERBOSE</code>, <code>NOTIF</code>, and <code>WARNING</code> do not report any value to the <code>name</code> or <code>code</code> parameters.</p>
 <p >You do not need to do any filtering in your callback, this is handled by the library already. But, of course, you could filter out specific error codes or names if you so wish. It's up to you.</p>
 <p >The <code>pointer</code> parameter allows you to pass any value to your callback. You specify this value in the call to <a class="el" href="../../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0" title="Set the global Orion error callback function.">oriSetErrorCallback()</a>.</p>
@@ -167,14 +168,16 @@ Function return statuses</h1>
 <p >Aside from the error callback, most Orion functions also return a status enum that describes how their execution went. This only applies for functions that could encounter errors (most of the library, but not all).</p>
 <p >When a function returns a non-OK status, it is usually accompanied by an appropriate debug message (sent to the <a class="el" href="../../db/d82/page_Debugging.html#section_Debugging_ErrorCallback">error callback</a>).</p>
 <p >For a list of possible function return status enums, see the <a class="el" href="../../db/d7a/page_ErrorList.html#section_ErrorList_FunctionReturns">error index</a>.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../db/d7a/page_ErrorList.html">Error index</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../db/d7a/page_ErrorList.html">Error index</a> </dd>
+<dd>
+<a class="el" href="../../d2/d8c/group__group__Errors.html">Core Orion functionality/Error handling</a> </dd></dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">Doxygen <b>1.9.3</b>. Documentation last updated on <b>Fri May 27 2022</b>.</li>
+                <li class="footer">Doxygen <b>1.9.3</b>. Documentation last updated on <b>Sat May 28 2022</b>.</li>
             </ul>
         </div>
     </body>

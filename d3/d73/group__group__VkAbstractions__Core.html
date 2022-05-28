@@ -144,8 +144,9 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Properties previously passed to <code>state</code> in functions such as <a class="el" href="../../db/de0/group__group__Meta.html#ga6abb12bde1b48ba499d9a685ce812730" title="Set application info for a state object.">oriDefineStateApplicationInfo()</a>, and features specified in functions like <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating the state&#39;s instance with oriCreateStateV...">oriFlagLayerEnabled()</a>, will be applied and used to create a <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">VkInstance</a> object.</p>
+<p >Properties previously passed to <code>state</code> in functions such as <a class="el" href="../../db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a" title="Set application info for a state object.">oriDefineStateApplicationInfo()</a>, and features specified in functions like <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating the state&#39;s instance with oriCreateStateV...">oriFlagLayerEnabled()</a>, will be applied and used to create a <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">VkInstance</a> object.</p>
 <p >The resulting instance object will be managed by the state.</p>
+<dl class="section note"><dt>Note</dt><dd>After execution, all previously specified instance extensions, layers, etc will be cleared; if you want to create multiple states, you must specify this functionality again each time (i.e. with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating the state&#39;s instance with oriCreateStateV...">oriFlagLayerEnabled()</a>, <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0" title="Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriC...">oriFlagInstanceExtensionEnabled()</a>, etc).</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>the state object from which properties will be used, and to which the resulting VkInstance will be tied. </td></tr>
@@ -163,7 +164,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">Doxygen <b>1.9.3</b>. Documentation last updated on <b>Fri May 27 2022</b>.</li>
+                <li class="footer">Doxygen <b>1.9.3</b>. Documentation last updated on <b>Sat May 28 2022</b>.</li>
             </ul>
         </div>
     </body>
