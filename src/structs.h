@@ -47,21 +47,15 @@
 // ----------------------------------------------------------------------------
 // ============================================================================
 
-// this is mostly used to store lists of enabled Vulkan layers, features, and extensions
-typedef struct _ori_StrList {
-    struct _ori_StrList *next;
-    char *data;
-} _ori_StrList;
-
-typedef struct _ori_LibState {
+typedef struct _ori_Lib {
     struct {
         oriErrorCallback errorCallback;
         void *errorCallbackUserData;
     } callbacks;
 
     oriErrorSeverityBit displayedErrorSeverities;
-} _ori_LibState;
-extern _ori_LibState _orion;
+} _ori_Lib;
+extern _ori_Lib _orion;
 
 typedef struct _ori_LibFlags {
 } _ori_LibFlags;
@@ -93,22 +87,24 @@ typedef struct oriState {
     struct {
     } listHeads;
 
-    VkApplicationInfo appInfo; // this cannot (?) be freed after VkCreateInstance() so it isn't in the instanceCreateInfo struct.
-    unsigned int apiVersion;
+    // struct of all global dynamic arrays (use realloc() to extend)
+    // these must be used instead of linked lists when they are of non-Orion structs (that don't have a 'next' pointer member)
+    struct {
+        VkInstance **instances;     unsigned int instancesCount;
+    } arrays;
 
-    // pointer to the associated instance structure
-    VkInstance *instance;
+    VkApplicationInfo appInfo;
 
-    // this struct is freed after oriCreateStateVkInstance().
+    // data in this struct is freed after oriCreateStateVkInstance().
     struct {
         // enabled Vulkan layers
         unsigned int enabledLayerCount;
-        _ori_StrList *enabledLayerListHead;
+        char **enabledLayers;
 
-        // enabled Vulkan extensions
+        // enabled Vulkan instance extensions
         unsigned int enabledExtCount;
-        _ori_StrList *enabledExtListHead;
-    } instanceCreateInfo;
+        char **enabledExtensions;
+    } currentInstanceCreateInfoBuffer;
 } oriState;
 
 #ifdef __cplusplus

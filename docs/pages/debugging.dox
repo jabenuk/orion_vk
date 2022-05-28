@@ -1,6 +1,8 @@
 /**
  * @page page_Debugging Debugging
  *
+ * For more function-specific documentation, see @ref group_Errors "Core Orion functionality/Error handling".
+ *
  * @section section_Debugging_ErrorCallback Error callback
  *
  * Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc.
@@ -88,5 +90,6 @@
  * For a list of possible function return status enums, see the @ref section_ErrorList_FunctionReturns "error index".
  *
  * @sa @subpage page_ErrorList
+ * @sa @ref group_Errors "Core Orion functionality/Error handling"
  *
  */

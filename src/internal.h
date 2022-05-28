@@ -66,6 +66,12 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
     "A Vulkan function returned a VkResult other than VK_SUCCESS.", \
     ORION_ERROR_SEVERITY_ERROR_BIT
 
+#define ORERR_MEMORY_ERROR \
+    "ERR_MEMORY_ERROR", \
+    0x02, \
+    "A function encountered a memory-related error.", \
+    ORION_ERROR_SEVERITY_ERROR_BIT
+
 // helper functions for specific 'error' types (improves on readability)
 #define _ori_DebugLog(format, ...) \
     { \

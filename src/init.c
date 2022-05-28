@@ -33,6 +33,21 @@
 #include <string.h>
 #include <stdio.h>
 
+// helper macro to remove duplicates from a dynamically allocated array
+#define __RemoveArrayDuplicates(array, count) \
+    { \
+        for (unsigned int i = 0; i < count - 1; i++) { \
+            if (array[i] != array[i + 1]) { \
+                continue; \
+            } \
+            for (unsigned int j = i + 1; j < count - 1; j++) { \
+                array[j] = array[j + 1]; \
+            } \
+            count--; \
+            i--; \
+        } \
+    }
+
 
 
 // ============================================================================
@@ -47,7 +62,7 @@
 // *****        STATE                                                     *****
 // ============================================================================
 
-_ori_LibState _orion = { NULL };
+_ori_Lib _orion = { NULL };
 
 // initialise library flags to their default values
 _ori_LibFlags _orionflags = {};
@@ -90,49 +105,33 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
     createInfo.pApplicationInfo = &state->appInfo;
 
     // specify layers to be enabled
-    createInfo.enabledLayerCount = state->instanceCreateInfo.enabledLayerCount;
-
-    // this is stored here as it needs to be freed AFTER instance creation
-    char *layerNames[createInfo.enabledLayerCount]; // we access from createInfo instead of state as no dereference is necessary
+    createInfo.enabledLayerCount = state->currentInstanceCreateInfoBuffer.enabledLayerCount;
 
     char logstr[768];
-    snprintf(logstr, 768, "vulkan instance created and will be managed by state object at location %p...", state);
-    // don't add a new line unless necessary
-    if (state->instanceCreateInfo.enabledLayerListHead || state->instanceCreateInfo.enabledExtListHead) {
-        strncat(logstr, "\n", 2); // more than the source length to get rid of GCC warnings
-    }
+    memset(logstr, 0, sizeof(logstr));
+    snprintf(logstr, 768, "VkInstance created into %p and will be managed by state object at location %p", instancePtr, state);
 
     // the support of these layers was already checked in oriFlagLayerEnabled().
-    if (state->instanceCreateInfo.enabledLayerListHead) {
-        unsigned int i = 0;
-
+    if (state->currentInstanceCreateInfoBuffer.enabledLayerCount) {
         char logstr_layer[768];
-        snprintf(logstr_layer, 768, "\t...layers enabled for this instance:\n");
+        snprintf(logstr_layer, 768, "\n\tlayers enabled for this instance:\n");
 
-        // traverse through the layer linked list, adding each element to the layerNames array
-        // this array is then passed into the createInfo structure
-        _ori_StrList *cur = state->instanceCreateInfo.enabledLayerListHead;
-        while (cur) {
-            layerNames[i] = malloc(sizeof(char) * strlen(cur->data) + 1); // + 1 for null term.
-            strncpy(layerNames[i], cur->data, strlen(cur->data) + 1);
-
+        // add to log message
+        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledLayerCount; i++) {
             char s[768];
-            snprintf(s, 768, "\t\t- name '%s'\n", layerNames[i]);
+            snprintf(s, 768, "\t\t- name '%s'%s", state->currentInstanceCreateInfoBuffer.enabledLayers[i], (i < state->currentInstanceCreateInfoBuffer.enabledLayerCount - 1) ? "\n" : "");
             strncat(logstr_layer, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
-
-            cur = cur->next;
-            i++;
         }
 
         strncat(logstr, logstr_layer, 767);
 
-        createInfo.ppEnabledLayerNames = (const char *const *) layerNames;
+        createInfo.ppEnabledLayerNames = (const char *const *) state->currentInstanceCreateInfoBuffer.enabledLayers;
     } else {
         createInfo.ppEnabledLayerNames = NULL;
     }
 
     // now for extensions
-    createInfo.enabledExtensionCount = state->instanceCreateInfo.enabledExtCount;
+    createInfo.enabledExtensionCount = state->currentInstanceCreateInfoBuffer.enabledExtCount;
 
     // stored in this scope for same reasons as layerNames
     char *extNames[createInfo.enabledExtensionCount]; // we access from createInfo instead of state as no dereference is necessary
@@ -141,84 +140,57 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
     // this is because the layers that provide some extensions might not yet have been specified
     // but we can now check for the support of each extension, removing the extension from the list if it is not supported.
     // obviously, there will be a big warning in the debug output if any desired extensions are not loaded + false will be returned at the end.
-    if (state->instanceCreateInfo.enabledExtListHead) {
-        // we first check the availability of each specified extension
-        _ori_StrList *cur = state->instanceCreateInfo.enabledExtListHead;
-        _ori_StrList *prev = NULL, *next = NULL; // these are here for removing any extensions from the list
-
-        while (cur) {
-            next = cur->next;
+    if (state->currentInstanceCreateInfoBuffer.enabledExtCount) {
+        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledExtCount; i++) {
+            // store current extension on stack to reduce dereferences
+            const char *curext = state->currentInstanceCreateInfoBuffer.enabledExtensions[i];
 
             // first check if the extension is already provided by the implementation
-            if (oriCheckInstanceExtensionAvailability(cur->data, NULL)) {
-                // make sure prev and cur are set in case the next extension isn't found
-                prev = cur;
-                cur = cur->next;
+            if (oriCheckInstanceExtensionAvailability(curext, NULL)) {
                 continue;
             }
 
             // otherwise:
-            _ori_StrList *curlayer = state->instanceCreateInfo.enabledLayerListHead;
             bool _found = false;
 
-            if (curlayer) {
-                // if there are any layers, traverse through the list of them and check if they provide the given extension
-                // set _found to true on the first one that does
-                while (curlayer && !_found) {
-                    if (oriCheckInstanceExtensionAvailability(cur->data, curlayer->data)) {
-                        _found = true;
-                    }
-
-                    curlayer = curlayer->next;
+            // if there are any layers, traverse through the array of them and check if they provide the given extension
+            // set _found to true on the first one that does
+            for (unsigned int j = 0; j < state->currentInstanceCreateInfoBuffer.enabledLayerCount; j++) {
+                if (oriCheckInstanceExtensionAvailability(curext, state->currentInstanceCreateInfoBuffer.enabledLayers[j])) {
+                    _found = true;
+                    break;
                 }
             }
 
             if (!_found) {
                 // if this is reached, then we know the extension is not provided by the implementation and there are no layers that could provide it
                 // so we know the extension is not available
-
-                _ori_Warning("specified instance extension `%s` was not found", cur->data);
+                _ori_Warning("specified instance extension `%s` was not found", curext);
                 r = ORION_RETURN_STATUS_ERROR_NOT_FOUND;
 
-                // remove the extension from the list
-                if (prev && next)       prev->next = next;
-                else if (prev && !next) prev->next = NULL;
-                else if (!prev && next) state->instanceCreateInfo.enabledExtListHead = next;
-                else                    state->instanceCreateInfo.enabledExtListHead = NULL;
+                // set array element to NULL
+                free(state->currentInstanceCreateInfoBuffer.enabledExtensions[i]);
+                state->currentInstanceCreateInfoBuffer.enabledExtensions[i] = NULL;
 
                 // decrease counter by one
                 // (the state variable doesn't matter anymore so we just change the create info count)
                 createInfo.enabledExtensionCount--;
             }
-
-            prev = cur;
-            cur = cur->next;
         }
+        char logstr_ext[768];
+        snprintf(logstr_ext, 768, "\n\tinstance extensions enabled for this instance:\n");
 
-        // any unsupported extensions have now been removed from the list, so we can traverse through it again
-        // this time, we add each extension to an array which is then passed to the create info struct.
-        unsigned int i = 0;
-
-        char logstr_extension[768];
-        snprintf(logstr_extension, 768, "\t...instance extensions enabled for this instance:\n");
-
-        cur = state->instanceCreateInfo.enabledExtListHead;
-        while (cur) {
-            extNames[i] = malloc(sizeof(char) * strlen(cur->data) + 1); // + 1 for null term.
-            strncpy(extNames[i], cur->data, strlen(cur->data) + 1);
-
+        // add to log message
+        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledExtCount; i++) {
             char s[768];
-            snprintf(s, 768, "\t\t- name '%s'", extNames[i]);
-            if (i < createInfo.enabledExtensionCount - 1) strncat(s, "\n", 767); // we don't want a newline at the end of the string
-            strncat(logstr_extension, s, 767);
-
-            cur = cur->next;
-            i++;
+            snprintf(s, 768, "\t\t- name '%s'%s", state->currentInstanceCreateInfoBuffer.enabledExtensions[i], (i < state->currentInstanceCreateInfoBuffer.enabledExtCount - 1) ? "\n" : "");
+            strncat(logstr_ext, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
         }
 
-        strncat(logstr, logstr_extension, 767);
+        strncat(logstr, logstr_ext, 767);
 
-        createInfo.ppEnabledExtensionNames = (const char *const *) extNames;
+        // any unsupported extensions have now been set to NULL in the array
+        createInfo.ppEnabledExtensionNames = (const char *const *) state->currentInstanceCreateInfoBuffer.enabledExtensions;
     } else {
         createInfo.ppEnabledExtensionNames = NULL;
     }
@@ -227,47 +199,39 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
         r = ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
         _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
     }
-    state->instance = instancePtr;
+
+    // add given pointer to instance to state array
+    state->arrays.instancesCount++;
+    state->arrays.instances = realloc(state->arrays.instances, state->arrays.instancesCount * sizeof(VkInstance *));
+    if (!state->arrays.instances) {
+        r = ORION_RETURN_STATUS_MEMORY_ERROR;
+        _ori_ThrowError(ORERR_MEMORY_ERROR);
+    }
+    state->arrays.instances[state->arrays.instancesCount - 1] = instancePtr;
 
     // we no longer need the data used for the create info struct so we can free it all
     {
-        _ori_StrList **cur = &state->instanceCreateInfo.enabledLayerListHead;
-        while (*cur) {
-            _ori_StrList *next = (*cur)->next;
-
-            free((*cur)->data); // since the data was malloc'd as well we need to explicitly free it too
-            (*cur)->data = NULL;
-
-            free(*cur); // *cur will be NULL by the end of this while loop
-            *cur = next;
+        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledLayerCount; i++) {
+            free(state->currentInstanceCreateInfoBuffer.enabledLayers[i]);
+            state->currentInstanceCreateInfoBuffer.enabledLayers[i] = NULL;
         }
-        state->instanceCreateInfo.enabledLayerCount = 0;
+        state->currentInstanceCreateInfoBuffer.enabledLayerCount = 0;
+
+        free(state->currentInstanceCreateInfoBuffer.enabledLayers);
+        state->currentInstanceCreateInfoBuffer.enabledLayers = NULL;
     }
     {
-        _ori_StrList **cur = &state->instanceCreateInfo.enabledExtListHead;
-        while (*cur) {
-            _ori_StrList *next = (*cur)->next;
-            free((*cur)->data); // since the data was malloc'd as well we need to explicitly free it too
-            (*cur)->data = NULL;
-
-            free(*cur); // *cur will be NULL by the end of this while loop
-            *cur = next;
+        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledExtCount; i++) {
+            free(state->currentInstanceCreateInfoBuffer.enabledExtensions[i]);
+            state->currentInstanceCreateInfoBuffer.enabledExtensions[i] = NULL;
         }
-        state->instanceCreateInfo.enabledExtCount = 0;
+        state->currentInstanceCreateInfoBuffer.enabledExtCount = 0;
+
+        free(state->currentInstanceCreateInfoBuffer.enabledExtensions);
+        state->currentInstanceCreateInfoBuffer.enabledExtensions = NULL;
     }
 
     _ori_Notification(logstr, 0);
-
-    // also free arrays of malloc'd strings
-    // this is done after creating the instance as they are referenced by the create info
-    for (unsigned int i = 0; i < createInfo.enabledLayerCount; i++) {
-        free(layerNames[i]);
-        layerNames[i] = NULL;
-    }
-    for (unsigned int i = 0; i < createInfo.enabledExtensionCount; i++) {
-        free(extNames[i]);
-        extNames[i] = NULL;
-    }
 
     return r;
 }
@@ -294,15 +258,13 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
  * @ingroup group_Meta
  *
  */
-oriState *oriCreateState(unsigned int apiVersion) {
+oriState *oriCreateState() {
     oriState *r = malloc(sizeof(oriState));
 
     // init to ensure everything (most importantly linked list heads) start at NULL
     memset(r, 0, sizeof(oriState));
 
-    r->apiVersion = apiVersion;
-
-    _ori_DebugLog("state object created at API version %d.%d.%d", VK_VERSION_MAJOR(apiVersion), VK_VERSION_MINOR(apiVersion), VK_VERSION_PATCH(apiVersion));
+    _ori_DebugLog("state object created into %p", r);
 
     return r;
 }
@@ -320,6 +282,20 @@ oriState *oriCreateState(unsigned int apiVersion) {
  *
  */
 void oriFreeState(oriState *state) {
+    // first, we remove duplicates from the public arrays
+    // this is because trying to destroy the state at the same address multiple times will lead to an exception.
+    __RemoveArrayDuplicates(state->arrays.instances, state->arrays.instancesCount);
+
+    // free VkInstances
+    for (unsigned int i = 0; i < state->arrays.instancesCount; i++) {
+        vkDestroyInstance(*state->arrays.instances[i], NULL);
+        _ori_DebugLog("VkInstance at %p was freed by state object at location %p", state->arrays.instances[i], state);
+        *state->arrays.instances[i] = NULL;
+    }
+    free(state->arrays.instances);
+    state->arrays.instances = NULL;
+
+    // finally, free state pointer
     free(state);
     state = NULL;
 }
@@ -334,18 +310,19 @@ void oriFreeState(oriState *state) {
  *
  * @param state the state the object is to be registered into
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
+ * @param apiVersion the Vulkan version to use, as specified in the
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Specification</a>.
  * @param name NULL, or a string containing the name of the application.
  * @param version the version of the application.
  * @param engineName NULL, or a string containing the name of the engine used to create the application.
  * @param engineVersion the version of the engine used to to create the application.
- * @param apiVersion the highest version of Vulkan that the application is to use.
  *
  * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkApplicationInfo.html">Vulkan Docs/VkApplicationInfo</a>
  *
  * @ingroup group_Meta
  *
  */
-void oriDefineStateApplicationInfo(oriState *state, const void *ext, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion) {
+void oriDefineStateApplicationInfo(oriState *state, const void *ext, unsigned int apiVersion, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion) {
     // using a compound literal should (?) be far less expensive than constantly dereferencing state to redefine the properties separately.
     state->appInfo = (VkApplicationInfo) {
         VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -354,17 +331,20 @@ void oriDefineStateApplicationInfo(oriState *state, const void *ext, const char 
         version,
         engineName,
         engineVersion,
-        state->apiVersion
+        apiVersion
     };
 
     _ori_DebugLog(
         "application info of state object at %p updated:\n"
+        "\tAPI version: %d.%d.%d\n"
         "\tname : %s\n"
         "\tversion : %d.%d.%d\n"
         "\tengine name : %s\n"
         "\tengine version : %d.%d.%d\n"
         "\textensive structure : at %p",
-        state, name,
+        state,
+        VK_VERSION_MAJOR(apiVersion), VK_VERSION_MINOR(apiVersion), VK_VERSION_PATCH(apiVersion),
+        name,
         VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version),
         engineName,
         VK_VERSION_MAJOR(engineVersion), VK_VERSION_MINOR(engineVersion), VK_VERSION_PATCH(engineVersion),

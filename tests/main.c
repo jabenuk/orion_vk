@@ -12,6 +12,7 @@ GLFWwindow *wMain = NULL;
 
 oriState *state = NULL;
 VkInstance instance = NULL;
+    VkInstance temp;
 
 void Initialise();      // library flags, initialisation
 void CreateWindow();    // create window (wMain)
@@ -33,7 +34,7 @@ int main() {
 }
 
 void Initialise() {
-    oriEnableDebugMessages(ORION_ERROR_SEVERITY_WARNING_BIT | ORION_ERROR_SEVERITY_ERROR_BIT | ORION_ERROR_SEVERITY_FATAL_BIT);
+    oriEnableDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
 
     glfwInit();
 }
@@ -46,8 +47,8 @@ void CreateWindow() {
 }
 
 void CreateState() {
-    state = oriCreateState(VK_API_VERSION_1_3);
-    oriDefineStateApplicationInfo(state, NULL, WINDOW_NAME, VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));
+    state = oriCreateState();
+    oriDefineStateApplicationInfo(state, NULL, VK_API_VERSION_1_3, WINDOW_NAME, VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));
 
     // get GLFW required extensions
     const char **extensions;
@@ -61,7 +62,6 @@ void CreateState() {
 
     // specify layers to be enabled
     oriFlagLayerEnabled(state, "VK_LAYER_KHRONOS_validation");
-    oriFlagLayerEnabled(state, "VK_LAYER_LUNARG_screenshot");
 }
 
 void CreateInstance() {

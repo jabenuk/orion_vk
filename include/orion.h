@@ -55,8 +55,15 @@
  *
  * However, it also holds state related to Vulkan, such as the application info.
  *
+ * Note that Vulkan objects, like <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">instances</a>,
+ * are @b not stored inside oriState, but rather this struct contains @b handles to said Vulkan objects, so that it can manage them.
+ * For example, you can create a Vulkan instance using data from an oriState object with oriCreateStateVkInstance(), but the function @b returns
+ * the instance so you can deal with it on your end. However, the function also returns the instance to the state, so that, when you call
+ * oriFreeState(), the instance (and any other instances made with this state) will implicitly be freed.
+ *
  * @sa oriCreateState()
  * @sa oriFreeState()
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a>
  *
  * @ingroup group_Meta
  *
@@ -118,7 +125,8 @@ typedef enum oriReturnStatus {
     ORION_RETURN_STATUS_OK = 0,
     ORION_RETURN_STATUS_ERROR_NOT_FOUND = 1,
     ORION_RETURN_STATUS_ERROR_VULKAN_ERROR = 2,
-    ORION_RETURN_STATUS_ERROR_INVALID_ENUM = 3
+    ORION_RETURN_STATUS_ERROR_INVALID_ENUM = 3,
+    ORION_RETURN_STATUS_MEMORY_ERROR = 4
 } oriReturnStatus;
 
 
@@ -135,6 +143,9 @@ typedef enum oriReturnStatus {
  *
  * The resulting instance object will be managed by the state.
  *
+ * @note After execution, all previously specified instance extensions, layers, etc will be cleared; if you want to create multiple states, you must specify this
+ * functionality again each time (i.e. with oriFlagLayerEnabled(), oriFlagInstanceExtensionEnabled(), etc).
+ *
  * @param state the state object from which properties will be used, and to which the resulting VkInstance will be tied.
  * @param instancePtr a pointer to the structure to which the instance will be returned.
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
@@ -145,7 +156,10 @@ typedef enum oriReturnStatus {
  * @ingroup group_VkAbstractions_Core
  *
  */
-oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr);
+oriReturnStatus oriCreateStateVkInstance(
+    oriState *state,
+    VkInstance *instancePtr
+);
 
 
 
@@ -166,7 +180,10 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
  * @ingroup group_VkAbstractions_Layers
  *
  */
-oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer);
+oriReturnStatus oriFlagLayerEnabled(
+    oriState *state,
+    const char *layer
+);
 
 /**
  * @brief Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriCreateStateVkInstance().
@@ -185,7 +202,10 @@ oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer);
  * @ingroup group_VkAbstractions_Layers
  *
  */
-oriReturnStatus oriFlagInstanceExtensionEnabled(oriState *state, const char *extension);
+oriReturnStatus oriFlagInstanceExtensionEnabled(
+    oriState *state,
+    const char *extension
+);
 
 
 
@@ -205,7 +225,9 @@ oriReturnStatus oriFlagInstanceExtensionEnabled(oriState *state, const char *ext
  * @ingroup group_VkAbstractions_Layers
  *
  */
-bool oriCheckLayerAvailability(const char *layer);
+bool oriCheckLayerAvailability(
+    const char *layer
+);
 
 /**
  * @brief Return the availability of the specified Vulkan instance extension.
@@ -226,7 +248,10 @@ bool oriCheckLayerAvailability(const char *layer);
  * @ingroup group_VkAbstractions_Layers
  *
  */
-bool oriCheckInstanceExtensionAvailability(const char *extension, const char *layer);
+bool oriCheckInstanceExtensionAvailability(
+    const char *extension,
+    const char *layer
+);
 
 
 
@@ -253,7 +278,13 @@ bool oriCheckInstanceExtensionAvailability(const char *extension, const char *la
  * @ingroup group_Errors
  *
  */
-typedef void (* oriErrorCallback)(const char *name, unsigned int code, const char *message, oriErrorSeverityBit severity, void *pointer);
+typedef void (* oriErrorCallback)(
+    const char *name,
+    unsigned int code,
+    const char *message,
+    oriErrorSeverityBit severity,
+    void *pointer
+);
 
 /**
  * @brief Set the global Orion error callback function.
@@ -273,7 +304,10 @@ typedef void (* oriErrorCallback)(const char *name, unsigned int code, const cha
  * @ingroup group_Errors
  *
  */
-void oriSetErrorCallback(oriErrorCallback callback, void *pointer);
+void oriSetErrorCallback(
+    oriErrorCallback callback,
+    void *pointer
+);
 
 /**
  * @brief Recieve any debug messages that fall under the specified criteria.
@@ -292,7 +326,9 @@ void oriSetErrorCallback(oriErrorCallback callback, void *pointer);
  * @ingroup group_Errors
  *
  */
-void oriEnableDebugMessages(oriErrorSeverityBit severities);
+void oriEnableDebugMessages(
+    oriErrorSeverityBit severities
+);
 
 
 
@@ -315,7 +351,10 @@ void oriEnableDebugMessages(oriErrorSeverityBit severities);
  * @ingroup group_Meta
  *
  */
-oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val);
+oriReturnStatus oriSetFlag(
+    oriLibraryFlag flag,
+    unsigned int val
+);
 
 
 
@@ -326,11 +365,6 @@ oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val);
 /**
  * @brief Create an Orion state object and return its handle.
  *
- * For the @c apiVersion parameter, you should use the @c VK_MAKE_API_VERSION macro defined in the Vulkan header.
- *
- * @param apiVersion the Vulkan version to use, as specified in the
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Specification</a>.
- *
  * @return the resulting Orion state handle.
  *
  * @sa oriState
@@ -339,7 +373,7 @@ oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val);
  * @ingroup group_Meta
  *
  */
-oriState *oriCreateState(unsigned int apiVersion);
+oriState *oriCreateState();
 
 /**
  * @brief Destroy the specified Orion state.
@@ -353,7 +387,9 @@ oriState *oriCreateState(unsigned int apiVersion);
  * @ingroup group_Meta
  *
  */
-void oriFreeState(oriState *state);
+void oriFreeState(
+    oriState *state
+);
 
 /**
  * @brief Set application info for a state object.
@@ -365,6 +401,8 @@ void oriFreeState(oriState *state);
  *
  * @param state the state the object is to be registered into
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
+ * @param apiVersion the Vulkan version to use, as specified in the
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Specification</a>.
  * @param name NULL, or a string containing the name of the application.
  * @param version the version of the application.
  * @param engineName NULL, or a string containing the name of the engine used to create the application.
@@ -375,7 +413,15 @@ void oriFreeState(oriState *state);
  * @ingroup group_Meta
  *
  */
-void oriDefineStateApplicationInfo(oriState *state, const void *ext, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion);
+void oriDefineStateApplicationInfo(
+    oriState *state,
+    const void *ext,
+    unsigned int apiVersion,
+    const char *name,
+    unsigned int version,
+    const char *engineName,
+    unsigned int engineVersion
+);
 
 #ifdef __cplusplus
     }

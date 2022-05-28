@@ -62,14 +62,19 @@ oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
         return ORION_RETURN_STATUS_ERROR_NOT_FOUND;
     }
 
-    state->instanceCreateInfo.enabledLayerCount++;
+    state->currentInstanceCreateInfoBuffer.enabledLayerCount++;
 
-    _ori_StrList *l = malloc(sizeof(_ori_StrList));
-    l->data = malloc(sizeof(char) * strlen(layer) + 1); // + 1 for null term
-    strncpy(l->data, layer, strlen(layer) + 1);
+    state->currentInstanceCreateInfoBuffer.enabledLayers = realloc(state->currentInstanceCreateInfoBuffer.enabledLayers, state->currentInstanceCreateInfoBuffer.enabledLayerCount * sizeof(char *));
+    if (!state->currentInstanceCreateInfoBuffer.enabledLayers) {
+        _ori_ThrowError(ORERR_MEMORY_ERROR);
+        return ORION_RETURN_STATUS_MEMORY_ERROR;
+    }
 
-    l->next = state->instanceCreateInfo.enabledLayerListHead;
-    state->instanceCreateInfo.enabledLayerListHead = l;
+    // here for readability
+    char **lastElem = &state->currentInstanceCreateInfoBuffer.enabledLayers[state->currentInstanceCreateInfoBuffer.enabledLayerCount - 1];
+
+    *lastElem = malloc(sizeof(char) * strlen(layer) + 1); // + 1 for null term
+    strncpy(*lastElem, layer, strlen(layer) + 1);
 
     return ORION_RETURN_STATUS_OK;
 }
@@ -90,14 +95,19 @@ oriReturnStatus oriFlagInstanceExtensionEnabled(oriState *state, const char *ext
     // check for the extension's availability.
     // this will be done in oriCreateStateVkInstance() instead.
 
-    state->instanceCreateInfo.enabledExtCount++;
+    state->currentInstanceCreateInfoBuffer.enabledExtCount++;
 
-    _ori_StrList *e = malloc(sizeof(_ori_StrList));
-    e->data = malloc(sizeof(char) * strlen(extension) + 1); // + 1 for null term.
-    strncpy(e->data, extension, strlen(extension) + 1);
+    state->currentInstanceCreateInfoBuffer.enabledExtensions = realloc(state->currentInstanceCreateInfoBuffer.enabledExtensions, state->currentInstanceCreateInfoBuffer.enabledExtCount * sizeof(char *));
+    if (!state->currentInstanceCreateInfoBuffer.enabledExtensions) {
+        _ori_ThrowError(ORERR_MEMORY_ERROR);
+        return ORION_RETURN_STATUS_MEMORY_ERROR;
+    }
 
-    e->next = state->instanceCreateInfo.enabledExtListHead;
-    state->instanceCreateInfo.enabledExtListHead = e;
+    // here for readability
+    char **lastElem = &state->currentInstanceCreateInfoBuffer.enabledExtensions[state->currentInstanceCreateInfoBuffer.enabledExtCount - 1];
+
+    *lastElem = malloc(sizeof(char) * strlen(extension) + 1); // + 1 for null term
+    strncpy(*lastElem, extension, strlen(extension) + 1);
 
     // there technically isn't any need to have a return type but it is there for consistency with other functions
     return ORION_RETURN_STATUS_OK;
