@@ -12,7 +12,7 @@ GLFWwindow *wMain = NULL;
 
 oriState *state = NULL;
 VkInstance instance = NULL;
-    VkInstance temp;
+VkInstance temp;
 
 void Initialise();      // library flags, initialisation
 void CreateWindow();    // create window (wMain)
