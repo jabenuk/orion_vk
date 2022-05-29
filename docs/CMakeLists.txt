@@ -8,7 +8,7 @@
 find_package(Doxygen)
 
 if (DOXYGEN_FOUND)
-    set(DOXYGEN_IN "${ORION_DOCS_DIR}/Doxyfile.cmakeinput")
+    set(DOXYGEN_IN "${ORION_DOCS_DIR}/Doxyfile.in")
     set(DOXYGEN_OUT "${PROJECT_BINARY_DIR}/docs/Doxyfile")
 
     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
