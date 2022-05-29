@@ -1,4 +1,4 @@
-<img src=".github/graphic/icon.png" align=left height=100px>
+<img src="/.github/graphics/icon.png" align=left height=100px>
 
 # orion_vk
 

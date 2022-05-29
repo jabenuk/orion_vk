@@ -20,7 +20,6 @@
  *
  * This file defines functions involved with:
  *   - 'initialising' the library (i.e. creating a state object)
- *   - loading, initialising, and managing the Vulkan interface
  *   - the creation of some core library structures
  *   - the overall termination of the library
  *

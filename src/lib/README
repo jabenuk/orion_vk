@@ -1,0 +1,42 @@
+Directory information: /src/lib/
+================================
+
+|--------------------------------------------|
+| This file may not be representative of the |
+| most up-to-date version of the repository! |
+|--------------------------------------------|
+
+This directory holds source files that define public API functions that
+are related to the Orion library. Internal functions are also defined
+within these files.
+
+The following file descriptions can be seen in the Doxygen @file
+descriptors in the respective file (this is not built into the Doxygen
+documentation).
+
+callback.c:
+    This file contains definitions for callbacks used both internally
+    within the Orion library and as default options for user-set callbacks.
+
+error.c:
+    This file contains functions related to error handling.
+
+    It should be noted that this mostly refers to library debugging -
+    that is to say, debugging aspects of the Orion library rather than
+    the Vulkan API specifically. Although some functionality related to
+    Vulkan debugging is indeed located in this file, this is generally
+    when it is directly tied to creation of state or other library features.
+
+extension.c:
+    This file contains functions broadly related to the use of Vulkan API
+    features.
+
+    This isn't specifically extensions, but rather instance + device
+    extensions as well as layers and anything else Vulkan-related that
+    isn't in the Core API.
+
+init.c:
+    This file defines functions involved with:
+      - 'initialising' the library (i.e. creating a state object)
+      - the creation of some core library structures
+      - the overall termination of the library

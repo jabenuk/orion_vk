@@ -19,7 +19,7 @@
  * @copyright Copyright (c) 2022
  *
  * This file defines functions involved with loading, initialising, and managing
- * the Vulkan interface with the use of Orion abstractions
+ * the Vulkan interface with the use of Orion abstractions.
  *
  */
 

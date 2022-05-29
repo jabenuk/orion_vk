@@ -1,0 +1,18 @@
+Directory information: /src/vulkan/
+===================================
+
+|--------------------------------------------|
+| This file may not be representative of the |
+| most up-to-date version of the repository! |
+|--------------------------------------------|
+
+This directory holds source files that define public API functions that
+are either Vulkan abstractions or functions related to the Vulkan API.
+
+The following file descriptions can be seen in the Doxygen @file
+descriptors in the respective file (this is not built into the Doxygen
+documentation).
+
+vk_init.c:
+    This file defines functions involved with loading, initialising, and
+    managing the Vulkan interface with the use of Orion abstractions.
