@@ -13,7 +13,7 @@
 # requires a binary file to be executed
 if [ -z "${1}" ]
 then
-    echo -e "\e[1mvalgrind_check.sh: \e[31;1mfatal error: \e[0mno input file"
+    echo -e "\e[1mmemcheck.sh: \e[31;1mfatal error: \e[0mno input file"
     echo -e "script terminated."
     exit
 fi

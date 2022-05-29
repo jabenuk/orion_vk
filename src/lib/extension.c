@@ -26,7 +26,10 @@
  */
 
 #include "orion.h"
-#include "internal.h"
+#include "orion_structs.h"
+#include "orion_codes.h"
+#include "orion_helpers.h"
+#include "orion_funcs.h"
 
 #include <stdlib.h>
 #include <string.h>

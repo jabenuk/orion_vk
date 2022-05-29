@@ -12,13 +12,15 @@
 /* *************************************************************************************** */
 
 /**
- * @file structs.h
+ * @file orion_structs.h
  * @author jack bennett
  * @brief Internal header file defining public opaque structures.
  *
  * @copyright Copyright (c) 2022
  *
  * This is an internal header.
+ * It is NOT to be included by the user, and is certainly not included as
+ * part of the interface orion.h header.
  *
  * This file defines the members of public, but opaque, library structures.
  *

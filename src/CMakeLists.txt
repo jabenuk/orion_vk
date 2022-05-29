@@ -7,11 +7,17 @@
 
 set(
     SRC
-        "error.c"
-        "extension.c"
-        "init.c"
+        "headers/orion_codes.h"
+        "headers/orion_funcs.h"
+        "headers/orion_helpers.h"
+        "headers/orion_structs.h"
 
-        "internal.h"
+        "lib/callback.c"
+        "lib/error.c"
+        "lib/extension.c"
+        "lib/init.c"
+
+        "vulkan/vk_init.c"
 )
 
 #
@@ -39,5 +45,5 @@ target_include_directories(
         "${ORION_CORE_VENDOR_DIR}"
         "${Vulkan_INCLUDE_DIRS}"
     PRIVATE
-        "${ORION_SRC_DIR}"
+        "${ORION_SRC_DIR}/headers"
 )

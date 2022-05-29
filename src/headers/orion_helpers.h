@@ -12,36 +12,29 @@
 /* *************************************************************************************** */
 
 /**
- * @file internal.h
+ * @file orion_helpers.h
  * @author jack bennett
- * @brief Internal shared header file
+ * @brief Internal header file defining internal helper functions.
  *
  * @copyright Copyright (c) 2022
  *
  * This is an internal header.
+ * It is NOT to be included by the user, and is certainly not included as
+ * part of the interface orion.h header.
  *
- * This file declares functions and macros, mostly helpers, that are widely used
+ * This file declares functions and macros that are widely used
  * within the internal scope of the Orion library - normally to reduce code reuse and
  * improve readability and therefore maintainability.
- *
- * This header is NOT to be included by the user, and is certainly not included as
- * part of the interface orion.h header.
  *
  */
 
 #pragma once
-#ifndef __ORION_INTERNAL_H
-#define __ORION_INTERNAL_H
+#ifndef __ORION_HELPERS_H
+#define __ORION_HELPERS_H
 
 #ifdef __cplusplus
     extern "C" {
 #endif // __cplusplus
-
-#include "orion.h"
-#include "structs.h"
-
-#include <string.h>
-#include <stdio.h>
 
 
 
@@ -54,26 +47,29 @@
 
 
 // ============================================================================
-// *****        LIBRARY ERROR HANDLING                                    *****
+// *****        GENERAL HELPER FUNCTIONS                                  *****
 // ============================================================================
 
-// calls the global error callback in _orion with the given parameters.
-void _ori_ThrowError(const char *name, unsigned int code, const char *message, oriErrorSeverityBit severity);
+// helper macro to remove duplicates from a dynamically allocated array
+#define _ori_RemoveArrayDuplicates(array, count) \
+    { \
+        for (unsigned int i = 0; i < count - 1; i++) { \
+            if (array[i] != array[i + 1]) { \
+                continue; \
+            } \
+            for (unsigned int j = i + 1; j < count - 1; j++) { \
+                array[j] = array[j + 1]; \
+            } \
+            count--; \
+            i--; \
+        } \
+    }
 
-// standardised error kits:
-// these should be used when calling the _ori_ThrowError() function.
 
-#define ORERR_VULKAN_RETURN_ERROR \
-    "ERR_VULKAN_RETURN_ERROR", \
-    0x01, \
-    "A Vulkan function returned a VkResult other than VK_SUCCESS.", \
-    ORION_ERROR_SEVERITY_ERROR_BIT
 
-#define ORERR_MEMORY_ERROR \
-    "ERR_MEMORY_ERROR", \
-    0x02, \
-    "A function encountered a memory-related error.", \
-    ORION_ERROR_SEVERITY_ERROR_BIT
+// ============================================================================
+// *****        LIBRARY ERROR HANDLING                                    *****
+// ============================================================================
 
 // helper functions for specific 'error' types (improves on readability)
 #define _ori_DebugLog(format, ...) \
@@ -103,31 +99,8 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
         } \
     }
 
-
-
-// ============================================================================
-// *****        DEFAULT CALLBACKS                                         *****
-// ============================================================================
-
-// default error callback (will be set in oriDefaultCallbacks())
-void _ori_DefaultErrorCallback(
-    const char *name,
-    unsigned int code,
-    const char *message,
-    oriErrorSeverityBit severity,
-    void *pointer
-);
-
-// this is always used for any debug messengers created under an Orion state
-VKAPI_ATTR VkBool32 VKAPI_CALL _ori_VulkanDebugMessengerCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-    VkDebugUtilsMessageTypeFlagBitsEXT type,
-    const VkDebugUtilsMessengerCallbackDataEXT *callbackdata,
-    void *userdata
-);
-
 #ifdef __cplusplus
     }
 #endif // __cplusplus
 
-#endif // __ORION_INTERNAL_H
+#endif // __ORION_HELPERS_H
