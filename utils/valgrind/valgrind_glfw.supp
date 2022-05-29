@@ -1,12 +1,8 @@
 {
-    x-glfwinit-calloc
+    <glfwInit>
     Memcheck:Leak
     match-leak-kinds: definite
-    fun:calloc
-    fun:_XimOpenIM
-    fun:_XimRegisterIMInstantiateCallback
-    fun:XRegisterIMInstantiateCallback
-    fun:_glfwInitX11
+    ...
     fun:glfwInit
-    fun:main
+    ...
 }

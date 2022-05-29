@@ -24,7 +24,7 @@ PROJECT_PATH="$(dirname -- "$(dirname -- "$(readlink -f "${BASH_SOURCE}")")")"
 SUPPRESSION_FILES=(
     "${PROJECT_PATH}/valgrind/valgrind_amd64.supp"
     "${PROJECT_PATH}/valgrind/valgrind_glfw.supp"
-    "${PROJECT_PATH}/valgrind/valgrind_radeon.supp"
+    "${PROJECT_PATH}/valgrind/valgrind_vulkan.supp"
 )
 
 # write the command (arguments)

@@ -1,17 +1,7 @@
 {
-    amdvlkpro64-posix-memalign
+    <amdvlkpro64>
     Memcheck:Leak
     match-leak-kinds: possible
-    fun:memalign
-    fun:posix_memalign
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
-    obj:/usr/lib/amdvlkpro64.so
+    ...
     obj:/usr/lib/amdvlkpro64.so
 }
