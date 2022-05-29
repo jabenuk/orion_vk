@@ -62,16 +62,16 @@ oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
         return ORION_RETURN_STATUS_ERROR_NOT_FOUND;
     }
 
-    state->currentInstanceCreateInfoBuffer.enabledLayerCount++;
+    state->instanceCreateInfo.enabledLayerCount++;
 
-    state->currentInstanceCreateInfoBuffer.enabledLayers = realloc(state->currentInstanceCreateInfoBuffer.enabledLayers, state->currentInstanceCreateInfoBuffer.enabledLayerCount * sizeof(char *));
-    if (!state->currentInstanceCreateInfoBuffer.enabledLayers) {
+    state->instanceCreateInfo.enabledLayers = realloc(state->instanceCreateInfo.enabledLayers, state->instanceCreateInfo.enabledLayerCount * sizeof(char *));
+    if (!state->instanceCreateInfo.enabledLayers) {
         _ori_ThrowError(ORERR_MEMORY_ERROR);
         return ORION_RETURN_STATUS_MEMORY_ERROR;
     }
 
     // here for readability
-    char **lastElem = &state->currentInstanceCreateInfoBuffer.enabledLayers[state->currentInstanceCreateInfoBuffer.enabledLayerCount - 1];
+    char **lastElem = &state->instanceCreateInfo.enabledLayers[state->instanceCreateInfo.enabledLayerCount - 1];
 
     *lastElem = malloc(sizeof(char) * strlen(layer) + 1); // + 1 for null term
     strncpy(*lastElem, layer, strlen(layer) + 1);
@@ -80,7 +80,7 @@ oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
 }
 
 /**
- * @brief Flag the specified Vulkan instance extension to be enabled when creating the state's instance with oriCreateStateVkInstance().
+ * @brief Flag the specified Vulkan instance extension to be enabled when creating the state's instance with oriCreateStateInstance().
  *
  * For information regarding the difference between 'instance extensions' and 'device extensions' in Vulkan, you should see
  * <a href="https://stackoverflow.com/a/53050492/12980669">this</a> answer on StackOverflow.
@@ -93,18 +93,18 @@ oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
 oriReturnStatus oriFlagInstanceExtensionEnabled(oriState *state, const char *extension) {
     // since the extension might be provided by a layer, and layers might not yet be specified, we don't
     // check for the extension's availability.
-    // this will be done in oriCreateStateVkInstance() instead.
+    // this will be done in oriCreateStateInstance() instead.
 
-    state->currentInstanceCreateInfoBuffer.enabledExtCount++;
+    state->instanceCreateInfo.enabledExtCount++;
 
-    state->currentInstanceCreateInfoBuffer.enabledExtensions = realloc(state->currentInstanceCreateInfoBuffer.enabledExtensions, state->currentInstanceCreateInfoBuffer.enabledExtCount * sizeof(char *));
-    if (!state->currentInstanceCreateInfoBuffer.enabledExtensions) {
+    state->instanceCreateInfo.enabledExtensions = realloc(state->instanceCreateInfo.enabledExtensions, state->instanceCreateInfo.enabledExtCount * sizeof(char *));
+    if (!state->instanceCreateInfo.enabledExtensions) {
         _ori_ThrowError(ORERR_MEMORY_ERROR);
         return ORION_RETURN_STATUS_MEMORY_ERROR;
     }
 
     // here for readability
-    char **lastElem = &state->currentInstanceCreateInfoBuffer.enabledExtensions[state->currentInstanceCreateInfoBuffer.enabledExtCount - 1];
+    char **lastElem = &state->instanceCreateInfo.enabledExtensions[state->instanceCreateInfo.enabledExtCount - 1];
 
     *lastElem = malloc(sizeof(char) * strlen(extension) + 1); // + 1 for null term
     strncpy(*lastElem, extension, strlen(extension) + 1);

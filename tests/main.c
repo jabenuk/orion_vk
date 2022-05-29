@@ -50,6 +50,14 @@ void CreateState() {
     state = oriCreateState();
     oriDefineStateApplicationInfo(state, NULL, VK_API_VERSION_1_3, WINDOW_NAME, VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));
 
+    // specify debug suppressions
+    oriDefineStateInstanceEnabledDebugMessages(state,
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+        VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+    );
+}
+
+void CreateInstance() {
     // get GLFW required extensions
     const char **extensions;
     unsigned int extensionCount;
@@ -60,12 +68,13 @@ void CreateState() {
         oriFlagInstanceExtensionEnabled(state, extensions[i]);
     }
 
+    // specify debug utils extension
+    oriFlagInstanceExtensionEnabled(state, "VK_EXT_debug_utils");
+
     // specify layers to be enabled
     oriFlagLayerEnabled(state, "VK_LAYER_KHRONOS_validation");
-}
 
-void CreateInstance() {
-    oriCreateStateVkInstance(state, &instance);
+    oriCreateStateInstance(state, &instance);
 }
 
 void Terminate() {

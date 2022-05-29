@@ -62,10 +62,7 @@
 // *****        STATE                                                     *****
 // ============================================================================
 
-_ori_Lib _orion = { NULL };
-
-// initialise library flags to their default values
-_ori_LibFlags _orionflags = {};
+_ori_Lib _orion = {};
 
 
 // ============================================================================
@@ -96,7 +93,7 @@ _ori_LibFlags _orionflags = {};
  * @ingroup group_VkAbstractions_Core
  *
  */
-oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePtr) {
+oriReturnStatus oriCreateStateInstance(oriState *state, VkInstance *instancePtr) {
     oriReturnStatus r = ORION_RETURN_STATUS_OK;
 
     VkInstanceCreateInfo createInfo = {};
@@ -105,72 +102,76 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
     createInfo.pApplicationInfo = &state->appInfo;
 
     // specify layers to be enabled
-    createInfo.enabledLayerCount = state->currentInstanceCreateInfoBuffer.enabledLayerCount;
+    createInfo.enabledLayerCount = state->instanceCreateInfo.enabledLayerCount;
 
     char logstr[768];
     memset(logstr, 0, sizeof(logstr));
     snprintf(logstr, 768, "VkInstance created into %p and will be managed by state object at location %p", instancePtr, state);
 
     // the support of these layers was already checked in oriFlagLayerEnabled().
-    if (state->currentInstanceCreateInfoBuffer.enabledLayerCount) {
+    if (state->instanceCreateInfo.enabledLayerCount) {
         char logstr_layer[768];
         snprintf(logstr_layer, 768, "\n\tlayers enabled for this instance:\n");
 
         // add to log message
-        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledLayerCount; i++) {
+        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledLayerCount; i++) {
             char s[768];
-            snprintf(s, 768, "\t\t- name '%s'%s", state->currentInstanceCreateInfoBuffer.enabledLayers[i], (i < state->currentInstanceCreateInfoBuffer.enabledLayerCount - 1) ? "\n" : "");
+            snprintf(s, 768, "\t\t- name '%s'%s", state->instanceCreateInfo.enabledLayers[i], (i < state->instanceCreateInfo.enabledLayerCount - 1) ? "\n" : "");
             strncat(logstr_layer, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
         }
 
         strncat(logstr, logstr_layer, 767);
 
-        createInfo.ppEnabledLayerNames = (const char *const *) state->currentInstanceCreateInfoBuffer.enabledLayers;
+        createInfo.ppEnabledLayerNames = (const char *const *) state->instanceCreateInfo.enabledLayers;
     } else {
         createInfo.ppEnabledLayerNames = NULL;
     }
 
     // now for extensions
-    createInfo.enabledExtensionCount = state->currentInstanceCreateInfoBuffer.enabledExtCount;
+    createInfo.enabledExtensionCount = state->instanceCreateInfo.enabledExtCount;
 
-    // stored in this scope for same reasons as layerNames
-    char *extNames[createInfo.enabledExtensionCount]; // we access from createInfo instead of state as no dereference is necessary
+    // check for VK_EXT_debug_utils, if it is enabled then make an instance debug messenger
+    bool debugUtilsExtFound = false;
 
     // unlike layers, the support of the specified extensions has not yet been checked
     // this is because the layers that provide some extensions might not yet have been specified
     // but we can now check for the support of each extension, removing the extension from the list if it is not supported.
-    // obviously, there will be a big warning in the debug output if any desired extensions are not loaded + false will be returned at the end.
-    if (state->currentInstanceCreateInfoBuffer.enabledExtCount) {
-        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledExtCount; i++) {
+    // obviously, there will be a big warning in the debug output if any desired extensions are not loaded
+    if (state->instanceCreateInfo.enabledExtCount) {
+        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
             // store current extension on stack to reduce dereferences
-            const char *curext = state->currentInstanceCreateInfoBuffer.enabledExtensions[i];
+            const char *curext = state->instanceCreateInfo.enabledExtensions[i];
 
-            // first check if the extension is already provided by the implementation
+            // check if the extension is already provided by the implementation
             if (oriCheckInstanceExtensionAvailability(curext, NULL)) {
+                if (!strcmp(curext, "VK_EXT_debug_utils")) {
+                    debugUtilsExtFound = true;
+                }
+
                 continue;
             }
 
             // otherwise:
-            bool _found = false;
+            bool _providedByALayer = false;
 
             // if there are any layers, traverse through the array of them and check if they provide the given extension
-            // set _found to true on the first one that does
-            for (unsigned int j = 0; j < state->currentInstanceCreateInfoBuffer.enabledLayerCount; j++) {
-                if (oriCheckInstanceExtensionAvailability(curext, state->currentInstanceCreateInfoBuffer.enabledLayers[j])) {
-                    _found = true;
+            // set _providedByALayer to true on the first one that does
+            for (unsigned int j = 0; j < state->instanceCreateInfo.enabledLayerCount; j++) {
+                if (oriCheckInstanceExtensionAvailability(curext, state->instanceCreateInfo.enabledLayers[j])) {
+                    _providedByALayer = true;
                     break;
                 }
             }
 
-            if (!_found) {
+            if (!_providedByALayer) {
                 // if this is reached, then we know the extension is not provided by the implementation and there are no layers that could provide it
                 // so we know the extension is not available
                 _ori_Warning("specified instance extension `%s` was not found", curext);
                 r = ORION_RETURN_STATUS_ERROR_NOT_FOUND;
 
                 // set array element to NULL
-                free(state->currentInstanceCreateInfoBuffer.enabledExtensions[i]);
-                state->currentInstanceCreateInfoBuffer.enabledExtensions[i] = NULL;
+                free(state->instanceCreateInfo.enabledExtensions[i]);
+                state->instanceCreateInfo.enabledExtensions[i] = NULL;
 
                 // decrease counter by one
                 // (the state variable doesn't matter anymore so we just change the create info count)
@@ -181,18 +182,40 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
         snprintf(logstr_ext, 768, "\n\tinstance extensions enabled for this instance:\n");
 
         // add to log message
-        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledExtCount; i++) {
+        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
             char s[768];
-            snprintf(s, 768, "\t\t- name '%s'%s", state->currentInstanceCreateInfoBuffer.enabledExtensions[i], (i < state->currentInstanceCreateInfoBuffer.enabledExtCount - 1) ? "\n" : "");
+            snprintf(s, 768, "\t\t- name '%s'%s", state->instanceCreateInfo.enabledExtensions[i], (i < state->instanceCreateInfo.enabledExtCount - 1) ? "\n" : "");
             strncat(logstr_ext, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
         }
 
         strncat(logstr, logstr_ext, 767);
 
         // any unsupported extensions have now been set to NULL in the array
-        createInfo.ppEnabledExtensionNames = (const char *const *) state->currentInstanceCreateInfoBuffer.enabledExtensions;
+        createInfo.ppEnabledExtensionNames = (const char *const *) state->instanceCreateInfo.enabledExtensions;
     } else {
         createInfo.ppEnabledExtensionNames = NULL;
+    }
+
+    // give a warning if the instance debug messenger was desired but not available; none will be made
+    if (_orion.flags.createInstanceDebugMessengers && !debugUtilsExtFound) {
+        _ori_Warning("%s", "vulkan instance debug messenger requested but the required extension, VK_EXT_debug_utils, was not enabled. none will be created!");
+    }
+
+    // populate debug messenger info if necessary
+    VkDebugUtilsMessengerCreateInfoEXT dbgmsngrCreateInfo = {};
+
+    if (_orion.flags.createInstanceDebugMessengers && debugUtilsExtFound) {
+        dbgmsngrCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+
+        // severity and type is specified with oriDefineStateInstanceEnabledDebugMessages().
+        dbgmsngrCreateInfo.messageSeverity = state->instanceCreateInfo.dbgmsngrEnabledMessages.severities;
+        dbgmsngrCreateInfo.messageType = state->instanceCreateInfo.dbgmsngrEnabledMessages.types;
+
+        // use internal callback, which routes Vulkan info to the Orion error callback.
+        dbgmsngrCreateInfo.pfnUserCallback = _ori_VulkanDebugMessengerCallback;
+        dbgmsngrCreateInfo.pUserData = _orion.callbacks.errorCallbackUserData;
+
+        createInfo.pNext = &dbgmsngrCreateInfo;
     }
 
     if (vkCreateInstance(&createInfo, NULL, instancePtr)) {
@@ -211,24 +234,24 @@ oriReturnStatus oriCreateStateVkInstance(oriState *state, VkInstance *instancePt
 
     // we no longer need the data used for the create info struct so we can free it all
     {
-        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledLayerCount; i++) {
-            free(state->currentInstanceCreateInfoBuffer.enabledLayers[i]);
-            state->currentInstanceCreateInfoBuffer.enabledLayers[i] = NULL;
+        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledLayerCount; i++) {
+            free(state->instanceCreateInfo.enabledLayers[i]);
+            state->instanceCreateInfo.enabledLayers[i] = NULL;
         }
-        state->currentInstanceCreateInfoBuffer.enabledLayerCount = 0;
+        state->instanceCreateInfo.enabledLayerCount = 0;
 
-        free(state->currentInstanceCreateInfoBuffer.enabledLayers);
-        state->currentInstanceCreateInfoBuffer.enabledLayers = NULL;
+        free(state->instanceCreateInfo.enabledLayers);
+        state->instanceCreateInfo.enabledLayers = NULL;
     }
     {
-        for (unsigned int i = 0; i < state->currentInstanceCreateInfoBuffer.enabledExtCount; i++) {
-            free(state->currentInstanceCreateInfoBuffer.enabledExtensions[i]);
-            state->currentInstanceCreateInfoBuffer.enabledExtensions[i] = NULL;
+        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
+            free(state->instanceCreateInfo.enabledExtensions[i]);
+            state->instanceCreateInfo.enabledExtensions[i] = NULL;
         }
-        state->currentInstanceCreateInfoBuffer.enabledExtCount = 0;
+        state->instanceCreateInfo.enabledExtCount = 0;
 
-        free(state->currentInstanceCreateInfoBuffer.enabledExtensions);
-        state->currentInstanceCreateInfoBuffer.enabledExtensions = NULL;
+        free(state->instanceCreateInfo.enabledExtensions);
+        state->instanceCreateInfo.enabledExtensions = NULL;
     }
 
     _ori_Notification(logstr, 0);
@@ -352,6 +375,38 @@ void oriDefineStateApplicationInfo(oriState *state, const void *ext, unsigned in
     );
 }
 
+/**
+ * @brief Define the properties of messages you want to be suppressed by the debug messenger of all instances to be created with a state object.
+ *
+ * This function only has an effect if the VK_EXT_debug_utils extension has been specified. This must be done before the respective call to
+ * oriCreateStateInstance().
+ *
+ * If you call this function, the @ref section_main_Config "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS" flag will be implicitly set to @b true.
+ *
+ * @note The message filters specified in this function are @b different to those specified in oriEnableDebugMessages().
+ * Whilst those specified in that function are related to the Orion library, those specified here are related to the Vulkan API. Furthermore, properties
+ * specified in oriEnableDebugMessages() describe the messages <b>to be displayed</b>, whilst those specified here describe the messages
+ * <b>to be suppressed</b>.
+ *
+ * @param state the state to modify.
+ * @param severities (bitmask) severities of the messages to @b suppress. By default, all messages are displayed <i>(if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
+ * @param types (bitmask) types of the messages to @b suppress. By default, all messages are displayed <i>(if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
+ *
+ * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VK_EXT_debug_utils.html">Vulkan Docs/VK_EXT_debug_utils</a>
+ * @sa
+ * <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageSeverityFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageSeverityFlagBitsEXT</a>
+ * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageTypeFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageTypeFlagBitsEXT</a>
+ *
+ * @ingroup group_VkAbstractions_Debugging
+ *
+ */
+void oriDefineStateInstanceEnabledDebugMessages(oriState *state, VkDebugUtilsMessageSeverityFlagBitsEXT severities, VkDebugUtilsMessageTypeFlagBitsEXT types) {
+    state->instanceCreateInfo.dbgmsngrEnabledMessages.severities = severities;
+    state->instanceCreateInfo.dbgmsngrEnabledMessages.types = types;
+
+    oriSetFlag(ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS, true);
+}
+
 
 
 // ============================================================================
@@ -375,8 +430,12 @@ oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
 
     switch (flag) {
         default:
-            _ori_Warning("An invalid flag was given to oriSetFlag(); nothing was updated.", 0);
+            _ori_Warning("%s", "An invalid flag was given to oriSetFlag(); nothing was updated.");
             return ORION_RETURN_STATUS_ERROR_INVALID_ENUM;
+        case ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS:
+            strncpy(flagstr, "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS", 127);
+            _orion.flags.createInstanceDebugMessengers = val;
+            break;
     }
 
     _ori_DebugLog("flag %s set to %d", flagstr, val);

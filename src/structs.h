@@ -54,12 +54,12 @@ typedef struct _ori_Lib {
     } callbacks;
 
     oriErrorSeverityBit displayedErrorSeverities;
+
+    struct {
+        bool createInstanceDebugMessengers;
+    } flags;
 } _ori_Lib;
 extern _ori_Lib _orion;
-
-typedef struct _ori_LibFlags {
-} _ori_LibFlags;
-extern _ori_LibFlags _orionflags;
 
 
 
@@ -95,7 +95,7 @@ typedef struct oriState {
 
     VkApplicationInfo appInfo;
 
-    // data in this struct is freed after oriCreateStateVkInstance().
+    // data in this struct is freed after oriCreateStateInstance().
     struct {
         // enabled Vulkan layers
         unsigned int enabledLayerCount;
@@ -104,7 +104,12 @@ typedef struct oriState {
         // enabled Vulkan instance extensions
         unsigned int enabledExtCount;
         char **enabledExtensions;
-    } currentInstanceCreateInfoBuffer;
+
+        struct {
+            VkDebugUtilsMessageSeverityFlagsEXT severities;
+            VkDebugUtilsMessageTypeFlagsEXT types;
+        } dbgmsngrEnabledMessages;
+    } instanceCreateInfo;
 } oriState;
 
 #ifdef __cplusplus

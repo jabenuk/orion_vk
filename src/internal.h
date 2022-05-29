@@ -40,6 +40,9 @@
 #include "orion.h"
 #include "structs.h"
 
+#include <string.h>
+#include <stdio.h>
+
 
 
 // ============================================================================
@@ -99,6 +102,29 @@ void _ori_ThrowError(const char *name, unsigned int code, const char *message, o
             _ori_ThrowError("", 0, str, ORION_ERROR_SEVERITY_NOTIF_BIT); \
         } \
     }
+
+
+
+// ============================================================================
+// *****        DEFAULT CALLBACKS                                         *****
+// ============================================================================
+
+// default error callback (will be set in oriDefaultCallbacks())
+void _ori_DefaultErrorCallback(
+    const char *name,
+    unsigned int code,
+    const char *message,
+    oriErrorSeverityBit severity,
+    void *pointer
+);
+
+// this is always used for any debug messengers created under an Orion state
+VKAPI_ATTR VkBool32 VKAPI_CALL _ori_VulkanDebugMessengerCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+    VkDebugUtilsMessageTypeFlagBitsEXT type,
+    const VkDebugUtilsMessengerCallbackDataEXT *callbackdata,
+    void *userdata
+);
 
 #ifdef __cplusplus
     }

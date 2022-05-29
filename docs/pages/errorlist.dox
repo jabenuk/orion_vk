@@ -26,5 +26,6 @@
  * | ---------- | ---------------------------- | -------- | -------------------------------------------------------------------------------------- |
  * | 0x01       | ERR_VULKAN_RETURN_ERROR      | Error    | A Vulkan function returned a VkResult other than VK_SUCCESS, you should debug further. |
  * | 0x02       | ERR_MEMORY_ERROR             | Error    | A function encountered a memory-related error.                                         |
+ * | 0x03       | ERR_VULKAN_DEBUG_MESSENGER   | N/a      | A Vulkan debug messenger reported this error. The severity is shown in the message, and is reported by Vulkan. |
  *
  */

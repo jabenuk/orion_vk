@@ -57,7 +57,7 @@
  *
  * Note that Vulkan objects, like <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">instances</a>,
  * are @b not stored inside oriState, but rather this struct contains @b handles to said Vulkan objects, so that it can manage them.
- * For example, you can create a Vulkan instance using data from an oriState object with oriCreateStateVkInstance(), but the function @b returns
+ * For example, you can create a Vulkan instance using data from an oriState object with oriCreateStateInstance(), but the function @b returns
  * the instance so you can deal with it on your end. However, the function also returns the instance to the state, so that, when you call
  * oriFreeState(), the instance (and any other instances made with this state) will implicitly be freed.
  *
@@ -87,7 +87,7 @@ typedef struct oriState oriState;
  *
  */
 typedef enum oriLibraryFlag {
-    TEMP = 0x00 // empty enums aren't allowed
+    ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS =    1
 } oriLibraryFlag;
 
 /**
@@ -156,7 +156,7 @@ typedef enum oriReturnStatus {
  * @ingroup group_VkAbstractions_Core
  *
  */
-oriReturnStatus oriCreateStateVkInstance(
+oriReturnStatus oriCreateStateInstance(
     oriState *state,
     VkInstance *instancePtr
 );
@@ -168,7 +168,7 @@ oriReturnStatus oriCreateStateVkInstance(
 // ============================================================================
 
 /**
- * @brief Flag the specified Vulkan layer to be enabled when creating the state's instance with oriCreateStateVkInstance().
+ * @brief Flag the specified Vulkan layer to be enabled when creating the state's instance with oriCreateStateInstance().
  *
  * @param state the state to enable the layer on.
  * @param layer a UTF-8, null-terminated string holding the name of the desired layer.
@@ -186,7 +186,7 @@ oriReturnStatus oriFlagLayerEnabled(
 );
 
 /**
- * @brief Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriCreateStateVkInstance().
+ * @brief Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriCreateStateInstance().
  *
  * For information regarding the difference between 'instance extensions' and 'device extensions' in Vulkan, you should see
  * <a href="https://stackoverflow.com/a/53050492/12980669">this</a> answer on StackOverflow.
@@ -392,7 +392,7 @@ void oriFreeState(
 );
 
 /**
- * @brief Set application info for a state object.
+ * @brief Set application info to be used by all instances created with the given state object.
  *
  * The @c apiVersion parameter of the application info is set in oriCreateState().
  *
@@ -421,6 +421,35 @@ void oriDefineStateApplicationInfo(
     unsigned int version,
     const char *engineName,
     unsigned int engineVersion
+);
+
+/**
+ * @brief Define the properties of messages you want to be displayed by the debug messenger of all instances created with the given state object.
+ *
+ * This function only has an effect if the VK_EXT_debug_utils extension has been specified. This must be done before the respective call to
+ * oriCreateStateInstance().
+ *
+ * If you call this function, the @ref section_main_Config "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS" flag will be implicitly set to @b true.
+ *
+ * @note The message filters specified in this function are @b different to those specified in oriEnableDebugMessages().
+ * Whilst those specified in that function are related to the Orion library, those specified here are related to the Vulkan API.
+ *
+ * @param state the state to modify.
+ * @param severities (bitmask) severities of the messages to @b display. By default, no messages are displayed <i>(even if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
+ * @param types (bitmask) types of the messages to @b display. By default, no messages are displayed <i>(even if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
+ *
+ * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VK_EXT_debug_utils.html">Vulkan Docs/VK_EXT_debug_utils</a>
+ * @sa
+ * <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageSeverityFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageSeverityFlagBitsEXT</a>
+ * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageTypeFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageTypeFlagBitsEXT</a>
+ *
+ * @ingroup group_VkAbstractions_Debugging
+ *
+ */
+void oriDefineStateInstanceEnabledDebugMessages(
+    oriState *state,
+    VkDebugUtilsMessageSeverityFlagBitsEXT severities,
+    VkDebugUtilsMessageTypeFlagBitsEXT types
 );
 
 #ifdef __cplusplus
