@@ -1,4 +1,5 @@
 var group__group__VkAbstractions__Core =
 [
-    [ "oriCreateStateVkInstance", "d3/d73/group__group__VkAbstractions__Core.html#gab64bd922a2f2e2b8a11ba787d46a2ee1", null ]
+    [ "Vulkan debugging", "db/d4f/group__group__VkAbstractions__Debugging.html", "db/d4f/group__group__VkAbstractions__Debugging" ],
+    [ "oriCreateStateInstance", "d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164", null ]
 ];

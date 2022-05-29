@@ -119,7 +119,14 @@ Modules</h1>
 <p ><a class="el" href="de/db6/group__group__Core.html">Core library</a> functions have been organised into the following modules:</p><ul>
 <li><a class="el" href="db/de0/group__group__Meta.html">Library management</a>: <em>functions that handle the initialisation, management, and eventual termination of the library.</em></li>
 <li><a class="el" href="d2/d8c/group__group__Errors.html">Error handling</a>: <em>functionality to catch errors thrown by Orion at runtime.</em></li>
-<li><a class="el" href="d8/dc3/group__group__VkAbstractions.html">Vulkan abstractions</a>: <em>abstractions of the Vulkan API.</em></li>
+<li><a class="el" href="d8/dc3/group__group__VkAbstractions.html">Vulkan abstractions</a>: <em>abstractions of the Vulkan API.</em><ul>
+<li><a class="el" href="d3/d73/group__group__VkAbstractions__Core.html">Core Vulkan API</a>: <em>core, general Vulkan functionality.</em><ul>
+<li><a class="el" href="db/d4f/group__group__VkAbstractions__Debugging.html">Debugging</a>: <em>utilities to debug Vulkan.</em></li>
+</ul>
+</li>
+<li><a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html">Layers and extensions</a>: <em>Vulkan extensibility.</em></li>
+</ul>
+</li>
 </ul>
 <h1><a class="anchor" id="section_main_Debugging"></a>
 Debugging</h1>
@@ -135,7 +142,7 @@ Configuration</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Flag name   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Additional notes    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">TEMP   </td><td class="markdownTableBodyNone">TEMP   </td><td class="markdownTableBodyNone">TEMP   </td></tr>
+<td class="markdownTableBodyNone">ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS   </td><td class="markdownTableBodyNone">Create an internal debug messenger for each instance (in <a class="el" href="d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateStateInstance()</a>) so that calls to vkCreateInstance() and vkDestroyInstance() can be debugged.   </td><td class="markdownTableBodyNone">Defaults to FALSE. <b>Requires the <code>VK_EXT_debug_utils</code> instance extension to be enabled before <a class="el" href="d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateStateInstance()</a> calls.</b>   </td></tr>
 </table>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->

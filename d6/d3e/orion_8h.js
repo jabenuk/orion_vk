@@ -11,7 +11,7 @@ var orion_8h =
       [ "ORION_ERROR_SEVERITY_VERBOSE_BIT", "d2/d8c/group__group__Errors.html#gga46ca29226d89a2b852dc639fb351a61da56b2818118c0220a16a3e376093de0d5", null ]
     ] ],
     [ "oriLibraryFlag", "db/de0/group__group__Meta.html#ga05b4271896044a820b1ddc6fef0ef379", [
-      [ "TEMP", "db/de0/group__group__Meta.html#gga05b4271896044a820b1ddc6fef0ef379a5937389a60030a604f0efdf5e3927325", null ]
+      [ "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS", "db/de0/group__group__Meta.html#gga05b4271896044a820b1ddc6fef0ef379af9e1652ab19d5acf1450a7858eda3b25", null ]
     ] ],
     [ "oriReturnStatus", "d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd", [
       [ "ORION_RETURN_STATUS_ERROR_GOOD_LUCK", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda94fe56cf25785964e5b95743c20933fd", null ],
@@ -24,8 +24,9 @@ var orion_8h =
     [ "oriCheckInstanceExtensionAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c", null ],
     [ "oriCheckLayerAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034", null ],
     [ "oriCreateState", "db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b", null ],
-    [ "oriCreateStateVkInstance", "d3/d73/group__group__VkAbstractions__Core.html#gab64bd922a2f2e2b8a11ba787d46a2ee1", null ],
+    [ "oriCreateStateInstance", "d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164", null ],
     [ "oriDefineStateApplicationInfo", "db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a", null ],
+    [ "oriDefineStateInstanceEnabledDebugMessages", "db/d4f/group__group__VkAbstractions__Debugging.html#ga842f02695f384903a456451314f952a7", null ],
     [ "oriEnableDebugMessages", "d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe", null ],
     [ "oriFlagInstanceExtensionEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0", null ],
     [ "oriFlagLayerEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331", null ],
