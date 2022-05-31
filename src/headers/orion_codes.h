@@ -48,6 +48,22 @@
     "ERR_MEMORY_ERROR", \
     0x02, \
     "A function encountered a memory-related error.", \
+    ORION_ERROR_SEVERITY_FATAL_BIT
+
+
+// code 0x03 reserved for VULKAN_DEBUG_MESSENGER
+
+
+#define ORERR_NULL_POINTER \
+    "ERR_NULL_POINTER", \
+    0x04, \
+    "A null pointer was passed to a function; the function returned early.", \
+    ORION_ERROR_SEVERITY_ERROR_BIT
+
+#define ORERR_EXT_NOT_ENABLED \
+    "ERR_EXT_NOT_ENABLED", \
+    0x05, \
+    "A required Vulkan extension was not enabled.", \
     ORION_ERROR_SEVERITY_ERROR_BIT
 
 #ifdef __cplusplus

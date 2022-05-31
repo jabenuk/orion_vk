@@ -1,6 +1,9 @@
 /**
  * @page page_Debugging Debugging
  *
+ * This page refers to 'library' debugging; it is related to Orion errors and function returns, etc. For Vulkan debugging (e.g.
+ * debug utils) see the @ref group_VkAbstractions_Core_Debugging "@b Core Vulkan API/Debugging" section.
+ *
  * For more function-specific documentation, see @ref group_Errors "Core Orion functionality/Error handling".
  *
  * @section section_Debugging_ErrorCallback Error callback

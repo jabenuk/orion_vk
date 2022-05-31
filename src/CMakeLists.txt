@@ -14,9 +14,10 @@ set(
 
         "lib/callback.c"
         "lib/error.c"
-        "lib/extension.c"
         "lib/init.c"
 
+        "vulkan/vk_debug.c"
+        "vulkan/vk_extension.c"
         "vulkan/vk_init.c"
 )
 

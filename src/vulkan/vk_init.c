@@ -63,11 +63,10 @@
  * @ingroup group_VkAbstractions_Core
  *
  */
-oriReturnStatus oriCreateStateInstance(oriState *state, VkInstance *instancePtr) {
-    oriReturnStatus r = ORION_RETURN_STATUS_OK;
-
+oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *instancePtr) {
     VkInstanceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pNext = ext;
 
     createInfo.pApplicationInfo = &state->appInfo;
 
@@ -97,57 +96,26 @@ oriReturnStatus oriCreateStateInstance(oriState *state, VkInstance *instancePtr)
         createInfo.ppEnabledLayerNames = NULL;
     }
 
-    // now for extensions
-    createInfo.enabledExtensionCount = state->instanceCreateInfo.enabledExtCount;
+    // now for extensions ...
 
     // check for VK_EXT_debug_utils, if it is enabled then make an instance debug messenger
     bool debugUtilsExtFound = false;
 
-    // unlike layers, the support of the specified extensions has not yet been checked
-    // this is because the layers that provide some extensions might not yet have been specified
-    // but we can now check for the support of each extension, removing the extension from the list if it is not supported.
-    // obviously, there will be a big warning in the debug output if any desired extensions are not loaded
     if (state->instanceCreateInfo.enabledExtCount) {
+        // unlike layers, the support of the specified extensions has not yet been checked
+        // this is because the layers that provide some extensions might not yet have been specified
+        // but we can now check for the support of each extension, removing the extension from the list if it is not supported.
+        oriPruneInstanceExtensions(state);
+
+        // check if the debug utils extension was specified
         for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
             // store current extension on stack to reduce dereferences
-            const char *curext = state->instanceCreateInfo.enabledExtensions[i];
-
-            // check if the extension is already provided by the implementation
-            if (oriCheckInstanceExtensionAvailability(curext, NULL)) {
-                if (!strcmp(curext, "VK_EXT_debug_utils")) {
-                    debugUtilsExtFound = true;
-                }
-
-                continue;
-            }
-
-            // otherwise:
-            bool _providedByALayer = false;
-
-            // if there are any layers, traverse through the array of them and check if they provide the given extension
-            // set _providedByALayer to true on the first one that does
-            for (unsigned int j = 0; j < state->instanceCreateInfo.enabledLayerCount; j++) {
-                if (oriCheckInstanceExtensionAvailability(curext, state->instanceCreateInfo.enabledLayers[j])) {
-                    _providedByALayer = true;
-                    break;
-                }
-            }
-
-            if (!_providedByALayer) {
-                // if this is reached, then we know the extension is not provided by the implementation and there are no layers that could provide it
-                // so we know the extension is not available
-                _ori_Warning("specified instance extension `%s` was not found", curext);
-                r = ORION_RETURN_STATUS_ERROR_NOT_FOUND;
-
-                // set array element to NULL
-                free(state->instanceCreateInfo.enabledExtensions[i]);
-                state->instanceCreateInfo.enabledExtensions[i] = NULL;
-
-                // decrease counter by one
-                // (the state variable doesn't matter anymore so we just change the create info count)
-                createInfo.enabledExtensionCount--;
+            if (!strcmp(state->instanceCreateInfo.enabledExtensions[i], "VK_EXT_debug_utils")) {
+                debugUtilsExtFound = true;
+                break;
             }
         }
+
         char logstr_ext[768];
         snprintf(logstr_ext, 768, "\n\tinstance extensions enabled for this instance:\n");
 
@@ -162,6 +130,7 @@ oriReturnStatus oriCreateStateInstance(oriState *state, VkInstance *instancePtr)
 
         // any unsupported extensions have now been set to NULL in the array
         createInfo.ppEnabledExtensionNames = (const char *const *) state->instanceCreateInfo.enabledExtensions;
+        createInfo.enabledExtensionCount = state->instanceCreateInfo.enabledExtCount;
     } else {
         createInfo.ppEnabledExtensionNames = NULL;
     }
@@ -177,7 +146,7 @@ oriReturnStatus oriCreateStateInstance(oriState *state, VkInstance *instancePtr)
     if (_orion.flags.createInstanceDebugMessengers && debugUtilsExtFound) {
         dbgmsngrCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 
-        // severity and type is specified with oriDefineStateInstanceEnabledDebugMessages().
+        // severity and type is specified with oriSpecifyInstanceDebugMessages().
         dbgmsngrCreateInfo.messageSeverity = state->instanceCreateInfo.dbgmsngrEnabledMessages.severities;
         dbgmsngrCreateInfo.messageType = state->instanceCreateInfo.dbgmsngrEnabledMessages.types;
 
@@ -189,42 +158,14 @@ oriReturnStatus oriCreateStateInstance(oriState *state, VkInstance *instancePtr)
     }
 
     if (vkCreateInstance(&createInfo, NULL, instancePtr)) {
-        r = ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
         _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
+        return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }
 
-    // add given pointer to instance to state array
-    state->arrays.instancesCount++;
-    state->arrays.instances = realloc(state->arrays.instances, state->arrays.instancesCount * sizeof(VkInstance *));
-    if (!state->arrays.instances) {
-        r = ORION_RETURN_STATUS_MEMORY_ERROR;
-        _ori_ThrowError(ORERR_MEMORY_ERROR);
-    }
-    state->arrays.instances[state->arrays.instancesCount - 1] = instancePtr;
+    // add given instance pointer to state array
+    _ori_AppendOntoDArray(VkInstance *, state->arrays.instances, state->arrays.instancesCount, instancePtr);
 
-    // we no longer need the data used for the create info struct so we can free it all
-    {
-        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledLayerCount; i++) {
-            free(state->instanceCreateInfo.enabledLayers[i]);
-            state->instanceCreateInfo.enabledLayers[i] = NULL;
-        }
-        state->instanceCreateInfo.enabledLayerCount = 0;
+    _ori_Notification("%s", logstr);
 
-        free(state->instanceCreateInfo.enabledLayers);
-        state->instanceCreateInfo.enabledLayers = NULL;
-    }
-    {
-        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
-            free(state->instanceCreateInfo.enabledExtensions[i]);
-            state->instanceCreateInfo.enabledExtensions[i] = NULL;
-        }
-        state->instanceCreateInfo.enabledExtCount = 0;
-
-        free(state->instanceCreateInfo.enabledExtensions);
-        state->instanceCreateInfo.enabledExtensions = NULL;
-    }
-
-    _ori_Notification(logstr, 0);
-
-    return r;
+    return ORION_RETURN_STATUS_OK;
 }

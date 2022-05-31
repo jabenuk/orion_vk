@@ -99,11 +99,35 @@ oriState *oriCreateState() {
  *
  */
 void oriFreeState(oriState *state) {
-    // first, we remove duplicates from the public arrays
-    // this is because trying to destroy the state at the same address multiple times will lead to an exception.
-    _ori_RemoveArrayDuplicates(state->arrays.instances, state->arrays.instancesCount);
+    // load any necessary non-core Vulkan functions before the instances are destroyed
+    // functions that rely on an instance are initialised as NULL before all instances are iterated through.
+    PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT = NULL;
+    for (unsigned int i = 0; !DestroyDebugUtilsMessengerEXT && i < state->arrays.instancesCount; i++) {
+        DestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(*(state->arrays.instances[i]), "vkDestroyDebugUtilsMessengerEXT");
+    }
 
-    // free VkInstances
+    // first, we remove duplicates from the public arrays
+    // this is because trying to destroy the contents of the same address multiple times will lead to an exception.
+    _ori_RemoveDArrayDuplicates(state->arrays.instances, state->arrays.instancesCount);
+
+    // destroy debug messengers
+    if (DestroyDebugUtilsMessengerEXT) {
+        for (unsigned int i = 0; i < state->arrays.debugMessengersCount; i++) {
+            // IMPORTANT!
+            // this is a hack that iterates through all instances and attempts to destroy the messenger with each one, essentially
+            // brute forcing the array until the instance that the messenger was created with is found. Since most projects probably use
+            // a very small amount of instances (normally only 1) this is probably fine -- but it HAS NOT BEEN TESTED!!!
+            // and: I don't know how vkDestroyDebugUtilsMessengerEXT() reacts when the wrong instance is passed. This could be VERY BAD!
+            // so I will probably look back at this later on but for now it works so... we'll see.
+            for (unsigned int j = 0; j < state->arrays.instancesCount; j++) {
+                DestroyDebugUtilsMessengerEXT(*(state->arrays.instances[j]), *(state->arrays.debugMessengers[j]), NULL);
+            }
+            _ori_DebugLog("VkDebugUtilsMessengerEXT at %p was freed by state object at location %p", state->arrays.debugMessengers[i], state);
+            *state->arrays.debugMessengers[i] = NULL;
+        }
+    }
+
+    // destroy instances
     for (unsigned int i = 0; i < state->arrays.instancesCount; i++) {
         vkDestroyInstance(*state->arrays.instances[i], NULL);
         _ori_DebugLog("VkInstance at %p was freed by state object at location %p", state->arrays.instances[i], state);
@@ -167,38 +191,6 @@ void oriDefineStateApplicationInfo(oriState *state, const void *ext, unsigned in
         VK_VERSION_MAJOR(engineVersion), VK_VERSION_MINOR(engineVersion), VK_VERSION_PATCH(engineVersion),
         ext
     );
-}
-
-/**
- * @brief Define the properties of messages you want to be suppressed by the debug messenger of all instances to be created with a state object.
- *
- * This function only has an effect if the VK_EXT_debug_utils extension has been specified. This must be done before the respective call to
- * oriCreateStateInstance().
- *
- * If you call this function, the @ref section_main_Config "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS" flag will be implicitly set to @b true.
- *
- * @note The message filters specified in this function are @b different to those specified in oriEnableDebugMessages().
- * Whilst those specified in that function are related to the Orion library, those specified here are related to the Vulkan API. Furthermore, properties
- * specified in oriEnableDebugMessages() describe the messages <b>to be displayed</b>, whilst those specified here describe the messages
- * <b>to be suppressed</b>.
- *
- * @param state the state to modify.
- * @param severities (bitmask) severities of the messages to @b suppress. By default, all messages are displayed <i>(if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
- * @param types (bitmask) types of the messages to @b suppress. By default, all messages are displayed <i>(if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
- *
- * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VK_EXT_debug_utils.html">Vulkan Docs/VK_EXT_debug_utils</a>
- * @sa
- * <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageSeverityFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageSeverityFlagBitsEXT</a>
- * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageTypeFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageTypeFlagBitsEXT</a>
- *
- * @ingroup group_VkAbstractions_Debugging
- *
- */
-void oriDefineStateInstanceEnabledDebugMessages(oriState *state, VkDebugUtilsMessageSeverityFlagBitsEXT severities, VkDebugUtilsMessageTypeFlagBitsEXT types) {
-    state->instanceCreateInfo.dbgmsngrEnabledMessages.severities = severities;
-    state->instanceCreateInfo.dbgmsngrEnabledMessages.types = types;
-
-    oriSetFlag(ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS, true);
 }
 
 

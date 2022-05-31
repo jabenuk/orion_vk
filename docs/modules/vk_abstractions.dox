@@ -39,7 +39,7 @@
  */
 
 /**
- * @defgroup group_VkAbstractions_Debugging Vulkan debugging
+ * @defgroup group_VkAbstractions_Core_Debugging Vulkan debugging
  * @ingroup group_VkAbstractions_Core
  *
  * @brief Abstractions of common Vulkan debugging utilities

@@ -85,27 +85,21 @@ extern _ori_Lib _orion;
  *
  */
 typedef struct oriState {
-    // struct of all global linked lists
-    struct {
-    } listHeads;
-
     // struct of all global dynamic arrays (use realloc() to extend)
     // these must be used instead of linked lists when they are of non-Orion structs (that don't have a 'next' pointer member)
     struct {
-        VkInstance **instances;     unsigned int instancesCount;
+        VkInstance **instances;                     unsigned int instancesCount;
+        VkDebugUtilsMessengerEXT **debugMessengers; unsigned int debugMessengersCount;
     } arrays;
 
     VkApplicationInfo appInfo;
 
-    // data in this struct is freed after oriCreateStateInstance().
     struct {
-        // enabled Vulkan layers
-        unsigned int enabledLayerCount;
-        char **enabledLayers;
+        // enabled Vulkan layers for instances created under this state
+        char **enabledLayers;       unsigned int enabledLayerCount;
 
-        // enabled Vulkan instance extensions
-        unsigned int enabledExtCount;
-        char **enabledExtensions;
+        // enabled Vulkan instance extensions for instances created under this state
+        char **enabledExtensions;   unsigned int enabledExtCount;
 
         struct {
             VkDebugUtilsMessageSeverityFlagsEXT severities;

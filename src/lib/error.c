@@ -117,6 +117,6 @@ void oriSetErrorCallback(oriErrorCallback callback, void *pointer) {
  * @ingroup group_Errors
  *
  */
-void oriEnableDebugMessages(oriErrorSeverityBit severities) {
+void oriEnableLibDebugMessages(oriErrorSeverityBit severities) {
     _orion.displayedErrorSeverities |= severities;
 }

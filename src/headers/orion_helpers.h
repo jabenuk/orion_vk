@@ -50,19 +50,82 @@
 // *****        GENERAL HELPER FUNCTIONS                                  *****
 // ============================================================================
 
-// helper macro to remove duplicates from a dynamically allocated array
-#define _ori_RemoveArrayDuplicates(array, count) \
+// append onto a dynamically allocated array
+//      type: the type of values accepted by the array
+//      array: the array, which will be updated
+//      len: the array length variable, which will be updated
+//      value: value to append
+#define _ori_AppendOntoDArray(type, array, len, value) \
     { \
-        for (unsigned int i = 0; i < count - 1; i++) { \
-            if (array[i] != array[i + 1]) { \
+        type oldarr[len]; \
+        /* copy current array onto stack */ \
+        /* sidenote: using a common iterator like 'i' will render this macro useless in most for loops. */ \
+        /*           so... we use a less likely one instead: */ \
+        for (unsigned int UwU = 0; UwU < len; UwU++) { \
+            oldarr[UwU] = array[UwU]; \
+        } \
+        \
+        len++; \
+        \
+        free(array); \
+        array = calloc(len, sizeof(type)); \
+        if (!array) printf("Memory error -- calloc returned null!\n");\
+        \
+        /* copy old array contents into newly allocated array */ \
+        for (unsigned int UwU = 0; UwU < len; UwU++) { \
+            array[UwU] = oldarr[UwU]; \
+        } \
+        \
+        /* append value onto the end of the array */ \
+        array[len - 1] = value; \
+    }
+
+// remove the element at index from a dynamically allocated array
+//      array: the array, which will be updated
+//      len: the array length variable, which will be updated
+//      index: the index of the element to remove
+#define _ori_RemoveFromDArray(array, len, index) \
+    { \
+        if (index <= len) { \
+            array[index] = 0; \
+            \
+            /* shift all later elements one to the left, filling the NULL 'gap' */ \
+            for (unsigned int UwU = index; UwU < len - 1; UwU++) { \
+                array[UwU] = array[UwU + 1]; \
+            } \
+            \
+            len--; \
+        } \
+    }
+
+// remove all duplicates from a dynamically allocated array
+//      array: the array
+//      len: length of the array
+#define _ori_RemoveDArrayDuplicates(array, len) \
+    { \
+        for (unsigned int UwU = 0; UwU < len - 1; UwU++) { \
+            if (array[UwU] != array[UwU + 1]) { \
                 continue; \
             } \
-            for (unsigned int j = i + 1; j < count - 1; j++) { \
-                array[j] = array[j + 1]; \
+            /* damn! we need to think of another unlikely name for an iterator. */ \
+            /* that's easy: */ \
+            for (unsigned int OwOWhatsThis = UwU + 1; OwOWhatsThis < len - 1; OwOWhatsThis++) { \
+                array[OwOWhatsThis] = array[OwOWhatsThis + 1]; \
             } \
-            count--; \
-            i--; \
+            /* annoyingly long but... it is a bit funny. */ \
+            len--; \
+            UwU--; \
         } \
+    }
+
+// free a dynamically allocated array
+//      array: the array
+//      len: length of the array
+#define _ori_FreeDArray(array, len) \
+    { \
+        free(array); \
+        array = NULL; \
+        len = 0; \
     }
 
 

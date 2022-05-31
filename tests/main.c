@@ -8,11 +8,14 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
+#define DBGMSNGR_SEVERITIES VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
+#define DBGMSNGR_TYPES VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+
 GLFWwindow *wMain = NULL;
 
 oriState *state = NULL;
 VkInstance instance = NULL;
-VkInstance temp;
+VkDebugUtilsMessengerEXT messenger = NULL;
 
 void Initialise();      // library flags, initialisation
 void CreateWindow();    // create window (wMain)
@@ -34,7 +37,9 @@ int main() {
 }
 
 void Initialise() {
-    oriEnableDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
+    oriEnableLibDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
+
+    oriSetFlag(ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS, true);
 
     glfwInit();
 }
@@ -50,14 +55,6 @@ void CreateState() {
     state = oriCreateState();
     oriDefineStateApplicationInfo(state, NULL, VK_API_VERSION_1_3, WINDOW_NAME, VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));
 
-    // specify debug suppressions
-    oriDefineStateInstanceEnabledDebugMessages(state,
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-        VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
-    );
-}
-
-void CreateInstance() {
     // get GLFW required extensions
     const char **extensions;
     unsigned int extensionCount;
@@ -74,7 +71,14 @@ void CreateInstance() {
     // specify layers to be enabled
     oriFlagLayerEnabled(state, "VK_LAYER_KHRONOS_validation");
 
-    oriCreateStateInstance(state, &instance);
+    // specify debug suppressions
+    oriSpecifyInstanceDebugMessages(state, DBGMSNGR_SEVERITIES, DBGMSNGR_TYPES);
+}
+
+void CreateInstance() {
+    oriCreateInstance(state, NULL, &instance);
+
+    oriCreateDebugMessenger(state, &instance, NULL, &messenger, DBGMSNGR_SEVERITIES, DBGMSNGR_TYPES);
 }
 
 void Terminate() {
