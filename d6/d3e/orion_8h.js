@@ -21,7 +21,8 @@ var orion_8h =
       [ "ORION_RETURN_STATUS_ERROR_INVALID_ENUM", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdabfcf47859c06c9437b1ab758b9a676ea", null ],
       [ "ORION_RETURN_STATUS_MEMORY_ERROR", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda3f29c7c4df529d5eb02cfc9fa4a6d432", null ],
       [ "ORION_RETURN_STATUS_EXT_NOT_ENABLED", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda27f73b5079092f4df698e04acdb64d45", null ],
-      [ "ORION_RETURN_STATUS_LAYER_NOT_ENABLED", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdaec546594928b25573d2e97659b9156b5", null ]
+      [ "ORION_RETURN_STATUS_LAYER_NOT_ENABLED", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdaec546594928b25573d2e97659b9156b5", null ],
+      [ "ORION_RETURN_STATUS_ERROR_NULL_POINTER", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda6116055b299b17f15440def9bf91438b", null ]
     ] ],
     [ "oriCheckInstanceExtensionAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c", null ],
     [ "oriCheckInstanceExtensionEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga3f0917fe284e1a120a50cdd124795150", null ],

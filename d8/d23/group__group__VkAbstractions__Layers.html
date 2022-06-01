@@ -208,6 +208,7 @@ false if the instance extension is not available</dd></dl>
 </div><div class="memdoc">
 <p >Similar to in <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga0fbf2072798a09416bef8fab3d8c742a" title="Check if layer is enabled in the state object state.">oriCheckLayerEnabled()</a>, the extension does not have to be actually 'enabled' yet; the function will still return true if it has at least been <b>specified</b> (with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0" title="Flag the specified Vulkan instance extension to be enabled when creating instances with oriCreateInst...">oriFlagInstanceExtensionEnabled()</a>) - this means no instances have to have been created with <code>state</code> for the function to work properly.</p>
 <p ><b>Unlike</b> with layers, however, the validation of the specified instance extensions is not checked outside of <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6" title="Validate any instance extensions in state against now-specified layers.">oriPruneInstanceExtensions()</a> (which is implicitly called in <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a>). If you are calling this function <em>before</em> <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a>, you should prune the instance extensions first to avoid false positives on invalid extensions. Note, though, that any extensions that are provided by layers not yet specified (even if said layers are specified later) will be <b>removed</b> from the state's list of instance extensions. See <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6" title="Validate any instance extensions in state against now-specified layers.">oriPruneInstanceExtensions()</a> for more.</p>
+<dl class="section warning"><dt>Warning</dt><dd>If <code>state</code> is NULL, <b>false</b> will be returned.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>the state object to query. </td></tr>
@@ -215,9 +216,9 @@ false if the instance extension is not available</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true </dd>
+<dl class="section return"><dt>Returns</dt><dd>true if the instance extension has been enabled </dd>
 <dd>
-false </dd></dl>
+false if the instance extension has not been enabled </dd></dl>
 
 </div>
 </div>
@@ -276,6 +277,7 @@ false if the layer is not available</dd></dl>
 </div><div class="memdoc">
 <p >The layer does not have to be actually 'enabled' yet; the function will still return true if the layer has at least been <b>specified</b> (with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using ...">oriFlagLayerEnabled()</a>) - this means no instances have to have been created with <code>state</code> for the function to work properly.</p>
 <p >You don't need to worry about validating the list of layers; the availability of the specified layers is immediately checked in <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using ...">oriFlagLayerEnabled()</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd>If <code>state</code> is NULL, <b>false</b> will be returned.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>the oriState object to query. </td></tr>
