@@ -128,7 +128,8 @@ typedef enum oriReturnStatus {
     ORION_RETURN_STATUS_ERROR_INVALID_ENUM = 3,
     ORION_RETURN_STATUS_MEMORY_ERROR = 4,
     ORION_RETURN_STATUS_EXT_NOT_ENABLED = 5,
-    ORION_RETURN_STATUS_LAYER_NOT_ENABLED = 6
+    ORION_RETURN_STATUS_LAYER_NOT_ENABLED = 6,
+    ORION_RETURN_STATUS_ERROR_NULL_POINTER = 7
 } oriReturnStatus;
 
 
@@ -304,6 +305,8 @@ bool oriCheckLayerAvailability(
  * You don't need to worry about validating the list of layers; the availability of the specified layers is immediately checked
  * in oriFlagLayerEnabled().
  *
+ * @warning If @c state is NULL, @b false will be returned.
+ *
  * @param state the oriState object to query.
  * @param layer the layer to search for.
  * @return true if the layer has been enabled.
@@ -354,10 +357,12 @@ bool oriCheckInstanceExtensionAvailability(
  * that any extensions that are provided by layers not yet specified (even if said layers are specified later) will be
  * @b removed from the state's list of instance extensions. See oriPruneInstanceExtensions() for more.
  *
+ * @warning If @c state is NULL, @b false will be returned.
+ *
  * @param state the state object to query.
  * @param extension the instance extension to search for.
- * @return true
- * @return false
+ * @return true if the instance extension has been enabled
+ * @return false if the instance extension has not been enabled
  *
  * @ingroup group_VkAbstractions_Layers
  *

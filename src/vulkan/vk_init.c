@@ -64,6 +64,12 @@
  *
  */
 oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *instancePtr) {
+    // according to the Vulkan specification, pInstance (instancePtr) must be a valid pointer to a VkInstance handle
+    if (!state || !instancePtr) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+    }
+
     VkInstanceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pNext = ext;

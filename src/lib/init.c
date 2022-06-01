@@ -29,6 +29,7 @@
 #include "orion_structs.h"
 #include "orion_helpers.h"
 #include "orion_funcs.h"
+#include "orion_codes.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -99,6 +100,11 @@ oriState *oriCreateState() {
  *
  */
 void oriFreeState(oriState *state) {
+    if (!state) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return;
+    }
+
     // load any necessary non-core Vulkan functions before the instances are destroyed
     // functions that rely on an instance are initialised as NULL before all instances are iterated through.
     PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT = NULL;
@@ -162,6 +168,11 @@ void oriFreeState(oriState *state) {
  *
  */
 void oriDefineStateApplicationInfo(oriState *state, const void *ext, unsigned int apiVersion, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion) {
+    if (!state) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return;
+    }
+
     // using a compound literal should (?) be far less expensive than constantly dereferencing state to redefine the properties separately.
     state->appInfo = (VkApplicationInfo) {
         VK_STRUCTURE_TYPE_APPLICATION_INFO,

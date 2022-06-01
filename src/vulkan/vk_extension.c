@@ -60,6 +60,11 @@
  *
  */
 oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
+    if (!state) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+    }
+
     if (!oriCheckLayerAvailability(layer)) {
         _ori_Warning("specified layer '%s' was not found", layer);
         return ORION_RETURN_STATUS_ERROR_NOT_FOUND;
@@ -85,6 +90,11 @@ oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
  *
  */
 oriReturnStatus oriFlagInstanceExtensionEnabled(oriState *state, const char *extension) {
+    if (!state) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+    }
+
     // since the extension might be provided by a layer, and layers might not yet be specified, we don't
     // check for the extension's availability.
     // this would be done in oriPruneInstanceExtensions() instead.
@@ -222,6 +232,11 @@ bool oriCheckLayerAvailability(const char *layer) {
  *
  */
 bool oriCheckLayerEnabled(oriState *state, const char *layer) {
+    if (!state) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return false;
+    }
+
     for (unsigned int i = 0; i < state->instanceCreateInfo.enabledLayerCount; i++) {
         if (!strcmp(state->instanceCreateInfo.enabledLayers[i], layer)) {
             return true;
@@ -296,6 +311,11 @@ bool oriCheckInstanceExtensionAvailability(const char *extension, const char *la
  *
  */
 bool oriCheckInstanceExtensionEnabled(oriState *state, const char *extension) {
+    if (!state) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return false;
+    }
+
     for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
         if (!strcmp(state->instanceCreateInfo.enabledExtensions[i], extension)) {
             return true;

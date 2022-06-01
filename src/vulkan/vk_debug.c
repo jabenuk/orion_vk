@@ -76,6 +76,11 @@
  *
  */
 void oriSpecifyInstanceDebugMessages(oriState *state, VkDebugUtilsMessageSeverityFlagBitsEXT severities, VkDebugUtilsMessageTypeFlagBitsEXT types) {
+    if (!state) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return;
+    }
+
     if (!_orion.flags.createInstanceDebugMessengers) {
         _ori_Warning("%s", "instance debug filters were specified but CREATE_INSTANCE_DEBUG_MESSENGERS was not enabled at the time of calling oriSpecifyInstanceDebugMessages()");
     }
@@ -114,6 +119,11 @@ void oriSpecifyInstanceDebugMessages(oriState *state, VkDebugUtilsMessageSeverit
  *
  */
 oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, const void *ext, VkDebugUtilsMessengerEXT *debugMessengerPtr, VkDebugUtilsMessageSeverityFlagBitsEXT severities, VkDebugUtilsMessageTypeFlagBitsEXT types) {
+    if (!state || !instance || !debugMessengerPtr) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+    }
+
     // check extension enabled
     if (!oriCheckInstanceExtensionEnabled(state, VK_EXT_DEBUG_UTILS_EXTENSION_NAME)) { // VK_EXT_DEBUG_UTILS_EXTENSION_NAME expands to VK_EXT_debug_utils
         _ori_ThrowError(ORERR_EXT_NOT_ENABLED);
