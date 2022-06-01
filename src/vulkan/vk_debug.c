@@ -77,11 +77,11 @@
  */
 void oriSpecifyInstanceDebugMessages(oriState *state, VkDebugUtilsMessageSeverityFlagBitsEXT severities, VkDebugUtilsMessageTypeFlagBitsEXT types) {
     if (!_orion.flags.createInstanceDebugMessengers) {
-        _ori_Warning("%s", "Instance debug filters were specified but CREATE_INSTANCE_DEBUG_MESSENGERS was not enabled at the time of calling oriSpecifyInstanceDebugMessages()");
+        _ori_Warning("%s", "instance debug filters were specified but CREATE_INSTANCE_DEBUG_MESSENGERS was not enabled at the time of calling oriSpecifyInstanceDebugMessages()");
     }
 
     if (!oriCheckInstanceExtensionEnabled(state, VK_EXT_DEBUG_UTILS_EXTENSION_NAME)) { // VK_EXT_DEBUG_UTILS_EXTENSION_NAME expands to VK_EXT_debug_utils
-        _ori_Warning("Instance debug filters were specified but the %s instance extension was not specified at the time of calling oriSpecifyInstanceDebugMessages()", VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        _ori_Warning("instance debug filters were specified but the %s instance extension was not specified at the time of calling oriSpecifyInstanceDebugMessages()", VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
 
     state->instanceCreateInfo.dbgmsngrEnabledMessages.severities = severities;
@@ -139,8 +139,13 @@ oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, c
         return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }
 
-    // if the messenger was successfully created, add its address to an array in state
-    _ori_AppendOntoDArray(VkDebugUtilsMessengerEXT *, state->arrays.debugMessengers, state->arrays.debugMessengersCount, debugMessengerPtr);
+    // create a struct to point to both the debug messenger and the instance it was created for
+    _ori_DebugUtilsMessengerEXT messengerStruct = {
+        debugMessengerPtr,
+        instance
+    };
+    // append this into state
+    _ori_AppendOntoDArray(_ori_DebugUtilsMessengerEXT, state->arrays.debugMessengers, state->arrays.debugMessengersCount, messengerStruct);
 
     _ori_Notification("debug messenger created at %p for instance at %p", debugMessengerPtr, instance);
 

@@ -39,7 +39,7 @@ int main() {
 void Initialise() {
     oriEnableLibDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
 
-    oriSetFlag(ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS, true);
+    oriSetFlag(ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS, false);
 
     glfwInit();
 }

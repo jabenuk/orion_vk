@@ -63,6 +63,14 @@ typedef struct _ori_Lib {
 } _ori_Lib;
 extern _ori_Lib _orion;
 
+// structures used to internally store extra data about Vulkan objects
+
+// we store a pointer to the instance that debug messengers were created for
+typedef struct _ori_DebugUtilsMessengerEXT {
+    VkDebugUtilsMessengerEXT *handle;
+    VkInstance *instance;
+} _ori_DebugUtilsMessengerEXT;
+
 
 
 // ============================================================================
@@ -88,8 +96,8 @@ typedef struct oriState {
     // struct of all global dynamic arrays (use realloc() to extend)
     // these must be used instead of linked lists when they are of non-Orion structs (that don't have a 'next' pointer member)
     struct {
-        VkInstance **instances;                     unsigned int instancesCount;
-        VkDebugUtilsMessengerEXT **debugMessengers; unsigned int debugMessengersCount;
+        VkInstance **instances;                         unsigned int instancesCount;
+        _ori_DebugUtilsMessengerEXT *debugMessengers;   unsigned int debugMessengersCount;
     } arrays;
 
     VkApplicationInfo appInfo;
@@ -101,6 +109,7 @@ typedef struct oriState {
         // enabled Vulkan instance extensions for instances created under this state
         char **enabledExtensions;   unsigned int enabledExtCount;
 
+        // instance debug messenger create info
         struct {
             VkDebugUtilsMessageSeverityFlagsEXT severities;
             VkDebugUtilsMessageTypeFlagsEXT types;

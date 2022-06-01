@@ -111,30 +111,28 @@ void oriFreeState(oriState *state) {
     _ori_RemoveDArrayDuplicates(state->arrays.instances, state->arrays.instancesCount);
 
     // destroy debug messengers
+    // if the DestroyDebugUtilsMessengerEXT pfn is NULL, then the debug utils extension wasn't enabled and therefore no debug messengers could be
+    // created by the user (at least not using Orion functions)
     if (DestroyDebugUtilsMessengerEXT) {
         for (unsigned int i = 0; i < state->arrays.debugMessengersCount; i++) {
-            // IMPORTANT!
-            // this is a hack that iterates through all instances and attempts to destroy the messenger with each one, essentially
-            // brute forcing the array until the instance that the messenger was created with is found. Since most projects probably use
-            // a very small amount of instances (normally only 1) this is probably fine -- but it HAS NOT BEEN TESTED!!!
-            // and: I don't know how vkDestroyDebugUtilsMessengerEXT() reacts when the wrong instance is passed. This could be VERY BAD!
-            // so I will probably look back at this later on but for now it works so... we'll see.
-            for (unsigned int j = 0; j < state->arrays.instancesCount; j++) {
-                DestroyDebugUtilsMessengerEXT(*(state->arrays.instances[j]), *(state->arrays.debugMessengers[j]), NULL);
-            }
-            _ori_DebugLog("VkDebugUtilsMessengerEXT at %p was freed by state object at location %p", state->arrays.debugMessengers[i], state);
-            *state->arrays.debugMessengers[i] = NULL;
+            DestroyDebugUtilsMessengerEXT(*(state->arrays.debugMessengers[i].instance), *(state->arrays.debugMessengers[i].handle), NULL);
+
+            _ori_DebugLog("VkDebugUtilsMessengerEXT at %p was freed by state object at location %p", state->arrays.debugMessengers[i].handle, state);
         }
     }
+    // note: this may have to be done inside the above if statement, but it seems to work fine here
+    _ori_FreeDArray(state->arrays.debugMessengers, state->arrays.debugMessengersCount);
 
     // destroy instances
     for (unsigned int i = 0; i < state->arrays.instancesCount; i++) {
         vkDestroyInstance(*state->arrays.instances[i], NULL);
         _ori_DebugLog("VkInstance at %p was freed by state object at location %p", state->arrays.instances[i], state);
-        *state->arrays.instances[i] = NULL;
     }
-    free(state->arrays.instances);
-    state->arrays.instances = NULL;
+    _ori_FreeDArray(state->arrays.instances, state->arrays.instancesCount)
+
+    // free other dynamically allocated arrays
+    _ori_FreeDArray(state->instanceCreateInfo.enabledExtensions, state->instanceCreateInfo.enabledExtCount);
+    _ori_FreeDArray(state->instanceCreateInfo.enabledLayers, state->instanceCreateInfo.enabledLayerCount);
 
     // finally, free state pointer
     free(state);
@@ -216,7 +214,7 @@ oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
 
     switch (flag) {
         default:
-            _ori_Warning("%s", "An invalid flag was given to oriSetFlag(); nothing was updated.");
+            _ori_Warning("%s", "an invalid flag was given to oriSetFlag(); nothing was updated.");
             return ORION_RETURN_STATUS_ERROR_INVALID_ENUM;
         case ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS:
             strncpy(flagstr, "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS", 127);

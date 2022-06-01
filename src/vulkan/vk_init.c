@@ -155,6 +155,8 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
         dbgmsngrCreateInfo.pUserData = _orion.callbacks.errorCallbackUserData;
 
         createInfo.pNext = &dbgmsngrCreateInfo;
+
+        _ori_Notification("appended instance debug messenger for next instance (at %p)", instancePtr);
     }
 
     if (vkCreateInstance(&createInfo, NULL, instancePtr)) {
