@@ -140,6 +140,8 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<b>ORION_RETURN_STATUS_ERROR_INVALID_ENUM</b>
 , <b>ORION_RETURN_STATUS_MEMORY_ERROR</b>
+, <b>ORION_RETURN_STATUS_EXT_NOT_ENABLED</b>
+, <b>ORION_RETURN_STATUS_LAYER_NOT_ENABLED</b>
 <br />
  }</td></tr>
 <tr class="memdesc:gabd16d3a672c8be2a02c93e26e7c8f8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The return status of an Orion function.  <a href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">More...</a><br /></td></tr>
@@ -150,9 +152,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga470902f9e1215040bf6b6d38e45950c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0">oriSetErrorCallback</a> (<a class="el" href="../../d2/d8c/group__group__Errors.html#ga2c1ef70b93a3e5922ad6780890f5e6ed">oriErrorCallback</a> callback, void *pointer)</td></tr>
 <tr class="memdesc:ga470902f9e1215040bf6b6d38e45950c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the global Orion error callback function.  <a href="../../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0">More...</a><br /></td></tr>
 <tr class="separator:ga470902f9e1215040bf6b6d38e45950c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab472e47ec9a7a9b9721005ad28f40abe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe">oriEnableDebugMessages</a> (<a class="el" href="../../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">oriErrorSeverityBit</a> severities)</td></tr>
-<tr class="memdesc:gab472e47ec9a7a9b9721005ad28f40abe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recieve any debug messages that fall under the specified criteria.  <a href="../../d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe">More...</a><br /></td></tr>
-<tr class="separator:gab472e47ec9a7a9b9721005ad28f40abe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga41987c5ca4442486ccad19fc4e99ecfe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d8c/group__group__Errors.html#ga41987c5ca4442486ccad19fc4e99ecfe">oriEnableLibDebugMessages</a> (<a class="el" href="../../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">oriErrorSeverityBit</a> severities)</td></tr>
+<tr class="memdesc:ga41987c5ca4442486ccad19fc4e99ecfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recieve any debug messages that fall under the specified criteria.  <a href="../../d2/d8c/group__group__Errors.html#ga41987c5ca4442486ccad19fc4e99ecfe">More...</a><br /></td></tr>
+<tr class="separator:ga41987c5ca4442486ccad19fc4e99ecfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p >Functionality found in this module is related to catching and debugging errors thrown by the library at runtime. You should also see the <a class="el" href="../../db/d82/page_Debugging.html">Debugging</a> page for more information about debugging.</p>
@@ -219,14 +221,14 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gab472e47ec9a7a9b9721005ad28f40abe" name="gab472e47ec9a7a9b9721005ad28f40abe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab472e47ec9a7a9b9721005ad28f40abe">&#9670;&nbsp;</a></span>oriEnableDebugMessages()</h2>
+<a id="ga41987c5ca4442486ccad19fc4e99ecfe" name="ga41987c5ca4442486ccad19fc4e99ecfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga41987c5ca4442486ccad19fc4e99ecfe">&#9670;&nbsp;</a></span>oriEnableLibDebugMessages()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void oriEnableDebugMessages </td>
+          <td class="memname">void oriEnableLibDebugMessages </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="../../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">oriErrorSeverityBit</a>&#160;</td>
           <td class="paramname"><em>severities</em></td><td>)</td>
@@ -291,7 +293,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last updated on <b>Tue May 31 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Wed Jun 1 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>

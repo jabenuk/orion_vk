@@ -113,17 +113,26 @@ $(document).ready(function(){initNavTree('d8/d23/group__group__VkAbstractions__L
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga2b10ea61a5c308e82118248237cce331"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331">oriFlagLayerEnabled</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const char *layer)</td></tr>
-<tr class="memdesc:ga2b10ea61a5c308e82118248237cce331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag the specified Vulkan layer to be enabled when creating the state's instance with <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateStateInstance()</a>.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331">More...</a><br /></td></tr>
+<tr class="memdesc:ga2b10ea61a5c308e82118248237cce331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag the specified Vulkan layer to be enabled when creating instances with <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a> using <code>state</code>.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331">More...</a><br /></td></tr>
 <tr class="separator:ga2b10ea61a5c308e82118248237cce331"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaad2a14a5ca5ce63ef2f12ecb859257c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0">oriFlagInstanceExtensionEnabled</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const char *extension)</td></tr>
-<tr class="memdesc:gaad2a14a5ca5ce63ef2f12ecb859257c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag the specified Vulkan instance extension to be enabled when creating the state instance with <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateStateInstance()</a>.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0">More...</a><br /></td></tr>
+<tr class="memdesc:gaad2a14a5ca5ce63ef2f12ecb859257c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag the specified Vulkan instance extension to be enabled when creating instances with <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a> using <code>state</code>.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0">More...</a><br /></td></tr>
 <tr class="separator:gaad2a14a5ca5ce63ef2f12ecb859257c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab3eb998f0aebf3b7e2b70a19739c05d6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6">oriPruneInstanceExtensions</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state)</td></tr>
+<tr class="memdesc:gab3eb998f0aebf3b7e2b70a19739c05d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validate any instance extensions in <code>state</code> against now-specified layers.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6">More...</a><br /></td></tr>
+<tr class="separator:gab3eb998f0aebf3b7e2b70a19739c05d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf2b0abacb963078bf15ac77fb504d034"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034">oriCheckLayerAvailability</a> (const char *layer)</td></tr>
 <tr class="memdesc:gaf2b0abacb963078bf15ac77fb504d034"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the availability of the specified Vulkan layer.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034">More...</a><br /></td></tr>
 <tr class="separator:gaf2b0abacb963078bf15ac77fb504d034"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0fbf2072798a09416bef8fab3d8c742a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga0fbf2072798a09416bef8fab3d8c742a">oriCheckLayerEnabled</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const char *layer)</td></tr>
+<tr class="memdesc:ga0fbf2072798a09416bef8fab3d8c742a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if <code>layer</code> is enabled in the state object <code>state</code>.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga0fbf2072798a09416bef8fab3d8c742a">More...</a><br /></td></tr>
+<tr class="separator:ga0fbf2072798a09416bef8fab3d8c742a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5561a1489aecd4f6591654255d69e59c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c">oriCheckInstanceExtensionAvailability</a> (const char *extension, const char *layer)</td></tr>
 <tr class="memdesc:ga5561a1489aecd4f6591654255d69e59c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the availability of the specified Vulkan instance extension.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c">More...</a><br /></td></tr>
 <tr class="separator:ga5561a1489aecd4f6591654255d69e59c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3f0917fe284e1a120a50cdd124795150"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga3f0917fe284e1a120a50cdd124795150">oriCheckInstanceExtensionEnabled</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const char *extension)</td></tr>
+<tr class="memdesc:ga3f0917fe284e1a120a50cdd124795150"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the instance extension <code>extension</code> is enabled in the state object <code>state</code>.  <a href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga3f0917fe284e1a120a50cdd124795150">More...</a><br /></td></tr>
+<tr class="separator:ga3f0917fe284e1a120a50cdd124795150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p >Functionality found in this module is related to layers and extensions in Vulkan. This module is part of the <a class="el" href="../../d8/dc3/group__group__VkAbstractions.html">core Vulkan abstractions</a>.</p>
@@ -168,7 +177,47 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>true if the instance extension is available </dd>
 <dd>
 false if the instance extension is not available</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0" title="Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriC...">oriFlagInstanceExtensionEnabled()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0" title="Flag the specified Vulkan instance extension to be enabled when creating instances with oriCreateInst...">oriFlagInstanceExtensionEnabled()</a> </dd></dl>
+
+</div>
+</div>
+<a id="ga3f0917fe284e1a120a50cdd124795150" name="ga3f0917fe284e1a120a50cdd124795150"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3f0917fe284e1a120a50cdd124795150">&#9670;&nbsp;</a></span>oriCheckInstanceExtensionEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool oriCheckInstanceExtensionEnabled </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>extension</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Similar to in <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga0fbf2072798a09416bef8fab3d8c742a" title="Check if layer is enabled in the state object state.">oriCheckLayerEnabled()</a>, the extension does not have to be actually 'enabled' yet; the function will still return true if it has at least been <b>specified</b> (with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0" title="Flag the specified Vulkan instance extension to be enabled when creating instances with oriCreateInst...">oriFlagInstanceExtensionEnabled()</a>) - this means no instances have to have been created with <code>state</code> for the function to work properly.</p>
+<p ><b>Unlike</b> with layers, however, the validation of the specified instance extensions is not checked outside of <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6" title="Validate any instance extensions in state against now-specified layers.">oriPruneInstanceExtensions()</a> (which is implicitly called in <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a>). If you are calling this function <em>before</em> <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a>, you should prune the instance extensions first to avoid false positives on invalid extensions. Note, though, that any extensions that are provided by layers not yet specified (even if said layers are specified later) will be <b>removed</b> from the state's list of instance extensions. See <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6" title="Validate any instance extensions in state against now-specified layers.">oriPruneInstanceExtensions()</a> for more.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">state</td><td>the state object to query. </td></tr>
+    <tr><td class="paramname">extension</td><td>the instance extension to search for. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true </dd>
+<dd>
+false </dd></dl>
 
 </div>
 </div>
@@ -196,7 +245,47 @@ false if the instance extension is not available</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the layer is available </dd>
 <dd>
 false if the layer is not available</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating the state&#39;s instance with oriCreateStateI...">oriFlagLayerEnabled()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using ...">oriFlagLayerEnabled()</a> </dd></dl>
+
+</div>
+</div>
+<a id="ga0fbf2072798a09416bef8fab3d8c742a" name="ga0fbf2072798a09416bef8fab3d8c742a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0fbf2072798a09416bef8fab3d8c742a">&#9670;&nbsp;</a></span>oriCheckLayerEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool oriCheckLayerEnabled </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>layer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >The layer does not have to be actually 'enabled' yet; the function will still return true if the layer has at least been <b>specified</b> (with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using ...">oriFlagLayerEnabled()</a>) - this means no instances have to have been created with <code>state</code> for the function to work properly.</p>
+<p >You don't need to worry about validating the list of layers; the availability of the specified layers is immediately checked in <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using ...">oriFlagLayerEnabled()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">state</td><td>the oriState object to query. </td></tr>
+    <tr><td class="paramname">layer</td><td>the layer to search for. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the layer has been enabled. </dd>
+<dd>
+false if the layer has not been enabled. </dd></dl>
 
 </div>
 </div>
@@ -226,7 +315,7 @@ false if the layer is not available</dd></dl>
       </table>
 </div><div class="memdoc">
 <p >For information regarding the difference between 'instance extensions' and 'device extensions' in Vulkan, you should see <a href="https://stackoverflow.com/a/53050492/12980669">this</a> answer on StackOverflow.</p>
-<dl class="section note"><dt>Note</dt><dd>If the given extension is provided by a layer, make sure to flag the layer as enabled with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating the state&#39;s instance with oriCreateStateI...">oriFlagLayerEnabled()</a> as well before creating the state instance.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the given extension is provided by a layer, make sure to flag the layer as enabled with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using ...">oriFlagLayerEnabled()</a> as well before creating the state instance.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>the state the enable the extension on. </td></tr>
@@ -275,12 +364,43 @@ false if the layer is not available</dd></dl>
 
 </div>
 </div>
+<a id="gab3eb998f0aebf3b7e2b70a19739c05d6" name="gab3eb998f0aebf3b7e2b70a19739c05d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab3eb998f0aebf3b7e2b70a19739c05d6">&#9670;&nbsp;</a></span>oriPruneInstanceExtensions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool oriPruneInstanceExtensions </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *&#160;</td>
+          <td class="paramname"><em>state</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >This function validates and removes any unavailable or non-existant instance extensions that have been specified for the oriState object <code>state</code>.</p>
+<p >This allows for you to specify instance extensions <b>before</b> the layers that provide them - essentially, Vulkan instance extensions are either provided by the implementation or a layer.</p>
+<p >This function is implicitly called in <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a> in case you forget.</p>
+<dl class="section warning"><dt>Warning</dt><dd>If you specify instance extensions that are provided by a layer, and you call this function before specifying said layer, these instance extensions will be <b>removed</b> from the state's internal list, and therefore will <b>not</b> be enabled, even if you specify the layer after this function.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">state</td><td>the state to validate. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if any extensions have been removed from the state's list. </dd>
+<dd>
+false if no extensions have been removed. </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last updated on <b>Tue May 31 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Wed Jun 1 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>

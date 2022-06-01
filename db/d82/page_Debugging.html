@@ -104,11 +104,12 @@ $(document).ready(function(){initNavTree('db/d82/page_Debugging.html','../../');
   <div class="headertitle"><div class="title">Debugging </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p >For more function-specific documentation, see <a class="el" href="../../d2/d8c/group__group__Errors.html">Core Orion functionality/Error handling</a>.</p>
+<div class="textblock"><p >This page refers to 'library' debugging; it is related to Orion errors and function returns, etc. For Vulkan debugging (e.g. debug utils) see the <a class="el" href="../../d9/d7f/group__group__VkAbstractions__Core__Debugging.html"><b>Core</b> Vulkan API/Debugging</a> section.</p>
+<p >For more function-specific documentation, see <a class="el" href="../../d2/d8c/group__group__Errors.html">Core Orion functionality/Error handling</a>.</p>
 <h1><a class="anchor" id="section_Debugging_ErrorCallback"></a>
 Error callback</h1>
 <p >Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc. Despite the name, this callback is not just used for errors, but also debug log messages, notifications, and warnings, so it's wise to consider it a 'debug callback' instead of specifically an 'error callback'. <em>(Although it is referred to as an 'error callback' in this documentation)</em>.</p>
-<p >To enable the debug callback, you need to specify the types of messages you want to see with <a class="el" href="../../d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe" title="Recieve any debug messages that fall under the specified criteria.">oriEnableDebugMessages()</a>. There is a default, built-in callback function which will be implicitly enabled, but you can set your own callback function with <a class="el" href="../../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0" title="Set the global Orion error callback function.">oriSetErrorCallback()</a>.</p>
+<p >To enable the debug callback, you need to specify the types of messages you want to see with oriEnableDebugMessages(). There is a default, built-in callback function which will be implicitly enabled, but you can set your own callback function with <a class="el" href="../../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0" title="Set the global Orion error callback function.">oriSetErrorCallback()</a>.</p>
 <p >For information regarding the expected function signature of the callback, and the meaning of the parameters, see <a class="el" href="../../d2/d8c/group__group__Errors.html#ga2c1ef70b93a3e5922ad6780890f5e6ed">oriErrorCallback</a>. An example of a custom error callback function can be seen below: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> errorcbfun(</div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *name,</div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> code,</div>
@@ -162,7 +163,7 @@ Error callback</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ORION_ERROR_SEVERITY_VERBOSE_BIT   </td><td class="markdownTableBodyNone">Almost <b>every</b> event that is happening.   </td></tr>
 </table>
-<p >These severity enums can (and should) be bit-masked when passing them to <a class="el" href="../../d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe" title="Recieve any debug messages that fall under the specified criteria.">oriEnableDebugMessages()</a>. No reported debug messages will have more than one severity bit enabled.</p>
+<p >These severity enums can (and should) be bit-masked when passing them to oriEnableDebugMessages(). No reported debug messages will have more than one severity bit enabled.</p>
 <h1><a class="anchor" id="section_Debugging_FunctionReturns"></a>
 Function return statuses</h1>
 <p >Aside from the error callback, most Orion functions also return a status enum that describes how their execution went. This only applies for functions that could encounter errors (most of the library, but not all).</p>
@@ -177,7 +178,7 @@ Function return statuses</h1>
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last updated on <b>Tue May 31 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Wed Jun 1 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>

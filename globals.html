@@ -103,21 +103,25 @@ $(document).ready(function(){initNavTree('globals.html',''); initResizable(); })
 <div class="contents">
 <div class="textblock">Here is a list of all documented file members with links to the documentation:</div><ul>
 <li>oriCheckInstanceExtensionAvailability()&#160;:&#160;<a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c">orion.h</a></li>
+<li>oriCheckInstanceExtensionEnabled()&#160;:&#160;<a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html#ga3f0917fe284e1a120a50cdd124795150">orion.h</a></li>
 <li>oriCheckLayerAvailability()&#160;:&#160;<a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034">orion.h</a></li>
+<li>oriCheckLayerEnabled()&#160;:&#160;<a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html#ga0fbf2072798a09416bef8fab3d8c742a">orion.h</a></li>
+<li>oriCreateDebugMessenger()&#160;:&#160;<a class="el" href="d9/d7f/group__group__VkAbstractions__Core__Debugging.html#ga24fde849aceded34e4c2ce7636f2b9f1">orion.h</a></li>
+<li>oriCreateInstance()&#160;:&#160;<a class="el" href="d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271">orion.h</a></li>
 <li>oriCreateState()&#160;:&#160;<a class="el" href="db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b">orion.h</a></li>
-<li>oriCreateStateInstance()&#160;:&#160;<a class="el" href="d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164">orion.h</a></li>
 <li>oriDefineStateApplicationInfo()&#160;:&#160;<a class="el" href="db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a">orion.h</a></li>
-<li>oriDefineStateInstanceEnabledDebugMessages()&#160;:&#160;<a class="el" href="db/d4f/group__group__VkAbstractions__Debugging.html#ga842f02695f384903a456451314f952a7">orion.h</a></li>
-<li>oriEnableDebugMessages()&#160;:&#160;<a class="el" href="d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe">orion.h</a></li>
+<li>oriEnableLibDebugMessages()&#160;:&#160;<a class="el" href="d2/d8c/group__group__Errors.html#ga41987c5ca4442486ccad19fc4e99ecfe">orion.h</a></li>
 <li>oriErrorCallback&#160;:&#160;<a class="el" href="d2/d8c/group__group__Errors.html#ga2c1ef70b93a3e5922ad6780890f5e6ed">orion.h</a></li>
 <li>oriErrorSeverityBit&#160;:&#160;<a class="el" href="d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">orion.h</a></li>
 <li>oriFlagInstanceExtensionEnabled()&#160;:&#160;<a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0">orion.h</a></li>
 <li>oriFlagLayerEnabled()&#160;:&#160;<a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331">orion.h</a></li>
 <li>oriFreeState()&#160;:&#160;<a class="el" href="db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4">orion.h</a></li>
 <li>oriLibraryFlag&#160;:&#160;<a class="el" href="db/de0/group__group__Meta.html#ga05b4271896044a820b1ddc6fef0ef379">orion.h</a></li>
+<li>oriPruneInstanceExtensions()&#160;:&#160;<a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6">orion.h</a></li>
 <li>oriReturnStatus&#160;:&#160;<a class="el" href="d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">orion.h</a></li>
 <li>oriSetErrorCallback()&#160;:&#160;<a class="el" href="d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0">orion.h</a></li>
 <li>oriSetFlag()&#160;:&#160;<a class="el" href="db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622">orion.h</a></li>
+<li>oriSpecifyInstanceDebugMessages()&#160;:&#160;<a class="el" href="d9/d7f/group__group__VkAbstractions__Core__Debugging.html#gaa592dd22f5c2411aef95f189b84e3689">orion.h</a></li>
 <li>oriState&#160;:&#160;<a class="el" href="db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">orion.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -125,7 +129,7 @@ $(document).ready(function(){initNavTree('globals.html',''); initResizable(); })
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last updated on <b>Tue May 31 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Wed Jun 1 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>

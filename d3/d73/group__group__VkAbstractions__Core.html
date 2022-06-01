@@ -113,30 +113,36 @@ $(document).ready(function(){initNavTree('d3/d73/group__group__VkAbstractions__C
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
 Modules</h2></td></tr>
-<tr class="memitem:db/d4f/group__group__VkAbstractions__Debugging"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d4f/group__group__VkAbstractions__Debugging.html">Vulkan debugging</a></td></tr>
-<tr class="memdesc:db/d4f/group__group__VkAbstractions__Debugging"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstractions of common Vulkan debugging utilities. <br /></td></tr>
+<tr class="memitem:d9/d7f/group__group__VkAbstractions__Core__Debugging"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d7f/group__group__VkAbstractions__Core__Debugging.html">Vulkan debugging</a></td></tr>
+<tr class="memdesc:d9/d7f/group__group__VkAbstractions__Core__Debugging"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstractions of common Vulkan debugging utilities. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga035274a50f913f4ca561ea9d60c6e164"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164">oriCreateStateInstance</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, VkInstance *instancePtr)</td></tr>
-<tr class="memdesc:ga035274a50f913f4ca561ea9d60c6e164"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply all previous properties set to the given <code>state</code> and create a VkInstance object, stored in <code>state</code>.  <a href="../../d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164">More...</a><br /></td></tr>
-<tr class="separator:ga035274a50f913f4ca561ea9d60c6e164"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6065235c47b1737321ae6a2a89587271"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271">oriCreateInstance</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const void *ext, VkInstance *instancePtr)</td></tr>
+<tr class="memdesc:ga6065235c47b1737321ae6a2a89587271"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply all previous properties set to the given <code>state</code> and create a VkInstance object, managed by <code>state</code>.  <a href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271">More...</a><br /></td></tr>
+<tr class="separator:ga6065235c47b1737321ae6a2a89587271"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p >This module covers most Orion abstractions, and most functions that simplify the use of the Core Vulkan API. It is part of the <a class="el" href="../../d8/dc3/group__group__VkAbstractions.html">core Vulkan abstractions</a>. </p>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga035274a50f913f4ca561ea9d60c6e164" name="ga035274a50f913f4ca561ea9d60c6e164"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga035274a50f913f4ca561ea9d60c6e164">&#9670;&nbsp;</a></span>oriCreateStateInstance()</h2>
+<a id="ga6065235c47b1737321ae6a2a89587271" name="ga6065235c47b1737321ae6a2a89587271"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6065235c47b1737321ae6a2a89587271">&#9670;&nbsp;</a></span>oriCreateInstance()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a> oriCreateStateInstance </td>
+          <td class="memname"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a> oriCreateInstance </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *&#160;</td>
           <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>ext</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -151,18 +157,20 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Properties previously passed to <code>state</code> in functions such as <a class="el" href="../../db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a" title="Set application info to be used by all instances created with the given state object.">oriDefineStateApplicationInfo()</a>, and features specified in functions like <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating the state&#39;s instance with oriCreateStateI...">oriFlagLayerEnabled()</a>, will be applied and used to create a <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">VkInstance</a> object.</p>
-<p >The resulting instance object will be managed by the state.</p>
-<dl class="section note"><dt>Note</dt><dd>After execution, all previously specified instance extensions, layers, etc will be cleared; if you want to create multiple states, you must specify this functionality again each time (i.e. with <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating the state&#39;s instance with oriCreateStateI...">oriFlagLayerEnabled()</a>, <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0" title="Flag the specified Vulkan instance extension to be enabled when creating the state instance with oriC...">oriFlagInstanceExtensionEnabled()</a>, etc).</dd></dl>
+<p >Properties previously passed to <code>state</code> in functions such as <a class="el" href="../../db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a" title="Set application info to be used by all instances created with the given state object.">oriDefineStateApplicationInfo()</a>, and features specified in functions like <a class="el" href="../../d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331" title="Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using ...">oriFlagLayerEnabled()</a>, will be applied and used to create a <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">VkInstance</a> object.</p>
+<p >The resulting instance object will be (memory) managed by the state.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>the state object from which properties will be used, and to which the resulting VkInstance will be tied. </td></tr>
+    <tr><td class="paramname">ext</td><td>equivalent to the <code>pNext</code> parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure. </td></tr>
     <tr><td class="paramname">instancePtr</td><td>a pointer to the structure to which the instance will be returned. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the <a class="el" href="../../d2/d8c/group__group__Errors.html">debug output</a> for more information.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a> </dd>
+<dd>
+<a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstanceCreateInfo.html">Vulkan Docs/VkInstanceCreateInfo</a> </dd></dl>
 
 </div>
 </div>
@@ -171,7 +179,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last updated on <b>Tue May 31 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Wed Jun 1 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>

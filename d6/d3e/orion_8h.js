@@ -19,18 +19,24 @@ var orion_8h =
       [ "ORION_RETURN_STATUS_ERROR_NOT_FOUND", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdaff2c529c44e84d96ec48971ed010a3a0", null ],
       [ "ORION_RETURN_STATUS_ERROR_VULKAN_ERROR", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda0ed391da95f81b794938aec6f38f41e2", null ],
       [ "ORION_RETURN_STATUS_ERROR_INVALID_ENUM", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdabfcf47859c06c9437b1ab758b9a676ea", null ],
-      [ "ORION_RETURN_STATUS_MEMORY_ERROR", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda3f29c7c4df529d5eb02cfc9fa4a6d432", null ]
+      [ "ORION_RETURN_STATUS_MEMORY_ERROR", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda3f29c7c4df529d5eb02cfc9fa4a6d432", null ],
+      [ "ORION_RETURN_STATUS_EXT_NOT_ENABLED", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bda27f73b5079092f4df698e04acdb64d45", null ],
+      [ "ORION_RETURN_STATUS_LAYER_NOT_ENABLED", "d2/d8c/group__group__Errors.html#ggabd16d3a672c8be2a02c93e26e7c8f8bdaec546594928b25573d2e97659b9156b5", null ]
     ] ],
     [ "oriCheckInstanceExtensionAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#ga5561a1489aecd4f6591654255d69e59c", null ],
+    [ "oriCheckInstanceExtensionEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga3f0917fe284e1a120a50cdd124795150", null ],
     [ "oriCheckLayerAvailability", "d8/d23/group__group__VkAbstractions__Layers.html#gaf2b0abacb963078bf15ac77fb504d034", null ],
+    [ "oriCheckLayerEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga0fbf2072798a09416bef8fab3d8c742a", null ],
+    [ "oriCreateDebugMessenger", "d9/d7f/group__group__VkAbstractions__Core__Debugging.html#ga24fde849aceded34e4c2ce7636f2b9f1", null ],
+    [ "oriCreateInstance", "d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271", null ],
     [ "oriCreateState", "db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b", null ],
-    [ "oriCreateStateInstance", "d3/d73/group__group__VkAbstractions__Core.html#ga035274a50f913f4ca561ea9d60c6e164", null ],
     [ "oriDefineStateApplicationInfo", "db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a", null ],
-    [ "oriDefineStateInstanceEnabledDebugMessages", "db/d4f/group__group__VkAbstractions__Debugging.html#ga842f02695f384903a456451314f952a7", null ],
-    [ "oriEnableDebugMessages", "d2/d8c/group__group__Errors.html#gab472e47ec9a7a9b9721005ad28f40abe", null ],
+    [ "oriEnableLibDebugMessages", "d2/d8c/group__group__Errors.html#ga41987c5ca4442486ccad19fc4e99ecfe", null ],
     [ "oriFlagInstanceExtensionEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0", null ],
     [ "oriFlagLayerEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331", null ],
     [ "oriFreeState", "db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4", null ],
+    [ "oriPruneInstanceExtensions", "d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6", null ],
     [ "oriSetErrorCallback", "d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0", null ],
-    [ "oriSetFlag", "db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622", null ]
+    [ "oriSetFlag", "db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622", null ],
+    [ "oriSpecifyInstanceDebugMessages", "d9/d7f/group__group__VkAbstractions__Core__Debugging.html#gaa592dd22f5c2411aef95f189b84e3689", null ]
 ];
