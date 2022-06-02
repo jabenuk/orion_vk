@@ -1,6 +1,7 @@
 var orion_8h =
 [
     [ "oriErrorCallback", "d2/d8c/group__group__Errors.html#ga2c1ef70b93a3e5922ad6780890f5e6ed", null ],
+    [ "oriPhysicalDeviceSuitabilityCheckFunc", "de/d40/group__group__VkAbstractions__Core__Devices.html#ga9afb67dafb1e31ce790215dd158cd302", null ],
     [ "oriState", "db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0", null ],
     [ "oriErrorSeverityBit", "d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d", [
       [ "ORION_ERROR_SEVERITY_ALL_BIT", "d2/d8c/group__group__Errors.html#gga46ca29226d89a2b852dc639fb351a61da04f147f1e03b545383a7a0d84e6f7a9d", null ],
@@ -30,12 +31,14 @@ var orion_8h =
     [ "oriCheckLayerEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga0fbf2072798a09416bef8fab3d8c742a", null ],
     [ "oriCreateDebugMessenger", "d9/d7f/group__group__VkAbstractions__Core__Debugging.html#ga24fde849aceded34e4c2ce7636f2b9f1", null ],
     [ "oriCreateInstance", "d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271", null ],
+    [ "oriCreateLogicalDevice", "de/d40/group__group__VkAbstractions__Core__Devices.html#gadc819a6132c93ed64055742707e8e482", null ],
     [ "oriCreateState", "db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b", null ],
     [ "oriDefineStateApplicationInfo", "db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a", null ],
+    [ "oriDestroyState", "db/de0/group__group__Meta.html#ga7eda3080bed9d53534df170b4215aa87", null ],
     [ "oriEnableLibDebugMessages", "d2/d8c/group__group__Errors.html#ga41987c5ca4442486ccad19fc4e99ecfe", null ],
+    [ "oriEnumerateSuitablePhysicalDevices", "de/d40/group__group__VkAbstractions__Core__Devices.html#ga10901eb9ef4006bc0ce642dd6aeaf78f", null ],
     [ "oriFlagInstanceExtensionEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#gaad2a14a5ca5ce63ef2f12ecb859257c0", null ],
     [ "oriFlagLayerEnabled", "d8/d23/group__group__VkAbstractions__Layers.html#ga2b10ea61a5c308e82118248237cce331", null ],
-    [ "oriFreeState", "db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4", null ],
     [ "oriPruneInstanceExtensions", "d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6", null ],
     [ "oriSetErrorCallback", "d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0", null ],
     [ "oriSetFlag", "db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622", null ],

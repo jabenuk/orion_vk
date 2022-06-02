@@ -133,9 +133,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga706c36d2d5210ebfe0b0e08fa64a221b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b">oriCreateState</a> ()</td></tr>
 <tr class="memdesc:ga706c36d2d5210ebfe0b0e08fa64a221b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Orion state object and return its handle.  <a href="../../db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b">More...</a><br /></td></tr>
 <tr class="separator:ga706c36d2d5210ebfe0b0e08fa64a221b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5f105d2506bee0448f5ada5a13747cc4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4">oriFreeState</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state)</td></tr>
-<tr class="memdesc:ga5f105d2506bee0448f5ada5a13747cc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the specified Orion state.  <a href="../../db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4">More...</a><br /></td></tr>
-<tr class="separator:ga5f105d2506bee0448f5ada5a13747cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7eda3080bed9d53534df170b4215aa87"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/de0/group__group__Meta.html#ga7eda3080bed9d53534df170b4215aa87">oriDestroyState</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state)</td></tr>
+<tr class="memdesc:ga7eda3080bed9d53534df170b4215aa87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the specified Orion state.  <a href="../../db/de0/group__group__Meta.html#ga7eda3080bed9d53534df170b4215aa87">More...</a><br /></td></tr>
+<tr class="separator:ga7eda3080bed9d53534df170b4215aa87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a">oriDefineStateApplicationInfo</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const void *ext, unsigned int apiVersion, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion)</td></tr>
 <tr class="memdesc:gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set application info to be used by all instances created with the given state object.  <a href="../../db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a">More...</a><br /></td></tr>
 <tr class="separator:gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,10 +157,10 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p >This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().</p>
 <p >However, it also holds state related to Vulkan, such as the application info.</p>
-<p >Note that Vulkan objects, like <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">instances</a>, are <b>not</b> stored inside oriState, but rather this struct contains <b>handles</b> to said Vulkan objects, so that it can manage them. For example, you can create a Vulkan instance using data from an oriState object with <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a>, but the function <b>returns</b> the instance so you can deal with it on your end. However, the function also returns the instance to the state, so that, when you call <a class="el" href="../../db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4" title="Destroy the specified Orion state.">oriFreeState()</a>, the instance (and any other instances made with this state) will implicitly be freed.</p>
+<p >Note that Vulkan objects, like <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">instances</a>, are <b>not</b> stored inside oriState, but rather this struct contains <b>handles</b> to said Vulkan objects, so that it can manage them. For example, you can create a Vulkan instance using data from an oriState object with <a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271" title="Apply all previous properties set to the given state and create a VkInstance object,...">oriCreateInstance()</a>, but the function <b>returns</b> the instance so you can deal with it on your end. However, the function also returns the instance to the state, so that, when you call <a class="el" href="../../db/de0/group__group__Meta.html#ga7eda3080bed9d53534df170b4215aa87" title="Destroy the specified Orion state.">oriDestroyState()</a>, the instance (and any other instances made with this state) will implicitly be freed.</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="../../db/de0/group__group__Meta.html#ga706c36d2d5210ebfe0b0e08fa64a221b" title="Create an Orion state object and return its handle.">oriCreateState()</a> </dd>
 <dd>
-<a class="el" href="../../db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4" title="Destroy the specified Orion state.">oriFreeState()</a> </dd>
+<a class="el" href="../../db/de0/group__group__Meta.html#ga7eda3080bed9d53534df170b4215aa87" title="Destroy the specified Orion state.">oriDestroyState()</a> </dd>
 <dd>
 <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a> </dd></dl>
 
@@ -201,7 +201,7 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the resulting Orion state handle.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0" title="An opaque structure that holds all public state.">oriState</a> </dd>
 <dd>
-<a class="el" href="../../db/de0/group__group__Meta.html#ga5f105d2506bee0448f5ada5a13747cc4" title="Destroy the specified Orion state.">oriFreeState()</a> </dd></dl>
+<a class="el" href="../../db/de0/group__group__Meta.html#ga7eda3080bed9d53534df170b4215aa87" title="Destroy the specified Orion state.">oriDestroyState()</a> </dd></dl>
 
 </div>
 </div>
@@ -278,14 +278,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5f105d2506bee0448f5ada5a13747cc4" name="ga5f105d2506bee0448f5ada5a13747cc4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5f105d2506bee0448f5ada5a13747cc4">&#9670;&nbsp;</a></span>oriFreeState()</h2>
+<a id="ga7eda3080bed9d53534df170b4215aa87" name="ga7eda3080bed9d53534df170b4215aa87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7eda3080bed9d53534df170b4215aa87">&#9670;&nbsp;</a></span>oriDestroyState()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void oriFreeState </td>
+          <td class="memname">void oriDestroyState </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *&#160;</td>
           <td class="paramname"><em>state</em></td><td>)</td>
@@ -293,7 +293,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Calling this function clears all data stored in <code>state</code> and destroys all Orion objects registered to it.</p>
+<p >Calling this function clears all data stored in <code>state</code> and destroys all Orion and Vulkan objects registered to it.</p>
+<dl class="section warning"><dt>Warning</dt><dd>If you destroy a Vulkan object that was created with <code>state</code> before calling this function, make sure to set the handle to the object to <b>NULL</b> (e.g. destroying a logical device -&gt; set the VkDevice struct to NULL). Otherwise, an exception will occur when this function is called.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>handle to the state object to be destroyed.</td></tr>
@@ -347,7 +348,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Wed Jun 1 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Thu Jun 2 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>
