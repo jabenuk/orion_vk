@@ -45,5 +45,9 @@ echo -e "-----------------------------------------------"
 echo -e "Running command:\n${VALGRIND_CMD}"
 echo -e "-----------------------------------------------\n"
 
+# set Vulkan env variable
+# this obviously won't work for everyone, this is mostly for my setup
+export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
+
 # execute command
 ${VALGRIND_CMD}

@@ -59,10 +59,10 @@
  * are @b not stored inside oriState, but rather this struct contains @b handles to said Vulkan objects, so that it can manage them.
  * For example, you can create a Vulkan instance using data from an oriState object with oriCreateInstance(), but the function @b returns
  * the instance so you can deal with it on your end. However, the function also returns the instance to the state, so that, when you call
- * oriFreeState(), the instance (and any other instances made with this state) will implicitly be freed.
+ * oriDestroyState(), the instance (and any other instances made with this state) will implicitly be freed.
  *
  * @sa oriCreateState()
- * @sa oriFreeState()
+ * @sa oriDestroyState()
  * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a>
  *
  * @ingroup group_Meta
@@ -135,7 +135,7 @@ typedef enum oriReturnStatus {
 
 
 // ============================================================================
-// *****        CORE VULKAN API ABSTRACTIONS                              *****
+// *****        CORE VULKAN API ABSTRACTIONS: INSTANCES                   *****
 // ============================================================================
 
 /**
@@ -163,6 +163,12 @@ oriReturnStatus oriCreateInstance(
     const void *ext,
     VkInstance *instancePtr
 );
+
+
+
+// ============================================================================
+// *****        CORE VULKAN API ABSTRACTIONS: DEBUGGING                   *****
+// ============================================================================
 
 /**
  * @brief Create a Vulkan debug messenger that will be managed by @c state.
@@ -200,6 +206,114 @@ oriReturnStatus oriCreateDebugMessenger(
     VkDebugUtilsMessengerEXT *debugMessengerPtr,
     VkDebugUtilsMessageSeverityFlagBitsEXT severities,
     VkDebugUtilsMessageTypeFlagBitsEXT types
+);
+
+
+
+// ============================================================================
+// *****        CORE VULKAN API ABSTRACTIONS: DEVICES                     *****
+// ============================================================================
+
+/**
+ * @brief A user-defined function to check the suitability of a physical Vulkan device.
+ *
+ * A function of this signature is to be used to select suitable graphics device/s to be used in the application.
+ *
+ * Devices reported to this function will only include those with Vulkan support. If there are no graphics devices with
+ * Vulkan support, this function <b>will not be called.</b>
+ *
+ * You should return @b true if the device supports the extensions you require, the device supports the required queue
+ * families, etc. You can make the function as simple or as advanced as you need - just make sure you return true if the
+ * device is suitable and false if it isn't.
+ *
+ * @param device the device to be queried
+ * @return true if the device is suitable to be used.
+ * @return false if the device is not suitable to be used.
+ *
+ * @ingroup group_VkAbstractions_Core_Devices
+ *
+ */
+typedef bool (* oriPhysicalDeviceSuitabilityCheckFunc)(
+    VkPhysicalDevice device
+);
+
+/**
+ * @brief Get a list of all devices that support Vulkan and are considered suitable for the application.
+ *
+ * This function retrieves an array of physical devices accessible to a Vulkan instance that are considered suitable
+ * for the application.
+ *
+ * @note If no physical devices with Vulkan support are found, the function will return an OK status but @c count will be set to
+ * @b 0.
+ *
+ * @param instance Vulkan instance to query
+ * @param count pointer to a variable into which the number of suitable physical devices will be returned.
+ * @param devices pointer to an array into which the list of suitable physical devices will be returned. <b>This array will be allocated by the function.</b>
+ * @param checkFunc an @ref oriPhysicalDeviceSuitabilityCheckFunc function pointer that returns true if a device is suitable and false
+ * if not.
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
+ *
+ * @ingroup group_VkAbstractions_Core_Devices
+ *
+ */
+oriReturnStatus oriEnumerateSuitablePhysicalDevices(
+    VkInstance instance,
+    unsigned int *count,
+    VkPhysicalDevice **devices,
+    oriPhysicalDeviceSuitabilityCheckFunc checkFunc
+);
+
+/**
+ * @brief Create a logical device to connect to one or more physical devices.
+ *
+ * The resulting logical device will be managed by @c state.
+ *
+ * If @c physicalDeviceCount is 1, then @c physicalDevices is a pointer to the desired physical device.
+ * If @c physicalDeviceCount is more than 1, then @c physicalDevices is an array of desired physical devices in the same device group.
+ * @c physicalDeviceCount @b cannot be 0.
+ *
+ * See <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html">Vulkan Docs/VkDeviceCreateInfo</a> and, occasionally,
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html">Vulkan Docs/VkDeviceGroupDeviceCreateInfo</a>
+ * for more info.
+ *
+ * @param state the state which will manage the resulting logical device.
+ * @param physicalDeviceCount the amount of physical devices to create the logical device for.
+ * @param physicalDevices either a pointer to the physical device or an array of physical devices (see above).
+ * @param device pointer to the variable into which the resulting device will be returned.
+ * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
+ * @param queueCreateInfoCount the size of the @c queueCreateInfos array.
+ * @param queueCreateInfos array of
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html">VkDeviceQueueCreateInfo</a> structures describing
+ * the queues that are requested along with the logical device.
+ * @param extensionCount the size of the @c extensionNames array.
+ * @param extensionNames array of null-terminated UTF-8 strings containing the names of device extensions to be enabled for the logical device.
+ * @param enabledFeatures NULL or a pointer to a
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">VkPhysicalDeviceFeatures</a> structure containing
+ * flags of device features to be enabled.
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
+ *
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html">Vulkan Docs/VkDeviceCreateInfo</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html">Vulkan Docs/VkDeviceGroupDeviceCreateInfo</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateDevice.html">Vulkan Docs/vkCreateDevice()</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html">Vulkan Docs/VkDeviceQueueCreateInfo</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">Vulkan Docs/VkPhysicalDeviceFeatures</a>
+ *
+ * @ingroup group_VkAbstractions_Core_Devices
+ *
+ */
+oriReturnStatus oriCreateLogicalDevice(
+    oriState *state,
+    unsigned int physicalDeviceCount,
+    VkPhysicalDevice *physicalDevices,
+    VkDevice *device,
+    const void *ext,
+    unsigned int queueCreateInfoCount,
+    VkDeviceQueueCreateInfo *queueCreateInfos,
+    unsigned int extensionCount,
+    const char **extensionNames,
+    VkPhysicalDeviceFeatures *enabledFeatures
 );
 
 
@@ -487,7 +601,7 @@ oriReturnStatus oriSetFlag(
  * @return the resulting Orion state handle.
  *
  * @sa oriState
- * @sa oriFreeState()
+ * @sa oriDestroyState()
  *
  * @ingroup group_Meta
  *
@@ -497,7 +611,11 @@ oriState *oriCreateState();
 /**
  * @brief Destroy the specified Orion state.
  *
- * Calling this function clears all data stored in @c state and destroys all Orion objects registered to it.
+ * Calling this function clears all data stored in @c state and destroys all Orion and Vulkan objects registered to it.
+ *
+ * @warning If you destroy a Vulkan object that was created with @c state before calling this function, make sure to set the
+ * handle to the object to @b NULL (e.g. destroying a logical device -> set the VkDevice struct to NULL).
+ * Otherwise, an exception will occur when this function is called.
  *
  * @param state handle to the state object to be destroyed.
  *
@@ -506,7 +624,7 @@ oriState *oriCreateState();
  * @ingroup group_Meta
  *
  */
-void oriFreeState(
+void oriDestroyState(
     oriState *state
 );
 

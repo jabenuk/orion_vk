@@ -62,22 +62,22 @@
         /* sidenote: using a common iterator like 'i' will render this macro useless in most for loops. */ \
         /*           so... we use a less likely one instead: */ \
         for (unsigned int UwU = 0; UwU < len; UwU++) { \
-            oldarr[UwU] = array[UwU]; \
+            oldarr[UwU] = (array)[UwU]; \
         } \
         \
         len++; \
         \
-        free(array); \
-        array = calloc(len, sizeof(type)); \
+        array = realloc(array, len * sizeof(type)); \
+        memset(array, 0, len * sizeof(type)); \
         if (!array) printf("Memory error -- calloc returned null!\n");\
         \
         /* copy old array contents into newly allocated array */ \
         for (unsigned int UwU = 0; UwU < len; UwU++) { \
-            array[UwU] = oldarr[UwU]; \
+            (array)[UwU] = oldarr[UwU]; \
         } \
         \
         /* append value onto the end of the array */ \
-        array[len - 1] = value; \
+        (array)[len - 1] = value; \
     }
 
 // remove the element at index from a dynamically allocated array
@@ -87,11 +87,11 @@
 #define _ori_RemoveFromDArray(array, len, index) \
     { \
         if (index <= len) { \
-            array[index] = 0; \
+            (array)[index] = 0; \
             \
             /* shift all later elements one to the left, filling the NULL 'gap' */ \
             for (unsigned int UwU = index; UwU < len - 1; UwU++) { \
-                array[UwU] = array[UwU + 1]; \
+                (array)[UwU] = (array)[UwU + 1]; \
             } \
             \
             len--; \
@@ -104,13 +104,13 @@
 #define _ori_RemoveDArrayDuplicates(array, len) \
     { \
         for (unsigned int UwU = 0; UwU < len - 1; UwU++) { \
-            if (array[UwU] != array[UwU + 1]) { \
+            if ((array)[UwU] != (array)[UwU + 1]) { \
                 continue; \
             } \
             /* damn! we need to think of another unlikely name for an iterator. */ \
             /* that's easy: */ \
             for (unsigned int OwOWhatsThis = UwU + 1; OwOWhatsThis < len - 1; OwOWhatsThis++) { \
-                array[OwOWhatsThis] = array[OwOWhatsThis + 1]; \
+                (array)[OwOWhatsThis] = (array)[OwOWhatsThis + 1]; \
             } \
             /* annoyingly long but... it is a bit funny. */ \
             len--; \

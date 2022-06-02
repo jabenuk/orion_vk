@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <glfw/include/GLFW/glfw3.h>
 
 #include "orion.h"
+#include <glfw/include/GLFW/glfw3.h>
 
 #define WINDOW_NAME "Vulkan-Orion application"
 #define WINDOW_WIDTH 640
@@ -12,46 +12,40 @@
 #define DBGMSNGR_TYPES VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
 
 GLFWwindow *wMain = NULL;
+VkSurfaceKHR sMain = NULL;
 
 oriState *state = NULL;
+
 VkInstance instance = NULL;
 VkDebugUtilsMessengerEXT messenger = NULL;
+VkDevice logicalDevice = NULL;
 
-void Initialise();      // library flags, initialisation
-void CreateWindow();    // create window (wMain)
-void CreateState();     // create state (state)
-void CreateInstance();  // create instance (instance)
-void Terminate();       // terminate the program
+bool physicalDeviceSuitabilityCheckFunc(VkPhysicalDevice device);
 
 int main() {
-    // initialisation and creation logic
-    Initialise();
-    CreateWindow();
-    CreateState();
-    CreateInstance();
+    //
+    // initialise program
+    //
 
-    // terminate program
-    Terminate();
-
-    return 0;
-}
-
-void Initialise() {
     oriEnableLibDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
 
     oriSetFlag(ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS, true);
 
     glfwInit();
-}
 
-void CreateWindow() {
+    //
+    // create GLFW window
+    //
+
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     wMain = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, NULL, NULL);
-}
 
-void CreateState() {
+    //
+    // create Orion state
+    //
+
     state = oriCreateState();
     oriDefineStateApplicationInfo(state, NULL, VK_API_VERSION_1_3, WINDOW_NAME, VK_MAKE_VERSION(1, 0, 0), "No Engine", VK_MAKE_VERSION(1, 0, 0));
 
@@ -73,16 +67,56 @@ void CreateState() {
 
     // specify debug suppressions
     oriSpecifyInstanceDebugMessages(state, DBGMSNGR_SEVERITIES, DBGMSNGR_TYPES);
-}
 
-void CreateInstance() {
+    //
+    // create a Vulkan instance
+    //
+
     oriCreateInstance(state, NULL, &instance);
 
     oriCreateDebugMessenger(state, &instance, NULL, &messenger, DBGMSNGR_SEVERITIES, DBGMSNGR_TYPES);
-}
 
-void Terminate() {
-    oriFreeState(state);
+    //
+    // create a surface with GLFW
+    //
+
+    if (glfwCreateWindowSurface(instance, wMain, NULL, &sMain)) {
+        printf("FATAL!! Failed to create window surface!\n");
+        return -1;
+    }
+
+    //
+    // get an array of all physical devices and create a logical device with the first one
+    //
+
+    // enumerate suitable devices
+    VkPhysicalDevice *devices;
+    unsigned int devicecount;
+    oriEnumerateSuitablePhysicalDevices(instance, &devicecount, &devices, physicalDeviceSuitabilityCheckFunc);
+
+    // create logical device
+    oriCreateLogicalDevice(state, 1, &(devices[0]), &logicalDevice, NULL, 0, NULL, 0, NULL, NULL);
+
+    //
+    // terminate
+    //
+
+    free(devices);
+    devices = NULL;
+
+    // because the window surface wasn't created with an Orion function, we need to manually destroy it
+    vkDestroySurfaceKHR(instance, sMain, NULL);
+
+    vkDestroyDevice(logicalDevice, NULL);
+    logicalDevice = NULL;
+
+    oriDestroyState(state);
 
     glfwTerminate();
+
+    return 0;
+}
+
+bool physicalDeviceSuitabilityCheckFunc(VkPhysicalDevice device) {
+    return true;
 }

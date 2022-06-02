@@ -21,3 +21,8 @@
 # everything in the GitHub folder should be tracked
 
 !.github/**
+
+#
+# valgrind core dumps
+
+vgcore.*

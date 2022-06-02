@@ -194,7 +194,7 @@ bool oriCheckLayerAvailability(const char *layer) {
     unsigned int layerCount = 0;
     vkEnumerateInstanceLayerProperties(&layerCount, NULL);
 
-    VkLayerProperties *availableLayers = malloc(layerCount * sizeof(VkLayerProperties));
+    VkLayerProperties *availableLayers = calloc(layerCount, sizeof(VkLayerProperties));
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers);
 
     bool found = false;
@@ -270,7 +270,7 @@ bool oriCheckInstanceExtensionAvailability(const char *extension, const char *la
     unsigned int extCount = 0;
     vkEnumerateInstanceExtensionProperties(layer, &extCount, NULL);
 
-    VkExtensionProperties *availableExts = malloc(extCount * sizeof(VkExtensionProperties));
+    VkExtensionProperties *availableExts = calloc(extCount, sizeof(VkExtensionProperties));
     vkEnumerateInstanceExtensionProperties(layer, &extCount, availableExts);
 
     bool found = false;

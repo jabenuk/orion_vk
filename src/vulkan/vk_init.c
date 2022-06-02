@@ -44,7 +44,7 @@
 
 
 // ============================================================================
-// *****        CORE VULKAN API ABSTRACTIONS                              *****
+// *****        CORE VULKAN API ABSTRACTIONS: INSTANCES                   *****
 // ============================================================================
 
 /**
@@ -172,6 +172,200 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
 
     // add given instance pointer to state array
     _ori_AppendOntoDArray(VkInstance *, state->arrays.instances, state->arrays.instancesCount, instancePtr);
+
+    _ori_Notification("%s", logstr);
+
+    return ORION_RETURN_STATUS_OK;
+}
+
+
+
+// ============================================================================
+// *****        CORE VULKAN API ABSTRACTIONS: DEVICES                     *****
+// ============================================================================
+
+/**
+ * @brief Get a list of all devices that support Vulkan and are considered suitable for the application.
+ *
+ * This function retrieves an array of physical devices accessible to a Vulkan instance that are considered suitable
+ * for the application.
+ *
+ * @param instance Vulkan instance to query
+ * @param count pointer to a variable into which the number of suitable physical devices will be returned.
+ * @param devices pointer to an array into which the list of suitable physical devices will be returned.
+ * @param checkFunc an @ref oriPhysicalDeviceSuitabilityCheckFunc function pointer that returns true if a device is suitable and false
+ * if not.
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
+ *
+ * @ingroup group_VkAbstractions_Core_Devices
+ *
+ */
+oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigned int *count, VkPhysicalDevice **devices, oriPhysicalDeviceSuitabilityCheckFunc checkFunc) {
+    if (!count || !devices || !checkFunc) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+    }
+
+    // c = number of available devices
+    // cr = number of suitable devices (will be returned into count)
+    unsigned int c = 0, cr = 0;
+
+    // get number of available devices
+    if (vkEnumeratePhysicalDevices(instance, &c, NULL)) {
+        _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
+        return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
+    }
+
+    // no vulkan-supported GPUs were found
+    if (!c) {
+        *count = 0;
+
+        _ori_Warning("%s", "couldn't find physical device with Vulkan support");
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    // d = array of available devices
+    VkPhysicalDevice *d = calloc(c, sizeof(VkPhysicalDevice));
+    if (!d) {
+        printf("Memory error -- calloc returned null!\n");
+    }
+
+    // get array of available devices
+    if (vkEnumeratePhysicalDevices(instance, &c, d)) {
+        _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
+        return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
+    }
+
+    // initialise devices to NULL
+    *devices = NULL;
+
+    // iterate through all available devices
+    for (unsigned int i = 0; i < c; i++) {
+        // check if each device is suitable
+        if (checkFunc(d[i])) {
+            _ori_AppendOntoDArray(VkPhysicalDevice, *devices, cr, d[i]);
+        }
+    }
+
+    // now cr has been updated, we check if it is 0 (i.e. no devices were deemed suitable)
+    if (!cr) {
+        *count = 0;
+
+        // make sure we free the array of available devices despite returning early
+        // the parameter array would not have been allocated if this is reached so we don't need to worry about that
+        free(d);
+        d = NULL;
+
+        _ori_Warning("found %d available device/s, but none were determined suitable", c);
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    _ori_DebugLog("found %d available device%s, of which %d %s determined suitable", c, (c != 1) ? "s" : "", cr, (cr != 1) ? "were" : "was");
+
+    // return cr into count
+    *count = cr;
+
+    free(d);
+    d = NULL;
+
+    return ORION_RETURN_STATUS_OK;
+}
+
+/**
+ * @brief Create a logical device to connect to one or more physical devices.
+ *
+ * The resulting logical device will be managed by @c state.
+ *
+ * If @c physicalDeviceCount is 1, then @c physicalDevices is a pointer to the desired physical device.
+ * If @c physicalDeviceCount is more than 1, then @c physicalDevices is an array of desired physical devices in the same device group.
+ * @c physicalDeviceCount @b cannot be 0.
+ *
+ * See <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html">Vulkan Docs/VkDeviceCreateInfo</a> and, occasionally,
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html">Vulkan Docs/VkDeviceGroupDeviceCreateInfo</a>
+ * for more info.
+ *
+ * @param state the state which will manage the resulting logical device.
+ * @param physicalDeviceCount the amount of physical devices to create the logical device for.
+ * @param physicalDevices either a pointer to the physical device or an array of physical devices (see above).
+ * @param device pointer to the variable into which the resulting device will be returned.
+ * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
+ * @param queueCreateInfoCount the size of the @c queueCreateInfos array.
+ * @param queueCreateInfos array of
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html">VkDeviceQueueCreateInfo</a> structures describing
+ * the queues that are requested along with the logical device.
+ * @param extensionCount the size of the @c extensionNames array.
+ * @param extensionNames array of null-terminated UTF-8 strings containing the names of device extensions to be enabled for the logical device.
+ * @param enabledFeatures NULL or a pointer to a
+ * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">VkPhysicalDeviceFeatures</a> structure containing
+ * flags of device features to be enabled.
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
+ *
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html">Vulkan Docs/VkDeviceCreateInfo</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html">Vulkan Docs/VkDeviceGroupDeviceCreateInfo</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateDevice.html">Vulkan Docs/vkCreateDevice()</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html">Vulkan Docs/VkDeviceQueueCreateInfo</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">Vulkan Docs/VkPhysicalDeviceFeatures</a>
+ *
+ * @ingroup group_VkAbstractions_Core_Devices
+ *
+ */
+oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDeviceCount, VkPhysicalDevice *physicalDevices, VkDevice *device, const void *ext, unsigned int queueCreateInfoCount, VkDeviceQueueCreateInfo *queueCreateInfos, unsigned int extensionCount, const char **extensionNames, VkPhysicalDeviceFeatures *enabledFeatures) {
+    if (!state || !physicalDeviceCount || !physicalDevices || !device) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+    }
+
+    char logstr[768];
+    memset(logstr, 0, sizeof(logstr));
+    snprintf(logstr, 768, "VkDevice created into %p and will be managed by state object at location %p", device, state);
+
+    VkDeviceCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.pNext = ext;
+
+    // append queue info to log string
+    {
+        char s[768];
+        snprintf(s, 768, "\n\t%d queues were requested", queueCreateInfoCount);
+        strncat(logstr, s, 767);
+    }
+
+    createInfo.queueCreateInfoCount = queueCreateInfoCount;
+    createInfo.pQueueCreateInfos = queueCreateInfos;
+
+    // append device extension info to log string
+    {
+        char s[768];
+        snprintf(s, 768, "\n\t%d device extensions were enabled", extensionCount);
+        strncat(logstr, s, 767);
+    }
+
+    createInfo.enabledExtensionCount = extensionCount;
+    createInfo.ppEnabledExtensionNames = extensionNames;
+
+    createInfo.pEnabledFeatures = enabledFeatures;
+
+    // this won't be updated if physicalDeviceCount is 1
+    VkDeviceGroupDeviceCreateInfo groupCreateInfo = {};
+
+    // append a device group create info to the device create info if there are multiple physical devices
+    if (physicalDeviceCount > 1) {
+        groupCreateInfo.physicalDeviceCount = physicalDeviceCount;
+        groupCreateInfo.pPhysicalDevices = physicalDevices;
+
+        createInfo.pNext = &groupCreateInfo;
+    }
+
+    // we pass the first element of physicalDevices to vkCreateDevice - even if multiple are specified:
+    // "if physicalDeviceCount is not 0, the physicalDevice parameter of vkCreateDevice must be an element of pPhysicalDevices" - from VkDeviceGroupDeviceCreateInfo(3)
+    if (vkCreateDevice(*physicalDevices, &createInfo, NULL, device)) {
+        _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
+        return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
+    }
+
+    _ori_AppendOntoDArray(VkDevice *, state->arrays.logicalDevices, state->arrays.logicalDevicesCount, device);
 
     _ori_Notification("%s", logstr);
 

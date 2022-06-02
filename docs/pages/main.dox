@@ -34,6 +34,7 @@
  *  - @ref group_VkAbstractions "Vulkan abstractions": <i>abstractions of the Vulkan API.</i>
  *      - @ref group_VkAbstractions_Core "Core Vulkan API": <i>core, general Vulkan functionality.</i>
  *          - @ref group_VkAbstractions_Core_Debugging "Debugging": <i>utilities to debug Vulkan.</i>
+ *          - @ref group_VkAbstractions_Core_Devices "Vulkan device management": <i>Vulkan device management.</i>
  *      - @ref group_VkAbstractions_Layers "Layers and extensions": <i>Vulkan extensibility.</i>
  *
  * @section section_main_Debugging Debugging

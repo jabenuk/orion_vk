@@ -87,7 +87,7 @@ typedef struct _ori_DebugUtilsMessengerEXT {
  * However, it also holds state related to Vulkan, such as the application info.
  *
  * @sa oriCreateState()
- * @sa oriFreeState()
+ * @sa oriDestroyState()
  *
  * @ingroup group_Meta
  *
@@ -98,6 +98,7 @@ typedef struct oriState {
     struct {
         VkInstance **instances;                         unsigned int instancesCount;
         _ori_DebugUtilsMessengerEXT *debugMessengers;   unsigned int debugMessengersCount;
+        VkDevice **logicalDevices;                      unsigned int logicalDevicesCount;
     } arrays;
 
     VkApplicationInfo appInfo;

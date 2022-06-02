@@ -71,7 +71,7 @@ _ori_Lib _orion = {};
  * @return the resulting Orion state handle.
  *
  * @sa oriState
- * @sa oriFreeState()
+ * @sa oriDestroyState()
  *
  * @ingroup group_Meta
  *
@@ -99,7 +99,7 @@ oriState *oriCreateState() {
  * @ingroup group_Meta
  *
  */
-void oriFreeState(oriState *state) {
+void oriDestroyState(oriState *state) {
     if (!state) {
         _ori_ThrowError(ORERR_NULL_POINTER);
         return;
@@ -121,7 +121,9 @@ void oriFreeState(oriState *state) {
     // created by the user (at least not using Orion functions)
     if (DestroyDebugUtilsMessengerEXT) {
         for (unsigned int i = 0; i < state->arrays.debugMessengersCount; i++) {
-            DestroyDebugUtilsMessengerEXT(*(state->arrays.debugMessengers[i].instance), *(state->arrays.debugMessengers[i].handle), NULL);
+            if (*state->arrays.debugMessengers[i].handle) {
+                DestroyDebugUtilsMessengerEXT(*(state->arrays.debugMessengers[i].instance), *(state->arrays.debugMessengers[i].handle), NULL);
+            }
 
             _ori_DebugLog("VkDebugUtilsMessengerEXT at %p was freed by state object at location %p", state->arrays.debugMessengers[i].handle, state);
         }
@@ -129,9 +131,20 @@ void oriFreeState(oriState *state) {
     // note: this may have to be done inside the above if statement, but it seems to work fine here
     _ori_FreeDArray(state->arrays.debugMessengers, state->arrays.debugMessengersCount);
 
+    // destroy devices
+    for (unsigned int i = 0; i < state->arrays.logicalDevicesCount; i++) {
+        if (*state->arrays.logicalDevices[i]) {
+            vkDestroyDevice(*state->arrays.logicalDevices[i], NULL);
+        }
+        _ori_DebugLog("VkDevice at %p was freed by state object at location %p", state->arrays.logicalDevices[i], state);
+    }
+    _ori_FreeDArray(state->arrays.logicalDevices, state->arrays.logicalDevicesCount);
+
     // destroy instances
     for (unsigned int i = 0; i < state->arrays.instancesCount; i++) {
-        vkDestroyInstance(*state->arrays.instances[i], NULL);
+        if (*state->arrays.instances[i]) {
+            vkDestroyInstance(*state->arrays.instances[i], NULL);
+        }
         _ori_DebugLog("VkInstance at %p was freed by state object at location %p", state->arrays.instances[i], state);
     }
     _ori_FreeDArray(state->arrays.instances, state->arrays.instancesCount)
@@ -141,6 +154,7 @@ void oriFreeState(oriState *state) {
     _ori_FreeDArray(state->instanceCreateInfo.enabledLayers, state->instanceCreateInfo.enabledLayerCount);
 
     // finally, free state pointer
+    _ori_Notification("freed state at %p", state);
     free(state);
     state = NULL;
 }

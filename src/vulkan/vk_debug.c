@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 
@@ -45,7 +46,7 @@
 
 
 // ============================================================================
-// *****        CORE VULKAN API ABSTRACTIONS                              *****
+// *****        CORE VULKAN API ABSTRACTIONS: DEBUGGING                   *****
 // ============================================================================
 
 /**
