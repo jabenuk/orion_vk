@@ -106,6 +106,11 @@ $(document).ready(function(){initNavTree('db/d82/page_Debugging.html','../../');
 <div class="contents">
 <div class="textblock"><p >This page refers to 'library' debugging; it is related to Orion errors and function returns, etc. For Vulkan debugging (e.g. debug utils) see the <a class="el" href="../../d9/d7f/group__group__VkAbstractions__Core__Debugging.html"><b>Core</b> Vulkan API/Debugging</a> section.</p>
 <p >For more function-specific documentation, see <a class="el" href="../../d2/d8c/group__group__Errors.html">Core Orion functionality/Error handling</a>.</p>
+<h1><a class="anchor" id="section_Debugging_Disabling"></a>
+Disabling debug output</h1>
+<p >Outputting debug information causes a lot of string manipulation functions to be called by Orion, like <code>strncpy()</code> and <code>snprintf()</code>. If you want to avoid this, you can do so by building with the CMake flag <code>-DORION_OPTIMISED=ON</code>.</p>
+<p >This method stops messages of <em>VERBOSE</em>, <em>NOTIF</em> and <em>WARNING</em> type from being processed. <b>Errors (message types <em>ERROR</em> and <em>FATAL</em>) will always be processed.</b> For information about the debug message types in Orion, see the <a class="el" href="../../db/d82/page_Debugging.html#section_Debugging_ErrorCallback">Error callback</a> section below.</p>
+<dl class="section note"><dt>Note</dt><dd>Vulkan debug messengers will <b>not</b> be affected by this macro.</dd></dl>
 <h1><a class="anchor" id="section_Debugging_ErrorCallback"></a>
 Error callback</h1>
 <p >Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc. Despite the name, this callback is not just used for errors, but also debug log messages, notifications, and warnings, so it's wise to consider it a 'debug callback' instead of specifically an 'error callback'. <em>(Although it is referred to as an 'error callback' in this documentation)</em>.</p>
@@ -140,7 +145,7 @@ Error callback</h1>
 <div class="line"> </div>
 <div class="line">    printf(<span class="stringliteral">&quot;-----\nmessage: %s\ncode: %d (%s)\nseverity: %s\n&quot;</span>, message, code, name, severitystr);</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup__group__Errors_html_ga46ca29226d89a2b852dc639fb351a61d"><div class="ttname"><a href="../../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">oriErrorSeverityBit</a></div><div class="ttdeci">oriErrorSeverityBit</div><div class="ttdoc">The severity of a debug message.</div><div class="ttdef"><b>Definition:</b> orion.h:102</div></div>
+<div class="ttc" id="agroup__group__Errors_html_ga46ca29226d89a2b852dc639fb351a61d"><div class="ttname"><a href="../../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d">oriErrorSeverityBit</a></div><div class="ttdeci">oriErrorSeverityBit</div><div class="ttdoc">The severity of a debug message.</div><div class="ttdef"><b>Definition:</b> orion.h:109</div></div>
 </div><!-- fragment --><p >Note that debug messages of type <code>VERBOSE</code>, <code>NOTIF</code>, and <code>WARNING</code> do not report any value to the <code>name</code> or <code>code</code> parameters.</p>
 <p >You do not need to do any filtering in your callback, this is handled by the library already. But, of course, you could filter out specific error codes or names if you so wish. It's up to you.</p>
 <p >The <code>pointer</code> parameter allows you to pass any value to your callback. You specify this value in the call to <a class="el" href="../../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0" title="Set the global Orion error callback function.">oriSetErrorCallback()</a>.</p>
@@ -155,7 +160,7 @@ Error callback</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ORION_ERROR_SEVERITY_FATAL_BIT   </td><td class="markdownTableBodyNone">Errors that the program <b>cannot</b> <b>recover</b> <b>from</b>.    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">ORION_ERROR_SEVERITY_ERROR_BIT   </td><td class="markdownTableBodyNone">Significant but recoverable errors.    </td></tr>
+<td class="markdownTableBodyNone">ORION_ERROR_SEVERITY_ERROR_BIT   </td><td class="markdownTableBodyNone">Significant but (potentially) recoverable errors.    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ORION_ERROR_SEVERITY_WARNING_BIT   </td><td class="markdownTableBodyNone">Events that may cause problems, but are not directly too significant.    </td></tr>
 <tr class="markdownTableRowEven">
@@ -178,7 +183,7 @@ Function return statuses</h1>
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Thu Jun 2 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Fri Jun 3 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>
