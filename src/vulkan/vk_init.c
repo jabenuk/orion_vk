@@ -79,23 +79,27 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
     // specify layers to be enabled
     createInfo.enabledLayerCount = state->instanceCreateInfo.enabledLayerCount;
 
-    char logstr[768];
-    memset(logstr, 0, sizeof(logstr));
-    snprintf(logstr, 768, "VkInstance created into %p and will be managed by state object at location %p", instancePtr, state);
+#   ifdef __oridebug
+        char logstr[768];
+        memset(logstr, 0, sizeof(logstr));
+        snprintf(logstr, 768, "VkInstance created into %p and will be managed by state object at location %p", instancePtr, state);
+#   endif
 
     // the support of these layers was already checked in oriFlagLayerEnabled().
     if (state->instanceCreateInfo.enabledLayerCount) {
-        char logstr_layer[768];
-        snprintf(logstr_layer, 768, "\n\tlayers enabled for this instance:\n");
+#       ifdef __oridebug
+            char logstr_layer[768];
+            snprintf(logstr_layer, 768, "\n\tlayers enabled for this instance:\n");
 
-        // add to log message
-        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledLayerCount; i++) {
-            char s[768];
-            snprintf(s, 768, "\t\t- name '%s'%s", state->instanceCreateInfo.enabledLayers[i], (i < state->instanceCreateInfo.enabledLayerCount - 1) ? "\n" : "");
-            strncat(logstr_layer, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
-        }
+            // add to log message
+            for (unsigned int i = 0; i < state->instanceCreateInfo.enabledLayerCount; i++) {
+                char s[768];
+                snprintf(s, 768, "\t\t- name '%s'%s", state->instanceCreateInfo.enabledLayers[i], (i < state->instanceCreateInfo.enabledLayerCount - 1) ? "\n" : "");
+                strncat(logstr_layer, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
+            }
 
-        strncat(logstr, logstr_layer, 767);
+            strncat(logstr, logstr_layer, 767);
+#       endif
 
         createInfo.ppEnabledLayerNames = (const char *const *) state->instanceCreateInfo.enabledLayers;
     } else {
@@ -122,17 +126,19 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
             }
         }
 
-        char logstr_ext[768];
-        snprintf(logstr_ext, 768, "\n\tinstance extensions enabled for this instance:\n");
+#       ifdef __oridebug
+            char logstr_ext[768];
+            snprintf(logstr_ext, 768, "\n\tinstance extensions enabled for this instance:\n");
 
-        // add to log message
-        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
-            char s[768];
-            snprintf(s, 768, "\t\t- name '%s'%s", state->instanceCreateInfo.enabledExtensions[i], (i < state->instanceCreateInfo.enabledExtCount - 1) ? "\n" : "");
-            strncat(logstr_ext, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
-        }
+            // add to log message
+            for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
+                char s[768];
+                snprintf(s, 768, "\t\t- name '%s'%s", state->instanceCreateInfo.enabledExtensions[i], (i < state->instanceCreateInfo.enabledExtCount - 1) ? "\n" : "");
+                strncat(logstr_ext, s, 767); // GCC wants strncat to have one less than the length of dest, so instead of 768, we specify 767.
+            }
 
-        strncat(logstr, logstr_ext, 767);
+            strncat(logstr, logstr_ext, 767);
+#       endif
 
         // any unsupported extensions have now been set to NULL in the array
         createInfo.ppEnabledExtensionNames = (const char *const *) state->instanceCreateInfo.enabledExtensions;
@@ -142,9 +148,11 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
     }
 
     // give a warning if the instance debug messenger was desired but not available; none will be made
-    if (_orion.flags.createInstanceDebugMessengers && !debugUtilsExtFound) {
-        _ori_Warning("%s", "vulkan instance debug messenger requested but the required extension, VK_EXT_debug_utils, was not enabled. none will be created!");
-    }
+#   ifdef __oridebug
+        if (_orion.flags.createInstanceDebugMessengers && !debugUtilsExtFound) {
+            _ori_Warning("%s", "vulkan instance debug messenger requested but the required extension, VK_EXT_debug_utils, was not enabled. none will be created!");
+        }
+#   endif
 
     // populate debug messenger info if necessary
     VkDebugUtilsMessengerCreateInfoEXT dbgmsngrCreateInfo = {};
@@ -162,7 +170,9 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
 
         createInfo.pNext = &dbgmsngrCreateInfo;
 
-        _ori_Notification("appended instance debug messenger for next instance (at %p)", instancePtr);
+#       ifdef __oridebug
+            _ori_Notification("appended instance debug messenger for next instance (at %p)", instancePtr);
+#       endif
     }
 
     if (vkCreateInstance(&createInfo, NULL, instancePtr)) {
@@ -173,7 +183,9 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
     // add given instance pointer to state array
     _ori_AppendOntoDArray(VkInstance *, state->arrays.instances, state->arrays.instancesCount, instancePtr);
 
-    _ori_Notification("%s", logstr);
+#   ifdef __oridebug
+        _ori_Notification("%s", logstr);
+#   endif
 
     return ORION_RETURN_STATUS_OK;
 }
@@ -221,7 +233,10 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
     if (!c) {
         *count = 0;
 
-        _ori_Warning("%s", "couldn't find physical device with Vulkan support");
+#       ifdef __oridebug
+            _ori_Warning("%s", "couldn't find physical device with Vulkan support");
+#       endif
+
         return ORION_RETURN_STATUS_OK;
     }
 
@@ -257,11 +272,16 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
         free(d);
         d = NULL;
 
-        _ori_Warning("found %d available device/s, but none were determined suitable", c);
+#       ifdef __oridebug
+            _ori_Warning("found %d available device/s, but none were determined suitable", c);
+#       endif
+
         return ORION_RETURN_STATUS_OK;
     }
 
-    _ori_DebugLog("found %d available device%s, of which %d %s determined suitable", c, (c != 1) ? "s" : "", cr, (cr != 1) ? "were" : "was");
+#   ifdef __oridebug
+        _ori_DebugLog("found %d available device%s, of which %d %s determined suitable", c, (c != 1) ? "s" : "", cr, (cr != 1) ? "were" : "was");
+#   endif
 
     // return cr into count
     *count = cr;
@@ -317,30 +337,36 @@ oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDev
         return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
     }
 
-    char logstr[768];
-    memset(logstr, 0, sizeof(logstr));
-    snprintf(logstr, 768, "VkDevice created into %p and will be managed by state object at location %p", device, state);
+#   ifdef __oridebug
+        char logstr[768];
+        memset(logstr, 0, sizeof(logstr));
+        snprintf(logstr, 768, "VkDevice created into %p and will be managed by state object at location %p", device, state);
+#   endif
 
     VkDeviceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pNext = ext;
 
     // append queue info to log string
-    {
-        char s[768];
-        snprintf(s, 768, "\n\t%d queues were requested", queueCreateInfoCount);
-        strncat(logstr, s, 767);
-    }
+#   ifdef __oridebug
+        {
+            char s[768];
+            snprintf(s, 768, "\n\t%d queues were requested", queueCreateInfoCount);
+            strncat(logstr, s, 767);
+        }
+#   endif
 
     createInfo.queueCreateInfoCount = queueCreateInfoCount;
     createInfo.pQueueCreateInfos = queueCreateInfos;
 
     // append device extension info to log string
-    {
-        char s[768];
-        snprintf(s, 768, "\n\t%d device extensions were enabled", extensionCount);
-        strncat(logstr, s, 767);
-    }
+#   ifdef __oridebug
+        {
+            char s[768];
+            snprintf(s, 768, "\n\t%d device extensions were enabled", extensionCount);
+            strncat(logstr, s, 767);
+        }
+#   endif
 
     createInfo.enabledExtensionCount = extensionCount;
     createInfo.ppEnabledExtensionNames = extensionNames;
@@ -367,7 +393,9 @@ oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDev
 
     _ori_AppendOntoDArray(VkDevice *, state->arrays.logicalDevices, state->arrays.logicalDevicesCount, device);
 
-    _ori_Notification("%s", logstr);
+#   ifdef __oridebug
+        _ori_Notification("%s", logstr);
+#   endif
 
     return ORION_RETURN_STATUS_OK;
 }

@@ -66,7 +66,10 @@ oriReturnStatus oriFlagLayerEnabled(oriState *state, const char *layer) {
     }
 
     if (!oriCheckLayerAvailability(layer)) {
-        _ori_Warning("specified layer '%s' was not found", layer);
+#       ifdef __oridebug
+            _ori_Warning("specified layer '%s' was not found", layer);
+#       endif
+
         return ORION_RETURN_STATUS_ERROR_NOT_FOUND;
     }
 
@@ -164,8 +167,11 @@ bool oriPruneInstanceExtensions(oriState *state) {
 
         // if this is reached, then we know the extension is not provided by the implementation and there are no layers that could provide it
         // so we know the extension is not available
-        _ori_Warning("specified instance extension '%s' was not found, removed from list of state at %p", curext, state);
         r = true;
+
+#       ifdef __oridebug
+            _ori_Warning("specified instance extension '%s' was not found, removed from list of state at %p", curext, state);
+#       endif
 
         // remove the extension from the list
         _ori_RemoveFromDArray(state->instanceCreateInfo.enabledExtensions, state->instanceCreateInfo.enabledExtCount, i);

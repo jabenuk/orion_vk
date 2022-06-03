@@ -82,13 +82,17 @@ void oriSpecifyInstanceDebugMessages(oriState *state, VkDebugUtilsMessageSeverit
         return;
     }
 
-    if (!_orion.flags.createInstanceDebugMessengers) {
-        _ori_Warning("%s", "instance debug filters were specified but CREATE_INSTANCE_DEBUG_MESSENGERS was not enabled at the time of calling oriSpecifyInstanceDebugMessages()");
-    }
+#   ifdef __oridebug
+        if (!_orion.flags.createInstanceDebugMessengers) {
+            _ori_Warning("%s", "instance debug filters were specified but CREATE_INSTANCE_DEBUG_MESSENGERS was not yet enabled");
+        }
+#   endif
 
-    if (!oriCheckInstanceExtensionEnabled(state, VK_EXT_DEBUG_UTILS_EXTENSION_NAME)) { // VK_EXT_DEBUG_UTILS_EXTENSION_NAME expands to VK_EXT_debug_utils
-        _ori_Warning("instance debug filters were specified but the %s instance extension was not specified at the time of calling oriSpecifyInstanceDebugMessages()", VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-    }
+#   ifdef __oridebug
+        if (!oriCheckInstanceExtensionEnabled(state, VK_EXT_DEBUG_UTILS_EXTENSION_NAME)) { // VK_EXT_DEBUG_UTILS_EXTENSION_NAME expands to VK_EXT_debug_utils
+            _ori_Warning("instance debug filters were specified but the %s instance extension was not yet specified", VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        }
+#   endif
 
     state->instanceCreateInfo.dbgmsngrEnabledMessages.severities = severities;
     state->instanceCreateInfo.dbgmsngrEnabledMessages.types = types;
@@ -158,7 +162,9 @@ oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, c
     // append this into state
     _ori_AppendOntoDArray(_ori_DebugUtilsMessengerEXT, state->arrays.debugMessengers, state->arrays.debugMessengersCount, messengerStruct);
 
-    _ori_Notification("debug messenger created at %p for instance at %p", debugMessengerPtr, instance);
+#   ifdef __oridebug
+        _ori_Notification("debug messenger created at %p for instance at %p", debugMessengerPtr, instance);
+#   endif
 
     return ORION_RETURN_STATUS_OK;
 }

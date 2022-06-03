@@ -82,7 +82,9 @@ oriState *oriCreateState() {
     // init to ensure everything (most importantly linked list heads) start at NULL
     memset(r, 0, sizeof(oriState));
 
-    _ori_DebugLog("state object created into %p", r);
+#   ifdef __oridebug
+        _ori_DebugLog("state object created into %p", r);
+#   endif
 
     return r;
 }
@@ -125,7 +127,9 @@ void oriDestroyState(oriState *state) {
                 DestroyDebugUtilsMessengerEXT(*(state->arrays.debugMessengers[i].instance), *(state->arrays.debugMessengers[i].handle), NULL);
             }
 
-            _ori_DebugLog("VkDebugUtilsMessengerEXT at %p was freed by state object at location %p", state->arrays.debugMessengers[i].handle, state);
+#           ifdef __oridebug
+                _ori_DebugLog("VkDebugUtilsMessengerEXT at %p was freed by state object at location %p", state->arrays.debugMessengers[i].handle, state);
+#           endif
         }
     }
     // note: this may have to be done inside the above if statement, but it seems to work fine here
@@ -136,7 +140,10 @@ void oriDestroyState(oriState *state) {
         if (*state->arrays.logicalDevices[i]) {
             vkDestroyDevice(*state->arrays.logicalDevices[i], NULL);
         }
-        _ori_DebugLog("VkDevice at %p was freed by state object at location %p", state->arrays.logicalDevices[i], state);
+
+#       ifdef __oridebug
+            _ori_DebugLog("VkDevice at %p was freed by state object at location %p", state->arrays.logicalDevices[i], state);
+#       endif
     }
     _ori_FreeDArray(state->arrays.logicalDevices, state->arrays.logicalDevicesCount);
 
@@ -145,7 +152,10 @@ void oriDestroyState(oriState *state) {
         if (*state->arrays.instances[i]) {
             vkDestroyInstance(*state->arrays.instances[i], NULL);
         }
-        _ori_DebugLog("VkInstance at %p was freed by state object at location %p", state->arrays.instances[i], state);
+
+#       ifdef __oridebug
+            _ori_DebugLog("VkInstance at %p was freed by state object at location %p", state->arrays.instances[i], state);
+#       endif
     }
     _ori_FreeDArray(state->arrays.instances, state->arrays.instancesCount)
 
@@ -154,7 +164,10 @@ void oriDestroyState(oriState *state) {
     _ori_FreeDArray(state->instanceCreateInfo.enabledLayers, state->instanceCreateInfo.enabledLayerCount);
 
     // finally, free state pointer
-    _ori_Notification("freed state at %p", state);
+#   ifdef __oridebug
+        _ori_Notification("freed state at %p", state);
+#   endif
+
     free(state);
     state = NULL;
 }
@@ -198,22 +211,24 @@ void oriDefineStateApplicationInfo(oriState *state, const void *ext, unsigned in
         apiVersion
     };
 
-    _ori_DebugLog(
-        "application info of state object at %p updated:\n"
-        "\tAPI version: %d.%d.%d\n"
-        "\tname : %s\n"
-        "\tversion : %d.%d.%d\n"
-        "\tengine name : %s\n"
-        "\tengine version : %d.%d.%d\n"
-        "\textensive structure : at %p",
-        state,
-        VK_VERSION_MAJOR(apiVersion), VK_VERSION_MINOR(apiVersion), VK_VERSION_PATCH(apiVersion),
-        name,
-        VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version),
-        engineName,
-        VK_VERSION_MAJOR(engineVersion), VK_VERSION_MINOR(engineVersion), VK_VERSION_PATCH(engineVersion),
-        ext
-    );
+#   ifdef __oridebug
+        _ori_DebugLog(
+            "application info of state object at %p updated:\n"
+            "\tAPI version: %d.%d.%d\n"
+            "\tname : %s\n"
+            "\tversion : %d.%d.%d\n"
+            "\tengine name : %s\n"
+            "\tengine version : %d.%d.%d\n"
+            "\textensive structure : at %p",
+            state,
+            VK_VERSION_MAJOR(apiVersion), VK_VERSION_MINOR(apiVersion), VK_VERSION_PATCH(apiVersion),
+            name,
+            VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version),
+            engineName,
+            VK_VERSION_MAJOR(engineVersion), VK_VERSION_MINOR(engineVersion), VK_VERSION_PATCH(engineVersion),
+            ext
+        );
+#   endif
 }
 
 
@@ -235,18 +250,29 @@ void oriDefineStateApplicationInfo(oriState *state, const void *ext, unsigned in
  *
  */
 oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
-    char flagstr[128];
+#   ifdef __oridebug
+        char flagstr[128];
+#   endif
 
     switch (flag) {
         default:
-            _ori_Warning("%s", "an invalid flag was given to oriSetFlag(); nothing was updated.");
+#           ifdef __oridebug
+                _ori_Warning("%s", "an invalid flag was given to oriSetFlag(); nothing was updated.");
+#           endif
+
             return ORION_RETURN_STATUS_ERROR_INVALID_ENUM;
         case ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS:
-            strncpy(flagstr, "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS", 127);
+#           ifdef __oridebug
+                strncpy(flagstr, "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS", 127);
+#           endif
+
             _orion.flags.createInstanceDebugMessengers = val;
             break;
     }
 
-    _ori_DebugLog("flag %s set to %d", flagstr, val);
+#   ifdef __oridebug
+        _ori_DebugLog("flag %s set to %d", flagstr, val);
+#   endif
+
     return ORION_RETURN_STATUS_OK;
 }

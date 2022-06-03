@@ -6,6 +6,16 @@
  *
  * For more function-specific documentation, see @ref group_Errors "Core Orion functionality/Error handling".
  *
+ * @section section_Debugging_Disabling Disabling debug output
+ *
+ * Outputting debug information causes a lot of string manipulation functions to be called by Orion, like @c strncpy() and @c snprintf().
+ * If you want to avoid this, you can do so by building with the CMake flag @c -DORION_OPTIMISED=ON.
+ *
+ * This method stops messages of @e VERBOSE, @e NOTIF and @e WARNING type from being processed. <b>Errors (message types @e ERROR and @e FATAL) will always be processed.</b>
+ * For information about the debug message types in Orion, see the @ref section_Debugging_ErrorCallback "Error callback" section below.
+ *
+ * @note Vulkan debug messengers will @b not be affected by this macro.
+ *
  * @section section_Debugging_ErrorCallback Error callback
  *
  * Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc.
@@ -74,7 +84,7 @@
  * | List of available error severities     | Description                                                           |
  * | -------------------------------------- | --------------------------------------------------------------------- |
  * | ORION_ERROR_SEVERITY_FATAL_BIT         | Errors that the program @b cannot @b recover @b from.                 |
- * | ORION_ERROR_SEVERITY_ERROR_BIT         | Significant but recoverable errors.                                   |
+ * | ORION_ERROR_SEVERITY_ERROR_BIT         | Significant but (potentially) recoverable errors.                     |
  * | ORION_ERROR_SEVERITY_WARNING_BIT       | Events that may cause problems, but are not directly too significant. |
  * | ORION_ERROR_SEVERITY_NOTIF_BIT         | General events, no problems reported.                                 |
  * | ORION_ERROR_SEVERITY_VERBOSE_BIT       | Almost @b every event that is happening.                              |

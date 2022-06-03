@@ -48,3 +48,11 @@ target_include_directories(
     PRIVATE
         "${ORION_SRC_DIR}/headers"
 )
+
+#
+# add optimised flag if requested
+
+if (ORION_OPTIMISED)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE "ORION_OPTIMISED")
+    message(WARNING "Building with ORION_OPTIMISED enabled -- debug output will be limited.")
+endif()

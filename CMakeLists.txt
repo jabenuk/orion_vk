@@ -40,6 +40,8 @@ option(ORION_BUILD_TESTS "Build Orion test executables" OFF)
 option(ORION_BUILD_EXAMPLES "Build Orion usage examples" OFF)
 option(ORION_GEN_DOCS "Generate HTML Orion documentation" ON)
 
+option(ORION_OPTIMISED "Optimise Orion, such as by removing debug output processing" OFF)
+
 #
 # subdirectories
 

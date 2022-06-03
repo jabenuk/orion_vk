@@ -34,7 +34,9 @@
 				"-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/CMake/linux/x86_64-linux-clang.cmake",
 
 				"-DORION_BUILD_TESTS=ON",
-				"-DORION_BUILD_EXAMPLES=ON"
+				"-DORION_BUILD_EXAMPLES=ON",
+
+				"-DORION_OPTIMISED=OFF"
 			]
 		/* __clean */  }, {
 			"label": "__clean",

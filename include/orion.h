@@ -35,6 +35,13 @@
 #include <vulkan/vulkan.h>
 #include <stdbool.h>
 
+// if ORION_OPTIMISED is defined, no debug output will be processed (no string manipulation functions)
+// this greatly reduces debugging capabilities. Errors will still be thrown.
+#ifndef ORION_OPTIMISED
+#   define __oridebug
+#endif
+
+
 
 // ============================================================================
 // ----------------------------------------------------------------------------
