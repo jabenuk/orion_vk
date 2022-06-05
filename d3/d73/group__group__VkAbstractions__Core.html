@@ -122,15 +122,15 @@ Modules</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga6065235c47b1737321ae6a2a89587271"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271">oriCreateInstance</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const void *ext, VkInstance *instancePtr)</td></tr>
-<tr class="memdesc:ga6065235c47b1737321ae6a2a89587271"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply all previous properties set to the given <code>state</code> and create a VkInstance object, managed by <code>state</code>.  <a href="../../d3/d73/group__group__VkAbstractions__Core.html#ga6065235c47b1737321ae6a2a89587271">More...</a><br /></td></tr>
-<tr class="separator:ga6065235c47b1737321ae6a2a89587271"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga758a71e4110b1cf5763bacca510cea0a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd">oriReturnStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d73/group__group__VkAbstractions__Core.html#ga758a71e4110b1cf5763bacca510cea0a">oriCreateInstance</a> (<a class="el" href="../../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0">oriState</a> *state, const void *ext, VkInstance *instanceOut)</td></tr>
+<tr class="memdesc:ga758a71e4110b1cf5763bacca510cea0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply all previous properties set to the given <code>state</code> and create a VkInstance object, managed by <code>state</code>.  <a href="../../d3/d73/group__group__VkAbstractions__Core.html#ga758a71e4110b1cf5763bacca510cea0a">More...</a><br /></td></tr>
+<tr class="separator:ga758a71e4110b1cf5763bacca510cea0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p >This module covers most Orion abstractions, and most functions that simplify the use of the Core Vulkan API. It is part of the <a class="el" href="../../d8/dc3/group__group__VkAbstractions.html">core Vulkan abstractions</a>. </p>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga6065235c47b1737321ae6a2a89587271" name="ga6065235c47b1737321ae6a2a89587271"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6065235c47b1737321ae6a2a89587271">&#9670;&nbsp;</a></span>oriCreateInstance()</h2>
+<a id="ga758a71e4110b1cf5763bacca510cea0a" name="ga758a71e4110b1cf5763bacca510cea0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga758a71e4110b1cf5763bacca510cea0a">&#9670;&nbsp;</a></span>oriCreateInstance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,7 +151,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">VkInstance *&#160;</td>
-          <td class="paramname"><em>instancePtr</em>&#160;</td>
+          <td class="paramname"><em>instanceOut</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -166,7 +166,7 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">state</td><td>the state object from which properties will be used, and to which the resulting VkInstance will be tied. </td></tr>
     <tr><td class="paramname">ext</td><td>equivalent to the <code>pNext</code> parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure. </td></tr>
-    <tr><td class="paramname">instancePtr</td><td>a pointer to the structure to which the instance will be returned. </td></tr>
+    <tr><td class="paramname">instanceOut</td><td>a pointer to the structure to which the instance will be returned. </td></tr>
   </table>
   </dd>
 </dl>
