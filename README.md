@@ -6,4 +6,10 @@
 [![Licence](https://img.shields.io/github/license/jabenuk/orion_vk)](/LICENCE)
 ![Lines of code](https://img.shields.io/tokei/lines/github/jabenuk/orion_vk)
 
-Vulkan bindings for the Orion graphics abstractions library.
+A low-level Vulkan graphics library for C that aims to abstract the more explicit aspects
+of the Vulkan API without losing any functionality.
+
+## Documentation
+
+For library documentation, see the [GitHub pages deployment](https://jabenuk.github.io/orion_vk/).
+Due to being very early in development, this documentation  is **_very_ subject to change**.
