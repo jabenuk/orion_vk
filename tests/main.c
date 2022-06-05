@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "orion.h"
 #include <glfw/include/GLFW/glfw3.h>
@@ -24,10 +23,6 @@ VkDevice logicalDevice = NULL;
 bool physicalDeviceSuitabilityCheckFunc(VkPhysicalDevice device);
 
 int main() {
-    clock_t start, end;
-
-    start = clock();
-
     //
     // initialise program
     //
@@ -118,10 +113,6 @@ int main() {
     oriDestroyState(state);
 
     glfwTerminate();
-
-    end = clock();
-
-    printf("Runtime completed in %lf seconds.\n", ((double) (end - start)) / CLOCKS_PER_SEC);
 
     return 0;
 }

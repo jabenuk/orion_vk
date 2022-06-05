@@ -149,7 +149,7 @@ oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, c
     // loading vkCreateDebugUtilsMessengerEXT() should always work here as the extension has already been checked for (above)
     PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(*instance, "vkCreateDebugUtilsMessengerEXT");
 
-    if (CreateDebugUtilsMessengerEXT(*instance, &createInfo, NULL, debugMessengerPtr)) {
+    if (CreateDebugUtilsMessengerEXT(*instance, &createInfo, _orion.callbacks.vulkanAllocators, debugMessengerPtr)) {
         _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
         return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }

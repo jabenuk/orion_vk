@@ -49,10 +49,12 @@
 // ----------------------------------------------------------------------------
 // ============================================================================
 
-typedef struct _ori_Lib {
+typedef struct _ori_Library {
     struct {
         oriErrorCallback errorCallback;
         void *errorCallbackUserData;
+
+        VkAllocationCallbacks *vulkanAllocators;
     } callbacks;
 
     oriErrorSeverityBit displayedErrorSeverities;
@@ -60,12 +62,13 @@ typedef struct _ori_Lib {
     struct {
         bool createInstanceDebugMessengers;
     } flags;
-} _ori_Lib;
-extern _ori_Lib _orion;
+} _ori_Library;
+extern _ori_Library _orion;
 
 // structures used to internally store extra data about Vulkan objects
 
-// we store a pointer to the instance that debug messengers were created for
+// when debug messengers are created, we store a pointer to the instance that they were created for
+// this is required to destroy said debug messengers
 typedef struct _ori_DebugUtilsMessengerEXT {
     VkDebugUtilsMessengerEXT *handle;
     VkInstance *instance;
@@ -94,7 +97,6 @@ typedef struct _ori_DebugUtilsMessengerEXT {
  */
 typedef struct oriState {
     // struct of all global dynamic arrays (use realloc() to extend)
-    // these must be used instead of linked lists when they are of non-Orion structs (that don't have a 'next' pointer member)
     struct {
         VkInstance **instances;                         unsigned int instancesCount;
         _ori_DebugUtilsMessengerEXT *debugMessengers;   unsigned int debugMessengersCount;

@@ -596,6 +596,26 @@ oriReturnStatus oriSetFlag(
     unsigned int val
 );
 
+/**
+ * @brief Optionally define the memory allocation functions to be used in Vulkan functions.
+ *
+ * This function sets the internally-held structure in which allocation function pointers can be defined.
+ *
+ * The structure passed to the @c callbacks parameter of this function will be referenced in any Vulkan function called internally by
+ * the library with a @c pAllocator parameter.
+ *
+ * Passing @b NULL to this function will reset Vulkan to using default allocation callbacks as described by the implementation.
+ *
+ * @param callbacks a pointer to the callbacks structure to use with Vulkan functions.
+ *
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#memory-allocation">Vulkan Docs/Memory allocation</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkAllocationCallbacks.html">Vulkan Docs/VkAllocationCallbacks</a>
+ *
+ * @ingroup group_Meta
+ *
+ */
+void oriSetVulkanAllocationCallbacks(VkAllocationCallbacks callbacks);
+
 
 
 // ============================================================================

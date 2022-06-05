@@ -22,6 +22,7 @@
  *   - 'initialising' the library (i.e. creating a state object)
  *   - the creation of some core library structures
  *   - the overall termination of the library
+ *   - configuring the library
  *
  */
 
@@ -44,7 +45,7 @@
 // ============================================================================
 
 // initialisation of global internal variables
-_ori_Lib _orion = {};
+_ori_Library _orion = { NULL };
 
 
 
@@ -107,6 +108,11 @@ void oriDestroyState(oriState *state) {
         return;
     }
 
+    // first, we remove duplicates from any public arrays that store pointers
+    // this is because trying to destroy the contents of the same address multiple times will lead to an exception.
+    _ori_RemoveDArrayDuplicates(state->arrays.instances, state->arrays.instancesCount);
+    _ori_RemoveDArrayDuplicates(state->arrays.logicalDevices, state->arrays.logicalDevicesCount);
+
     // load any necessary non-core Vulkan functions before the instances are destroyed
     // functions that rely on an instance are initialised as NULL before all instances are iterated through.
     PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT = NULL;
@@ -114,17 +120,13 @@ void oriDestroyState(oriState *state) {
         DestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(*(state->arrays.instances[i]), "vkDestroyDebugUtilsMessengerEXT");
     }
 
-    // first, we remove duplicates from the public arrays
-    // this is because trying to destroy the contents of the same address multiple times will lead to an exception.
-    _ori_RemoveDArrayDuplicates(state->arrays.instances, state->arrays.instancesCount);
-
     // destroy debug messengers
     // if the DestroyDebugUtilsMessengerEXT pfn is NULL, then the debug utils extension wasn't enabled and therefore no debug messengers could be
     // created by the user (at least not using Orion functions)
     if (DestroyDebugUtilsMessengerEXT) {
         for (unsigned int i = 0; i < state->arrays.debugMessengersCount; i++) {
             if (*state->arrays.debugMessengers[i].handle) {
-                DestroyDebugUtilsMessengerEXT(*(state->arrays.debugMessengers[i].instance), *(state->arrays.debugMessengers[i].handle), NULL);
+                DestroyDebugUtilsMessengerEXT(*(state->arrays.debugMessengers[i].instance), *(state->arrays.debugMessengers[i].handle), _orion.callbacks.vulkanAllocators);
             }
 
 #           ifdef __oridebug
@@ -138,7 +140,7 @@ void oriDestroyState(oriState *state) {
     // destroy devices
     for (unsigned int i = 0; i < state->arrays.logicalDevicesCount; i++) {
         if (*state->arrays.logicalDevices[i]) {
-            vkDestroyDevice(*state->arrays.logicalDevices[i], NULL);
+            vkDestroyDevice(*state->arrays.logicalDevices[i], _orion.callbacks.vulkanAllocators);
         }
 
 #       ifdef __oridebug
@@ -150,7 +152,7 @@ void oriDestroyState(oriState *state) {
     // destroy instances
     for (unsigned int i = 0; i < state->arrays.instancesCount; i++) {
         if (*state->arrays.instances[i]) {
-            vkDestroyInstance(*state->arrays.instances[i], NULL);
+            vkDestroyInstance(*state->arrays.instances[i], _orion.callbacks.vulkanAllocators);
         }
 
 #       ifdef __oridebug
@@ -275,4 +277,26 @@ oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
 #   endif
 
     return ORION_RETURN_STATUS_OK;
+}
+
+/**
+ * @brief Optionally define the memory allocation functions to be used in Vulkan functions.
+ *
+ * This function sets the internally-held structure in which allocation function pointers can be defined.
+ *
+ * The structure passed to the @c callbacks parameter of this function will be referenced in any Vulkan function called internally by
+ * the library with a @c pAllocator parameter.
+ *
+ * Passing @b NULL to this function will reset Vulkan to using default allocation callbacks as described by the implementation.
+ *
+ * @param callbacks the callbacks structure to use with Vulkan functions.
+ *
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#memory-allocation">Vulkan Docs/Memory allocation</a>
+ * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkAllocationCallbacks.html">Vulkan Docs/VkAllocationCallbacks</a>
+ *
+ * @ingroup group_Meta
+ *
+ */
+void oriSetVulkanAllocationCallbacks(VkAllocationCallbacks callbacks) {
+    _orion.callbacks.vulkanAllocators = &callbacks;
 }

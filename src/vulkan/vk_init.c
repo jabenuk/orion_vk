@@ -175,7 +175,7 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
 #       endif
     }
 
-    if (vkCreateInstance(&createInfo, NULL, instancePtr)) {
+    if (vkCreateInstance(&createInfo, _orion.callbacks.vulkanAllocators, instancePtr)) {
         _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
         return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }

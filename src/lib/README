@@ -32,3 +32,4 @@ init.c:
       - 'initialising' the library (i.e. creating a state object)
       - the creation of some core library structures
       - the overall termination of the library
+      - configuring the library
