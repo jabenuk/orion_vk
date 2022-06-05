@@ -292,7 +292,7 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, oriPhys
         d = NULL;
 
 #       ifdef __oridebug
-            _ori_Warning("found %d available device/s, but none were determined suitable", c);
+            _ori_Warning("found %d available physical device%s, but none were determined suitable", c, (c != 1) ? "s" : "");
 #       endif
 
         return ORION_RETURN_STATUS_OK;
@@ -300,9 +300,9 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, oriPhys
 
 #   ifdef __oridebug
         if (checkFunc) {
-            _ori_DebugLog("found %d available device%s, of which %d %s determined suitable", c, (c != 1) ? "s" : "", cr, (cr != 1) ? "were" : "was");
+            _ori_DebugLog("found %d available physical device%s, of which %d %s determined suitable", c, (c != 1) ? "s" : "", cr, (cr != 1) ? "were" : "was");
         } else {
-            _ori_DebugLog("found %d available device%s, no suitability check function used", c, (c != 1) ? "s" : "");
+            _ori_DebugLog("found %d available physical device%s, no suitability check function used", c, (c != 1) ? "s" : "");
         }
 #   endif
 
@@ -414,7 +414,15 @@ oriReturnStatus oriEnumerateAvailableQueueFamilies(VkPhysicalDevice *physicalDev
  *
  */
 oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDeviceCount, VkPhysicalDevice *physicalDevices, const void *ext, unsigned int queueCreateInfoCount, VkDeviceQueueCreateInfo *queueCreateInfos, unsigned int extensionCount, const char **extensionNames, VkPhysicalDeviceFeatures *enabledFeatures, VkDevice *deviceOut) {
-    if (!state || !physicalDeviceCount || !physicalDevices || !deviceOut) {
+    if (!deviceOut) {
+#       ifdef __oridebug
+            _ori_Warning("%s", "oriCreateLogicalDevice() was called but all output pointers were passed as NULL");
+#       endif
+
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    if (!state || !physicalDeviceCount || !physicalDevices) {
         _ori_ThrowError(ORERR_NULL_POINTER);
         return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
     }

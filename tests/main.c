@@ -97,17 +97,63 @@ int main() {
     // enumerate available queue families
     VkQueueFamilyProperties *families;
     unsigned int familyCount;
-    oriEnumerateAvailableQueueFamilies(devices[0], NULL, NULL);
+    oriEnumerateAvailableQueueFamilies(&devices[0], &familyCount, &families);
+
+    // get graphics and present queue family indices
+    struct {
+        unsigned int graphics;
+        unsigned int present;
+    } queueFamilyIndices = { 0 };
+    const unsigned int uniqueQueueCount = 2;
+
+    {
+        for (unsigned int i = 0; i < familyCount; i++) {
+            // check for graphics queue
+            if ((families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == VK_QUEUE_GRAPHICS_BIT) {
+                queueFamilyIndices.graphics = i;
+            }
+
+            // check for surface support; if the queue family has surface support, it is a present queue
+            VkBool32 psupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(devices[0], i, sMain, &psupport);
+
+            if (psupport) {
+                queueFamilyIndices.present = i;
+            }
+        }
+    }
+
+    // create a creation info struct for each queue family
+    VkDeviceQueueCreateInfo queueCreateInfos[uniqueQueueCount];
+
+    {
+        float queuePriority = 1.0f;
+
+        // array of unique queue indices
+        unsigned int uniqueQueueIndices[] = {
+            queueFamilyIndices.graphics,
+            queueFamilyIndices.present
+        };
+
+        for (unsigned int i = 0; i < uniqueQueueCount; i++) {
+            queueCreateInfos[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfos[i].pNext = NULL;
+            queueCreateInfos[i].flags = 0;
+            queueCreateInfos[i].queueFamilyIndex = uniqueQueueIndices[i];
+            queueCreateInfos[i].queueCount = 1;
+            queueCreateInfos[i].pQueuePriorities = &queuePriority;
+        }
+    }
 
     // create logical device
-    // oriCreateLogicalDevice(state, 1, &(devices[0]), NULL, familyCount, families, 0, NULL, NULL, &logicalDevice);
+    oriCreateLogicalDevice(state, 1, &(devices[0]), NULL, uniqueQueueCount, queueCreateInfos, 0, NULL, NULL, &logicalDevice);
 
     //
     // terminate
     //
 
-    free(devices);
-    devices = NULL;
+    free(devices); devices = NULL;
+    free(families); families = NULL;
 
     // because the window surface wasn't created with an Orion function, we need to manually destroy it
     vkDestroySurfaceKHR(instance, sMain, NULL);
