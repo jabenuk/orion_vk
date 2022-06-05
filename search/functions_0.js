@@ -17,5 +17,6 @@ var searchData=
   ['oripruneinstanceextensions_14',['oriPruneInstanceExtensions',['../d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6',1,'orion.h']]],
   ['oriseterrorcallback_15',['oriSetErrorCallback',['../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0',1,'orion.h']]],
   ['orisetflag_16',['oriSetFlag',['../db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622',1,'orion.h']]],
-  ['orispecifyinstancedebugmessages_17',['oriSpecifyInstanceDebugMessages',['../d9/d7f/group__group__VkAbstractions__Core__Debugging.html#gaa592dd22f5c2411aef95f189b84e3689',1,'orion.h']]]
+  ['orisetvulkanallocationcallbacks_17',['oriSetVulkanAllocationCallbacks',['../db/de0/group__group__Meta.html#ga6487e5c2269105fe34da6f0034f7b1fe',1,'orion.h']]],
+  ['orispecifyinstancedebugmessages_18',['oriSpecifyInstanceDebugMessages',['../d9/d7f/group__group__VkAbstractions__Core__Debugging.html#gaa592dd22f5c2411aef95f189b84e3689',1,'orion.h']]]
 ];

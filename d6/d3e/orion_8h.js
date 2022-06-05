@@ -42,5 +42,6 @@ var orion_8h =
     [ "oriPruneInstanceExtensions", "d8/d23/group__group__VkAbstractions__Layers.html#gab3eb998f0aebf3b7e2b70a19739c05d6", null ],
     [ "oriSetErrorCallback", "d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0", null ],
     [ "oriSetFlag", "db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622", null ],
+    [ "oriSetVulkanAllocationCallbacks", "db/de0/group__group__Meta.html#ga6487e5c2269105fe34da6f0034f7b1fe", null ],
     [ "oriSpecifyInstanceDebugMessages", "d9/d7f/group__group__VkAbstractions__Core__Debugging.html#gaa592dd22f5c2411aef95f189b84e3689", null ]
 ];

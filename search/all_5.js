@@ -23,6 +23,7 @@ var searchData=
   ['orireturnstatus_20',['oriReturnStatus',['../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd',1,'orion.h']]],
   ['oriseterrorcallback_21',['oriSetErrorCallback',['../d2/d8c/group__group__Errors.html#ga470902f9e1215040bf6b6d38e45950c0',1,'orion.h']]],
   ['orisetflag_22',['oriSetFlag',['../db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622',1,'orion.h']]],
-  ['orispecifyinstancedebugmessages_23',['oriSpecifyInstanceDebugMessages',['../d9/d7f/group__group__VkAbstractions__Core__Debugging.html#gaa592dd22f5c2411aef95f189b84e3689',1,'orion.h']]],
-  ['oristate_24',['oriState',['../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0',1,'orion.h']]]
+  ['orisetvulkanallocationcallbacks_23',['oriSetVulkanAllocationCallbacks',['../db/de0/group__group__Meta.html#ga6487e5c2269105fe34da6f0034f7b1fe',1,'orion.h']]],
+  ['orispecifyinstancedebugmessages_24',['oriSpecifyInstanceDebugMessages',['../d9/d7f/group__group__VkAbstractions__Core__Debugging.html#gaa592dd22f5c2411aef95f189b84e3689',1,'orion.h']]],
+  ['oristate_25',['oriState',['../db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0',1,'orion.h']]]
 ];
