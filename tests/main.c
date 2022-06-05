@@ -74,7 +74,7 @@ int main() {
 
     oriCreateInstance(state, NULL, &instance);
 
-    oriCreateDebugMessenger(state, &instance, NULL, &messenger, DBGMSNGR_SEVERITIES, DBGMSNGR_TYPES);
+    oriCreateDebugMessenger(state, &instance, NULL, DBGMSNGR_SEVERITIES, DBGMSNGR_TYPES, &messenger);
 
     //
     // create a surface with GLFW
@@ -92,10 +92,15 @@ int main() {
     // enumerate suitable devices
     VkPhysicalDevice *devices;
     unsigned int devicecount;
-    oriEnumerateSuitablePhysicalDevices(instance, &devicecount, &devices, physicalDeviceSuitabilityCheckFunc);
+    oriEnumerateSuitablePhysicalDevices(instance, physicalDeviceSuitabilityCheckFunc, &devicecount, &devices);
+
+    // enumerate available queue families
+    VkQueueFamilyProperties *families;
+    unsigned int familyCount;
+    oriEnumerateAvailableQueueFamilies(devices[0], NULL, NULL);
 
     // create logical device
-    oriCreateLogicalDevice(state, 1, &(devices[0]), &logicalDevice, NULL, 0, NULL, 0, NULL, NULL);
+    // oriCreateLogicalDevice(state, 1, &(devices[0]), NULL, familyCount, families, 0, NULL, NULL, &logicalDevice);
 
     //
     // terminate
@@ -107,9 +112,6 @@ int main() {
     // because the window surface wasn't created with an Orion function, we need to manually destroy it
     vkDestroySurfaceKHR(instance, sMain, NULL);
 
-    vkDestroyDevice(logicalDevice, NULL);
-    logicalDevice = NULL;
-
     oriDestroyState(state);
 
     glfwTerminate();
@@ -118,5 +120,7 @@ int main() {
 }
 
 bool physicalDeviceSuitabilityCheckFunc(VkPhysicalDevice device) {
+    bool r = false;
+
     return true;
 }

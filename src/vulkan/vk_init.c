@@ -63,9 +63,14 @@
  * @ingroup group_VkAbstractions_Core
  *
  */
-oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *instancePtr) {
-    // according to the Vulkan specification, pInstance (instancePtr) must be a valid pointer to a VkInstance handle
-    if (!state || !instancePtr) {
+oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *instanceOut) {
+    // instanceOut can technically be NULL. in which case there is no point doing any of this.
+    if (!instanceOut) {
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    // according to the Vulkan specification, pInstance (instanceOut) must be a valid pointer to a VkInstance handle
+    if (!state) {
         _ori_ThrowError(ORERR_NULL_POINTER);
         return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
     }
@@ -82,7 +87,7 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
 #   ifdef __oridebug
         char logstr[768];
         memset(logstr, 0, sizeof(logstr));
-        snprintf(logstr, 768, "VkInstance created into %p and will be managed by state object at location %p", instancePtr, state);
+        snprintf(logstr, 768, "VkInstance created into %p and will be managed by state object at location %p", instanceOut, state);
 #   endif
 
     // the support of these layers was already checked in oriFlagLayerEnabled().
@@ -118,11 +123,13 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
         oriPruneInstanceExtensions(state);
 
         // check if the debug utils extension was specified
-        for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
-            // store current extension on stack to reduce dereferences
-            if (!strcmp(state->instanceCreateInfo.enabledExtensions[i], "VK_EXT_debug_utils")) {
-                debugUtilsExtFound = true;
-                break;
+        // (if requested)
+        if (_orion.flags.createInstanceDebugMessengers) {
+            for (unsigned int i = 0; i < state->instanceCreateInfo.enabledExtCount; i++) {
+                if (!strcmp(state->instanceCreateInfo.enabledExtensions[i], "VK_EXT_debug_utils")) {
+                    debugUtilsExtFound = true;
+                    break;
+                }
             }
         }
 
@@ -157,7 +164,8 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
     // populate debug messenger info if necessary
     VkDebugUtilsMessengerCreateInfoEXT dbgmsngrCreateInfo = {};
 
-    if (_orion.flags.createInstanceDebugMessengers && debugUtilsExtFound) {
+    // debugUtilsExtFound can only be true if _orion.flags.createInstanceDebugMessengers is also true
+    if (debugUtilsExtFound) {
         dbgmsngrCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 
         // severity and type is specified with oriSpecifyInstanceDebugMessages().
@@ -171,17 +179,17 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
         createInfo.pNext = &dbgmsngrCreateInfo;
 
 #       ifdef __oridebug
-            _ori_Notification("appended instance debug messenger for next instance (at %p)", instancePtr);
+            _ori_Notification("appended instance debug messenger for upcoming instance creation (at %p)", instanceOut);
 #       endif
     }
 
-    if (vkCreateInstance(&createInfo, _orion.callbacks.vulkanAllocators, instancePtr)) {
+    if (vkCreateInstance(&createInfo, _orion.callbacks.vulkanAllocators, instanceOut)) {
         _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
         return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }
 
     // add given instance pointer to state array
-    _ori_AppendOntoDArray(VkInstance *, state->arrays.instances, state->arrays.instancesCount, instancePtr);
+    _ori_AppendOntoDArray(VkInstance *, state->arrays.instances, state->arrays.instancesCount, instanceOut);
 
 #   ifdef __oridebug
         _ori_Notification("%s", logstr);
@@ -203,24 +211,27 @@ oriReturnStatus oriCreateInstance(oriState *state, const void *ext, VkInstance *
  * for the application.
  *
  * @param instance Vulkan instance to query
- * @param count pointer to a variable into which the number of suitable physical devices will be returned.
- * @param devices pointer to an array into which the list of suitable physical devices will be returned.
  * @param checkFunc an @ref oriPhysicalDeviceSuitabilityCheckFunc function pointer that returns true if a device is suitable and false
  * if not.
+ * @param countOut pointer to a variable into which the number of suitable physical devices will be returned.
+ * @param devicesOut pointer to an array into which the list of suitable physical devices will be returned.
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
  * "debug output" for more information.
  *
  * @ingroup group_VkAbstractions_Core_Devices
  *
  */
-oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigned int *count, VkPhysicalDevice **devices, oriPhysicalDeviceSuitabilityCheckFunc checkFunc) {
-    if (!count || !devices || !checkFunc) {
-        _ori_ThrowError(ORERR_NULL_POINTER);
-        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, oriPhysicalDeviceSuitabilityCheckFunc checkFunc, unsigned int *countOut, VkPhysicalDevice **devicesOut) {
+    if (!devicesOut && !countOut) {
+#       ifdef __oridebug
+            _ori_Warning("%s", "oriEnumerateSuitablePhysicalDevices() was called but all output pointers were passed as NULL");
+#       endif
+
+        return ORION_RETURN_STATUS_OK;
     }
 
     // c = number of available devices
-    // cr = number of suitable devices (will be returned into count)
+    // cr = number of suitable devices (will be returned into countOut)
     unsigned int c = 0, cr = 0;
 
     // get number of available devices
@@ -231,8 +242,6 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
 
     // no vulkan-supported GPUs were found
     if (!c) {
-        *count = 0;
-
 #       ifdef __oridebug
             _ori_Warning("%s", "couldn't find physical device with Vulkan support");
 #       endif
@@ -244,6 +253,7 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
     VkPhysicalDevice *d = calloc(c, sizeof(VkPhysicalDevice));
     if (!d) {
         printf("Memory error -- calloc returned null!\n");
+        return ORION_RETURN_STATUS_MEMORY_ERROR;
     }
 
     // get array of available devices
@@ -252,21 +262,30 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
         return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }
 
-    // initialise devices to NULL
-    *devices = NULL;
+    if (devicesOut) {
+        // initialise devices to NULL
+        *devicesOut = NULL;
+    }
 
-    // iterate through all available devices
     for (unsigned int i = 0; i < c; i++) {
-        // check if each device is suitable
-        if (checkFunc(d[i])) {
-            _ori_AppendOntoDArray(VkPhysicalDevice, *devices, cr, d[i]);
+        // check if each device is suitable, if checkFunc is not NULL
+        if (checkFunc && !checkFunc(d[i])) {
+            continue;
         }
+
+        if (devicesOut) {
+            _ori_AppendOntoDArray(VkPhysicalDevice, *devicesOut, cr, d[i]);
+        } else { // if devicesOut is NULL, then countOut must not be (both cannot be NULL, as asserted at the beginning of the function)
+            cr++;
+        }
+    }
+
+    if (countOut) {
+        *countOut = cr;
     }
 
     // now cr has been updated, we check if it is 0 (i.e. no devices were deemed suitable)
     if (!cr) {
-        *count = 0;
-
         // make sure we free the array of available devices despite returning early
         // the parameter array would not have been allocated if this is reached so we don't need to worry about that
         free(d);
@@ -280,14 +299,77 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
     }
 
 #   ifdef __oridebug
-        _ori_DebugLog("found %d available device%s, of which %d %s determined suitable", c, (c != 1) ? "s" : "", cr, (cr != 1) ? "were" : "was");
+        if (checkFunc) {
+            _ori_DebugLog("found %d available device%s, of which %d %s determined suitable", c, (c != 1) ? "s" : "", cr, (cr != 1) ? "were" : "was");
+        } else {
+            _ori_DebugLog("found %d available device%s, no suitability check function used", c, (c != 1) ? "s" : "");
+        }
 #   endif
-
-    // return cr into count
-    *count = cr;
 
     free(d);
     d = NULL;
+
+    return ORION_RETURN_STATUS_OK;
+}
+
+/**
+ * @brief Get a list of all available queue families for a specified physical device.
+ *
+ * This function retrieves an array of queue families available to a specified physical device.
+ *
+ * @param physicalDevice the physical device to query.
+ * @param familiesOut pointer to a variable into which the array of queue families will be returned.
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
+ *
+ * @ingroup group_VkAbstractions_Core_Devices
+ *
+ */
+oriReturnStatus oriEnumerateAvailableQueueFamilies(VkPhysicalDevice *physicalDevice, unsigned int *countOut, VkQueueFamilyProperties **familiesOut) {
+    if (!countOut && !familiesOut) {
+#       ifdef __oridebug
+            _ori_Warning("%s", "oriEnumerateAvailableQueueFamilies() was called but all output pointers were passed as NULL");
+#       endif
+
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    if (!physicalDevice) {
+        _ori_ThrowError(ORERR_NULL_POINTER);
+        return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
+    }
+
+    unsigned int c = 0;
+
+    vkGetPhysicalDeviceQueueFamilyProperties(*physicalDevice, &c, NULL);
+
+    if (countOut) {
+        *countOut = c;
+    }
+
+    if (!c) {
+#       ifdef __oridebug
+            _ori_Warning("%s", "no queue families available for a specified physical device");
+#       endif
+
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    if (!familiesOut) {
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    *familiesOut = calloc(c, sizeof(VkQueueFamilyProperties));
+    if (!*familiesOut) {
+        printf("Memory error -- calloc returned null!\n");
+        return ORION_RETURN_STATUS_MEMORY_ERROR;
+    }
+
+    vkGetPhysicalDeviceQueueFamilyProperties(*physicalDevice, &c, *familiesOut);
+
+#   ifdef __oridebug
+        _ori_DebugLog("found %d available queue famil%s available to physical device at %p", c, (c != 1) ? "ies" : "y", physicalDevice);
+#   endif
 
     return ORION_RETURN_STATUS_OK;
 }
@@ -308,7 +390,6 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
  * @param state the state which will manage the resulting logical device.
  * @param physicalDeviceCount the amount of physical devices to create the logical device for.
  * @param physicalDevices either a pointer to the physical device or an array of physical devices (see above).
- * @param device pointer to the variable into which the resulting device will be returned.
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
  * @param queueCreateInfoCount the size of the @c queueCreateInfos array.
  * @param queueCreateInfos array of
@@ -319,6 +400,7 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
  * @param enabledFeatures NULL or a pointer to a
  * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">VkPhysicalDeviceFeatures</a> structure containing
  * flags of device features to be enabled.
+ * @param deviceOut pointer to the variable into which the resulting device will be returned.
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
  * "debug output" for more information.
  *
@@ -331,8 +413,8 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(VkInstance instance, unsigne
  * @ingroup group_VkAbstractions_Core_Devices
  *
  */
-oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDeviceCount, VkPhysicalDevice *physicalDevices, VkDevice *device, const void *ext, unsigned int queueCreateInfoCount, VkDeviceQueueCreateInfo *queueCreateInfos, unsigned int extensionCount, const char **extensionNames, VkPhysicalDeviceFeatures *enabledFeatures) {
-    if (!state || !physicalDeviceCount || !physicalDevices || !device) {
+oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDeviceCount, VkPhysicalDevice *physicalDevices, const void *ext, unsigned int queueCreateInfoCount, VkDeviceQueueCreateInfo *queueCreateInfos, unsigned int extensionCount, const char **extensionNames, VkPhysicalDeviceFeatures *enabledFeatures, VkDevice *deviceOut) {
+    if (!state || !physicalDeviceCount || !physicalDevices || !deviceOut) {
         _ori_ThrowError(ORERR_NULL_POINTER);
         return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
     }
@@ -340,7 +422,7 @@ oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDev
 #   ifdef __oridebug
         char logstr[768];
         memset(logstr, 0, sizeof(logstr));
-        snprintf(logstr, 768, "VkDevice created into %p and will be managed by state object at location %p", device, state);
+        snprintf(logstr, 768, "VkDevice created into %p and will be managed by state object at location %p", deviceOut, state);
 #   endif
 
     VkDeviceCreateInfo createInfo = {};
@@ -386,12 +468,12 @@ oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDev
 
     // we pass the first element of physicalDevices to vkCreateDevice - even if multiple are specified:
     // "if physicalDeviceCount is not 0, the physicalDevice parameter of vkCreateDevice must be an element of pPhysicalDevices" - from VkDeviceGroupDeviceCreateInfo(3)
-    if (vkCreateDevice(*physicalDevices, &createInfo, NULL, device)) {
+    if (vkCreateDevice(*physicalDevices, &createInfo, NULL, deviceOut)) {
         _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
         return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }
 
-    _ori_AppendOntoDArray(VkDevice *, state->arrays.logicalDevices, state->arrays.logicalDevicesCount, device);
+    _ori_AppendOntoDArray(VkDevice *, state->arrays.logicalDevices, state->arrays.logicalDevicesCount, deviceOut);
 
 #   ifdef __oridebug
         _ori_Notification("%s", logstr);

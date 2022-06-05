@@ -112,19 +112,23 @@ void oriSpecifyInstanceDebugMessages(oriState *state, VkDebugUtilsMessageSeverit
  *
  * @param state the state object to which the resulting
  * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerEXT.html">VkDebugUtilsMessengerEXT</a> will be tied.
- * @param debugMessengerPtr a pointer to the structure to which the debug messenger will be returned.
  * @param severities (bitmask) severities of the messages to @b display.
  * @param types (bitmask) types of the messages to @b display.
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
  * "debug output" for more information.
+ * @param debugMessengerOut a pointer to the structure to which the debug messenger will be returned.
  *
  * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerEXT.html">Vulkan Docs/VkDebugUtilsMessengerEXT</a>
  *
  * @ingroup group_VkAbstractions_Core_Debugging
  *
  */
-oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, const void *ext, VkDebugUtilsMessengerEXT *debugMessengerPtr, VkDebugUtilsMessageSeverityFlagBitsEXT severities, VkDebugUtilsMessageTypeFlagBitsEXT types) {
-    if (!state || !instance || !debugMessengerPtr) {
+oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, const void *ext, VkDebugUtilsMessageSeverityFlagBitsEXT severities, VkDebugUtilsMessageTypeFlagBitsEXT types, VkDebugUtilsMessengerEXT *debugMessengerOut) {
+    if (!debugMessengerOut) {
+        return ORION_RETURN_STATUS_OK;
+    }
+
+    if (!state || !instance) {
         _ori_ThrowError(ORERR_NULL_POINTER);
         return ORION_RETURN_STATUS_ERROR_NULL_POINTER;
     }
@@ -132,7 +136,7 @@ oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, c
     // check extension enabled
     if (!oriCheckInstanceExtensionEnabled(state, VK_EXT_DEBUG_UTILS_EXTENSION_NAME)) { // VK_EXT_DEBUG_UTILS_EXTENSION_NAME expands to VK_EXT_debug_utils
         _ori_ThrowError(ORERR_EXT_NOT_ENABLED);
-        *debugMessengerPtr = NULL;
+        *debugMessengerOut = NULL;
         return ORION_RETURN_STATUS_EXT_NOT_ENABLED;
     }
 
@@ -149,21 +153,21 @@ oriReturnStatus oriCreateDebugMessenger(oriState *state, VkInstance *instance, c
     // loading vkCreateDebugUtilsMessengerEXT() should always work here as the extension has already been checked for (above)
     PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(*instance, "vkCreateDebugUtilsMessengerEXT");
 
-    if (CreateDebugUtilsMessengerEXT(*instance, &createInfo, _orion.callbacks.vulkanAllocators, debugMessengerPtr)) {
+    if (CreateDebugUtilsMessengerEXT(*instance, &createInfo, _orion.callbacks.vulkanAllocators, debugMessengerOut)) {
         _ori_ThrowError(ORERR_VULKAN_RETURN_ERROR);
         return ORION_RETURN_STATUS_ERROR_VULKAN_ERROR;
     }
 
     // create a struct to point to both the debug messenger and the instance it was created for
     _ori_DebugUtilsMessengerEXT messengerStruct = {
-        debugMessengerPtr,
+        debugMessengerOut,
         instance
     };
     // append this into state
     _ori_AppendOntoDArray(_ori_DebugUtilsMessengerEXT, state->arrays.debugMessengers, state->arrays.debugMessengersCount, messengerStruct);
 
 #   ifdef __oridebug
-        _ori_Notification("debug messenger created at %p for instance at %p", debugMessengerPtr, instance);
+        _ori_Notification("debug messenger created at %p for instance at %p", debugMessengerOut, instance);
 #   endif
 
     return ORION_RETURN_STATUS_OK;

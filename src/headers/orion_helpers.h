@@ -86,15 +86,17 @@
 //      index: the index of the element to remove
 #define _ori_RemoveFromDArray(array, len, index) \
     { \
-        if (index <= len) { \
-            (array)[index] = 0; \
-            \
-            /* shift all later elements one to the left, filling the NULL 'gap' */ \
-            for (unsigned int UwU = index; UwU < len - 1; UwU++) { \
-                (array)[UwU] = (array)[UwU + 1]; \
+        if (array && len > 0) { \
+            if (index <= len) { \
+                (array)[index] = 0; \
+                \
+                /* shift all later elements one to the left, filling the NULL 'gap' */ \
+                for (unsigned int UwU = index; UwU < len - 1; UwU++) { \
+                    (array)[UwU] = (array)[UwU + 1]; \
+                } \
+                \
+                len--; \
             } \
-            \
-            len--; \
         } \
     }
 
@@ -103,18 +105,20 @@
 //      len: length of the array
 #define _ori_RemoveDArrayDuplicates(array, len) \
     { \
-        for (unsigned int UwU = 0; UwU < len - 1; UwU++) { \
-            if ((array)[UwU] != (array)[UwU + 1]) { \
-                continue; \
+        if (array && len > 0) { \
+            for (unsigned int UwU = 0; UwU < len - 1; UwU++) { \
+                if ((array)[UwU] != (array)[UwU + 1]) { \
+                    continue; \
+                } \
+                /* damn! we need to think of another unlikely name for an iterator. */ \
+                /* that's easy: */ \
+                for (unsigned int OwOWhatsThis = UwU + 1; OwOWhatsThis < len - 1; OwOWhatsThis++) { \
+                    (array)[OwOWhatsThis] = (array)[OwOWhatsThis + 1]; \
+                } \
+                /* annoyingly long but... it is a bit funny. */ \
+                len--; \
+                UwU--; \
             } \
-            /* damn! we need to think of another unlikely name for an iterator. */ \
-            /* that's easy: */ \
-            for (unsigned int OwOWhatsThis = UwU + 1; OwOWhatsThis < len - 1; OwOWhatsThis++) { \
-                (array)[OwOWhatsThis] = (array)[OwOWhatsThis + 1]; \
-            } \
-            /* annoyingly long but... it is a bit funny. */ \
-            len--; \
-            UwU--; \
         } \
     }
 

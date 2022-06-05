@@ -155,7 +155,7 @@ typedef enum oriReturnStatus {
  *
  * @param state the state object from which properties will be used, and to which the resulting VkInstance will be tied.
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
- * @param instancePtr a pointer to the structure to which the instance will be returned.
+ * @param instanceOut a pointer to the structure to which the instance will be returned.
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
  * "debug output" for more information.
  *
@@ -168,7 +168,7 @@ typedef enum oriReturnStatus {
 oriReturnStatus oriCreateInstance(
     oriState *state,
     const void *ext,
-    VkInstance *instancePtr
+    VkInstance *instanceOut
 );
 
 
@@ -187,18 +187,18 @@ oriReturnStatus oriCreateInstance(
  * The user pointer that will be reported to the callback is specified in oriSetErrorCallback(). You do not have to filter the messages yourself.
  *
  * @note The @c VK_EXT_debug_utils extension @b must be enabled; if not, @ref section_ErrorList_FunctionReturns "ORION_RETURN_STATUS_EXT_NOT_ENABLED" will be
- * returned, and @c debugMessengerPtr will be set to @b NULL.
+ * returned, and @c debugMessengerOut will be set to @b NULL.
  *
  * @param state the state object to which the resulting
  * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerEXT.html">VkDebugUtilsMessengerEXT</a> will be tied.
  * @param instance the Vulkan <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">instance</a> that the messenger
  * will be used with.
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
- * @param debugMessengerPtr a pointer to the structure to which the debug messenger will be returned.
  * @param severities (bitmask) severities of the messages to @b display.
  * @param types (bitmask) types of the messages to @b display.
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
  * "debug output" for more information.
+ * @param debugMessengerOut a pointer to the structure to which the debug messenger will be returned.
  *
  * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerEXT.html">Vulkan Docs/VkDebugUtilsMessengerEXT</a>
  * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerCreateInfoEXT.html">Vulkan Docs/VkDebugUtilsMessengerCreateInfoEXT</a>
@@ -210,9 +210,9 @@ oriReturnStatus oriCreateDebugMessenger(
     oriState *state,
     VkInstance *instance,
     const void *ext,
-    VkDebugUtilsMessengerEXT *debugMessengerPtr,
     VkDebugUtilsMessageSeverityFlagBitsEXT severities,
-    VkDebugUtilsMessageTypeFlagBitsEXT types
+    VkDebugUtilsMessageTypeFlagBitsEXT types,
+    VkDebugUtilsMessengerEXT *debugMessengerOut
 );
 
 
@@ -250,14 +250,14 @@ typedef bool (* oriPhysicalDeviceSuitabilityCheckFunc)(
  * This function retrieves an array of physical devices accessible to a Vulkan instance that are considered suitable
  * for the application.
  *
- * @note If no physical devices with Vulkan support are found, the function will return an OK status but @c count will be set to
- * @b 0.
+ * @note For a list of all @b available physical devices, pass @b NULL to the @c checkFunc parameter. This will mean that no suitability checks
+ * will be done, and all devices with Vulkan support will be returned.
  *
  * @param instance Vulkan instance to query
- * @param count pointer to a variable into which the number of suitable physical devices will be returned.
- * @param devices pointer to an array into which the list of suitable physical devices will be returned. <b>This array will be allocated by the function.</b>
  * @param checkFunc an @ref oriPhysicalDeviceSuitabilityCheckFunc function pointer that returns true if a device is suitable and false
  * if not.
+ * @param countOut pointer to a variable into which the number of suitable physical devices will be returned.
+ * @param devicesOut pointer to an array into which the list of suitable physical devices will be returned. <b>This array will be allocated by the function.</b>
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
  * "debug output" for more information.
  *
@@ -266,9 +266,29 @@ typedef bool (* oriPhysicalDeviceSuitabilityCheckFunc)(
  */
 oriReturnStatus oriEnumerateSuitablePhysicalDevices(
     VkInstance instance,
-    unsigned int *count,
-    VkPhysicalDevice **devices,
-    oriPhysicalDeviceSuitabilityCheckFunc checkFunc
+    oriPhysicalDeviceSuitabilityCheckFunc checkFunc,
+    unsigned int *countOut,
+    VkPhysicalDevice **devicesOut
+);
+
+/**
+ * @brief Get a list of all available queue families for a specified physical device.
+ *
+ * This function retrieves an array of queue families available to a specified physical device.
+ *
+ * @param physicalDevice the physical device to query.
+ * @param countOut pointer to a variable into which the amount of queue families will be returned.
+ * @param familiesOut pointer to an array into which the list of queue families will be returned. <b>This array will be allocated by the function.</b>
+ * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
+ * "debug output" for more information.
+ *
+ * @ingroup group_VkAbstractions_Core_Devices
+ *
+ */
+oriReturnStatus oriEnumerateAvailableQueueFamilies(
+    VkPhysicalDevice *physicalDevice,
+    unsigned int *countOut,
+    VkQueueFamilyProperties **familiesOut
 );
 
 /**
@@ -287,7 +307,6 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(
  * @param state the state which will manage the resulting logical device.
  * @param physicalDeviceCount the amount of physical devices to create the logical device for.
  * @param physicalDevices either a pointer to the physical device or an array of physical devices (see above).
- * @param device pointer to the variable into which the resulting device will be returned.
  * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
  * @param queueCreateInfoCount the size of the @c queueCreateInfos array.
  * @param queueCreateInfos array of
@@ -298,6 +317,7 @@ oriReturnStatus oriEnumerateSuitablePhysicalDevices(
  * @param enabledFeatures NULL or a pointer to a
  * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">VkPhysicalDeviceFeatures</a> structure containing
  * flags of device features to be enabled.
+ * @param deviceOut pointer to the variable into which the resulting device will be returned.
  * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
  * "debug output" for more information.
  *
@@ -314,13 +334,13 @@ oriReturnStatus oriCreateLogicalDevice(
     oriState *state,
     unsigned int physicalDeviceCount,
     VkPhysicalDevice *physicalDevices,
-    VkDevice *device,
     const void *ext,
     unsigned int queueCreateInfoCount,
     VkDeviceQueueCreateInfo *queueCreateInfos,
     unsigned int extensionCount,
     const char **extensionNames,
-    VkPhysicalDeviceFeatures *enabledFeatures
+    VkPhysicalDeviceFeatures *enabledFeatures,
+    VkDevice *deviceOut
 );
 
 
@@ -614,7 +634,9 @@ oriReturnStatus oriSetFlag(
  * @ingroup group_Meta
  *
  */
-void oriSetVulkanAllocationCallbacks(VkAllocationCallbacks callbacks);
+void oriSetVulkanAllocationCallbacks(
+    VkAllocationCallbacks callbacks
+);
 
 
 
