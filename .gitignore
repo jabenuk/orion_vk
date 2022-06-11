@@ -13,9 +13,7 @@
 # (add other editor files here if necessary)
 
 # .. for VSCode:
-.vscode/*.json
-!.vscode/launch.json
-!.vscode/tasks.json
+.vscode/
 
 #
 # everything in the GitHub folder should be tracked
