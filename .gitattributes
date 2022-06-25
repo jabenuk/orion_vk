@@ -2,3 +2,6 @@
 # most people don't bother using them anyways
 **tests/* linguist-vendored
 **examples/* linguist-vendored
+
+# also vendor deps folder
+**deps/*

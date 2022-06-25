@@ -8,6 +8,9 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
+// #define ORION_SEVERITIES ORION_ERROR_SEVERITY_FATAL_BIT | ORION_ERROR_SEVERITY_ERROR_BIT | ORION_ERROR_SEVERITY_WARNING_BIT
+#define ORION_SEVERITIES ORION_ERROR_SEVERITY_ALL_BIT
+
 #define DBGMSNGR_SEVERITIES VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
 #define DBGMSNGR_TYPES VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
 
@@ -18,7 +21,10 @@ oriState *state = NULL;
 
 VkInstance instance = NULL;
 VkDebugUtilsMessengerEXT messenger = NULL;
+
 VkDevice logicalDevice = NULL;
+VkQueue graphicsQueue = NULL;
+VkQueue presentQueue = NULL;
 
 bool physicalDeviceSuitabilityCheckFunc(VkPhysicalDevice device);
 
@@ -27,20 +33,14 @@ int main() {
     // initialise program
     //
 
-    oriEnableLibDebugMessages(ORION_ERROR_SEVERITY_ALL_BIT);
+    oriEnableLibDebugMessages(ORION_SEVERITIES);
 
     oriSetFlag(ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS, true);
 
-    glfwInit();
-
-    //
-    // create GLFW window
-    //
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    wMain = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, NULL, NULL);
+    if (!glfwInit()) {
+        printf("FATAL!! Failed to init GLFW!\n");
+        return -1;
+    }
 
     //
     // create Orion state
@@ -51,6 +51,7 @@ int main() {
 
     // get GLFW required extensions
     const char **extensions;
+
     unsigned int extensionCount;
     extensions = glfwGetRequiredInstanceExtensions(&extensionCount);
 
@@ -74,16 +75,27 @@ int main() {
 
     oriCreateInstance(state, NULL, &instance);
 
+    // also create a debug messenger
     oriCreateDebugMessenger(state, &instance, NULL, DBGMSNGR_SEVERITIES, DBGMSNGR_TYPES, &messenger);
 
     //
-    // create a surface with GLFW
+    // create GLFW window
     //
 
-    if (glfwCreateWindowSurface(instance, wMain, NULL, &sMain)) {
-        printf("FATAL!! Failed to create window surface!\n");
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    wMain = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, NULL, NULL);
+    if (!wMain) {
+        printf("FATAL!! Failed to create window!\n");
         return -1;
     }
+
+    if (glfwCreateWindowSurface(instance, wMain, NULL, &sMain)) {
+        printf("FATAL!! Failed to create surface!\n");
+        return -1;
+    }
+
 
     //
     // get an array of all physical devices and create a logical device with the first one
@@ -146,7 +158,15 @@ int main() {
     }
 
     // create logical device
-    oriCreateLogicalDevice(state, 1, &(devices[0]), NULL, uniqueQueueCount, queueCreateInfos, 0, NULL, NULL, &logicalDevice);
+    const char *deviceExtensions[] = {
+        "VK_KHR_swapchain"
+    };
+
+    oriCreateLogicalDevice(state, 1, &(devices[0]), NULL, uniqueQueueCount, queueCreateInfos, 1, deviceExtensions, NULL, &logicalDevice);
+
+    // get queue handles
+    vkGetDeviceQueue(logicalDevice, queueFamilyIndices.graphics, 0, &graphicsQueue);
+    vkGetDeviceQueue(logicalDevice, queueFamilyIndices.present, 0, &presentQueue);
 
     //
     // terminate

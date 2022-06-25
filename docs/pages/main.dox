@@ -37,6 +37,9 @@
  *          - @ref group_VkAbstractions_Core_Devices "Vulkan device management": <i>Vulkan device management.</i>
  *      - @ref group_VkAbstractions_Layers "Layers and extensions": <i>Vulkan extensibility.</i>
  *
+ * If you are developing the library and need a space to temporarily put undocumented members, please see the
+ * @ref group_Undocumented "Undocumented functionality" module.
+ *
  * @section section_main_Debugging Debugging
  *
  *  > Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc.

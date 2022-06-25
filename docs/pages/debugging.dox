@@ -94,7 +94,7 @@
  *
  * @section section_Debugging_FunctionReturns Function return statuses
  *
- * Aside from the error callback, most Orion functions also return a status enum that describes how their execution went.
+ * Aside from the error callback, most Orion functions also return a @ref oriReturnStatus enum that describes how their execution went.
  * This only applies for functions that could encounter errors (most of the library, but not all).
  *
  * When a function returns a non-OK status, it is usually accompanied by an appropriate debug message (sent to the

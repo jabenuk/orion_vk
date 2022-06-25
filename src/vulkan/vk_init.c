@@ -441,7 +441,7 @@ oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDev
 #   ifdef __oridebug
         {
             char s[768];
-            snprintf(s, 768, "\n\t%d queues were requested", queueCreateInfoCount);
+            snprintf(s, 768, "\n\t%d queue%s %s requested", queueCreateInfoCount, (queueCreateInfoCount == 1) ? "" : "s", (queueCreateInfoCount == 1) ? "was" : "were");
             strncat(logstr, s, 767);
         }
 #   endif
@@ -453,7 +453,20 @@ oriReturnStatus oriCreateLogicalDevice(oriState *state, unsigned int physicalDev
 #   ifdef __oridebug
         {
             char s[768];
-            snprintf(s, 768, "\n\t%d device extensions were enabled", extensionCount);
+            snprintf(s, 768, "\n\t%d extension%s %s enabled for this device", extensionCount, (extensionCount == 1) ? "" : "s", (extensionCount == 1) ? "was" : "were");
+
+            // if there were any extensions enabled, list them
+            if (extensionCount) {
+                strncat(s, ":\n", 767);
+
+                // add to log message
+                for (unsigned int i = 0; i < extensionCount; i++) {
+                    char _s[768];
+                    snprintf(_s, 768, "\t\t- name '%s'%s", extensionNames[i], (i < extensionCount - 1) ? "\n" : "");
+                    strncat(s, _s, 767);
+                }
+            }
+
             strncat(logstr, s, 767);
         }
 #   endif

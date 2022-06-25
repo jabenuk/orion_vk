@@ -124,6 +124,8 @@ typedef enum oriErrorSeverityBit {
  *
  * This can be used to manage errors in your program.
  *
+ * To see a list of all possible return statuses, see the @ref page_ErrorList "Error index".
+ *
  * @ingroup group_Errors
  *
  */

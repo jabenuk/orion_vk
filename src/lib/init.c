@@ -137,7 +137,7 @@ void oriDestroyState(oriState *state) {
     // note: this may have to be done inside the above if statement, but it seems to work fine here
     _ori_FreeDArray(state->arrays.debugMessengers, state->arrays.debugMessengersCount);
 
-    // destroy devices
+    // destroy logical devices
     for (unsigned int i = 0; i < state->arrays.logicalDevicesCount; i++) {
         if (*state->arrays.logicalDevices[i]) {
             vkDestroyDevice(*state->arrays.logicalDevices[i], _orion.callbacks.vulkanAllocators);
