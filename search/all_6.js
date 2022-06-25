@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['vulkan_20abstractions_0',['Vulkan abstractions',['../d8/dc3/group__group__VkAbstractions.html',1,'']]],
-  ['vulkan_20debugging_1',['Vulkan debugging',['../d9/d7f/group__group__VkAbstractions__Core__Debugging.html',1,'']]],
-  ['vulkan_20device_20management_2',['Vulkan device management',['../de/d40/group__group__VkAbstractions__Core__Devices.html',1,'']]]
+  ['undocumented_20functionality_0',['Undocumented functionality',['../de/d26/group__group__Undocumented.html',1,'']]]
 ];

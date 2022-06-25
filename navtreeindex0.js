@@ -37,6 +37,7 @@ var NAVTREEINDEX0 =
 "db/de0/group__group__Meta.html#ga886536caa0112761f05d46c5e844cbe0":[2,0,1,0],
 "db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622":[2,0,1,5],
 "db/de0/group__group__Meta.html#gaf1ab8a9faa7c5c5d3d3fcf6cc16db40a":[2,0,1,3],
+"de/d26/group__group__Undocumented.html":[2,1],
 "de/d40/group__group__VkAbstractions__Core__Devices.html":[2,0,2,1,1],
 "de/d40/group__group__VkAbstractions__Core__Devices.html#ga2503e739ea2fd15a5d2be9463a250bfe":[2,0,2,1,1,2],
 "de/d40/group__group__VkAbstractions__Core__Devices.html#ga29a1f6abd68c65b958517fc37515fe7b":[2,0,2,1,1,1],
