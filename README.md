@@ -2,8 +2,8 @@
 
 # orion_vk
 
-[![Build HTML documentation](https://github.com/jabenuk/orion_vk/actions/workflows/docs-build.yml/badge.svg)](https://github.com/jabenuk/orion_vk/actions/workflows/docs-build.yml)
-[![Licence](https://img.shields.io/github/license/jabenuk/orion_vk)](/LICENCE)
+[![Build HTML documentation](https://github.com/kosude/orion_vk/actions/workflows/docs-build.yml/badge.svg)](https://github.com/kosude/orion_vk/actions/workflows/docs-build.yml)
+[![Licence](https://img.shields.io/github/license/kosude/orion_vk)](/LICENCE)
 
 A low-level Vulkan graphics library for C that aims to abstract the more explicit
 aspects of the Vulkan API without losing any functionality.
@@ -11,7 +11,7 @@ aspects of the Vulkan API without losing any functionality.
 ## Documentation
 
 For library documentation, see the
-[GitHub pages deployment](https://jabenuk.github.io/orion_vk/). Due to being very
+[GitHub pages deployment](https://kosude.github.io/orion_vk/). Due to being very
 early in development, this documentation  is **_very_ subject to change**.
 
 ## Dependencies

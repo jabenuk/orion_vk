@@ -1,6 +1,6 @@
 # Home                          {#mainpage}
 
-Source code: [jabenuk/orion](https://github.com/jabenuk/orion_vk)
+Source code: [kosude/orion](https://github.com/kosude/orion_vk)
 
 
 ## Summary                      {#sct_mainpage_summary}
