@@ -1,9 +1,0 @@
-/**
- * @defgroup group_Undocumented Undocumented functionality
- *
- * @brief Functions that have not yet been documented.
- *
- * This module is here simply for the purpose of keeping the documentation organised and complete.
- * In practice, it should always be @b empty!
- *
- */

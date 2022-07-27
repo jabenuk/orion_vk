@@ -1,5 +1,5 @@
 /* *************************************************************************************** */
-/*                        ORION GRAPHICS LIBRARY AND RENDERING ENGINE                      */
+/*                       ORION GRAPHICS LIBRARY AND RENDERING ENGINE                       */
 /* *************************************************************************************** */
 /* Copyright (c) 2022 Jack Bennett                                                         */
 /* --------------------------------------------------------------------------------------- */
@@ -11,292 +11,347 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
+
+// ============================================================================ //
+// *****                     Doxygen file information                     ***** //
+// ============================================================================ //
+
 /**
  * @file init.c
  * @author jack bennett
  * @brief Library initialisation, loading, and overall management
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 jack bennett
  *
  * This file defines functions involved with:
- *   - 'initialising' the library (i.e. creating a state object)
- *   - the creation of some core library structures
+ *   - initialising the library
  *   - the overall termination of the library
  *   - configuring the library
  *
  */
 
 #include "orion.h"
-#include "orion_structs.h"
-#include "orion_helpers.h"
+#include "orion_errors.h"
+#include "orion_flags.h"
 #include "orion_funcs.h"
-#include "orion_codes.h"
+#include "orion_structs.h"
 
-#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 
+// ============================================================================ //
+// *****                     Private/internal systems                     ***** //
+// ============================================================================ //
 
-// ============================================================================
-// ----------------------------------------------------------------------------
-// *****        ORION PRIVATE FUNCTIONALITY                               *****
-// ----------------------------------------------------------------------------
-// ============================================================================
-
-// initialisation of global internal variables
-_ori_Library _orion = { NULL };
-
-
-
-// ============================================================================
-// ----------------------------------------------------------------------------
-// *****        ORION PUBLIC INTERFACE                                    *****
-// ----------------------------------------------------------------------------
-// ============================================================================
+// we statically initialise callbacks in case they are called before oriInit().
+_oriLibrary_t _orion = {
+    NULL,
+    .callbacks.debug.fun = _oriDefaultDebugCallback
+};
 
 
+// ============================================================================ //
+// *****                  Orion library public interface                  ***** //
+// ============================================================================ //
 
-// ============================================================================
-// *****        STATE                                                     *****
-// ============================================================================
 
-/**
- * @brief Create an Orion state object and return its handle.
- *
- * For the @c apiVersion parameter, you should use the @c VK_MAKE_API_VERSION macro defined in the Vulkan header.
- *
- * @param apiVersion the Vulkan version to use, as specified in the
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Specification</a>.
- *
- * @return the resulting Orion state handle.
- *
- * @sa oriState
- * @sa oriDestroyState()
- *
- * @ingroup group_Meta
- *
- */
-oriState *oriCreateState() {
-    oriState *r = malloc(sizeof(oriState));
+// ----[Orion library public interface]---------------------------------------- //
+//                             Library management                               //
 
-    // init to ensure everything (most importantly linked list heads) start at NULL
-    memset(r, 0, sizeof(oriState));
-
-#   ifdef __oridebug
-        _ori_DebugLog("state object created into %p", r);
-#   endif
-
-    return r;
-}
-
-/**
- * @brief Destroy the specified Orion state.
- *
- * Calling this function clears all data stored in @c state and destroys all Orion objects registered to it.
- *
- * @param state handle to the state object to be destroyed.
- *
- * @sa oriState
- *
- * @ingroup group_Meta
- *
- */
-void oriDestroyState(oriState *state) {
-    if (!state) {
-        _ori_ThrowError(ORERR_NULL_POINTER);
-        return;
+const oriReturnStatus_t oriInit(const unsigned int instanceCount, VkInstance *instanceOut, const VkInstanceCreateFlags instanceFlags, const unsigned int apiVersion, const char *applicationName, const unsigned int applicationVersion, const char *engineName, const unsigned int engineVersion, const unsigned int enabledLayerCount, const char **enabledLayers, const unsigned int enabledInstanceExtensionCount, const char **enabledInstanceExtensions, const void *instanceNext) {
+    if (_orion.initialised) { // already initialised
+        return ORION_RETURN_STATUS_SKIPPED;
+    }
+    if (!instanceOut || !instanceCount) { // no output variables given, or count is 0
+        _oriWarning("all output variables NULL in call to %s", __func__);
+        return ORION_RETURN_STATUS_NO_OUTPUT;
+    }
+    if (!instanceOut && instanceCount) { // no instances given but count is not 0
+        _oriError(ORIERR_NULL_POINTER, __func__);
+        return ORION_RETURN_STATUS_NULL_POINTER;
+    }
+    if (!enabledLayers && enabledLayerCount) { // no layers given but count is not 0
+        _oriError(ORIERR_NULL_POINTER, __func__);
+        return ORION_RETURN_STATUS_NULL_POINTER;
+    }
+    if (!enabledInstanceExtensions && enabledInstanceExtensionCount) { // no extensions given but count is not 0
+        _oriError(ORIERR_NULL_POINTER, __func__);
+        return ORION_RETURN_STATUS_NULL_POINTER;
     }
 
-    // first, we remove duplicates from any public arrays that store pointers
-    // this is because trying to destroy the contents of the same address multiple times will lead to an exception.
-    _ori_RemoveDArrayDuplicates(state->arrays.instances, state->arrays.instancesCount);
-    _ori_RemoveDArrayDuplicates(state->arrays.logicalDevices, state->arrays.logicalDevicesCount);
-
-    // load any necessary non-core Vulkan functions before the instances are destroyed
-    // functions that rely on an instance are initialised as NULL before all instances are iterated through.
-    PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT = NULL;
-    for (unsigned int i = 0; !DestroyDebugUtilsMessengerEXT && i < state->arrays.instancesCount; i++) {
-        DestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(*(state->arrays.instances[i]), "vkDestroyDebugUtilsMessengerEXT");
-    }
-
-    // destroy debug messengers
-    // if the DestroyDebugUtilsMessengerEXT pfn is NULL, then the debug utils extension wasn't enabled and therefore no debug messengers could be
-    // created by the user (at least not using Orion functions)
-    if (DestroyDebugUtilsMessengerEXT) {
-        for (unsigned int i = 0; i < state->arrays.debugMessengersCount; i++) {
-            if (*state->arrays.debugMessengers[i].handle) {
-                DestroyDebugUtilsMessengerEXT(*(state->arrays.debugMessengers[i].instance), *(state->arrays.debugMessengers[i].handle), _orion.callbacks.vulkanAllocators);
-            }
-
-#           ifdef __oridebug
-                _ori_DebugLog("VkDebugUtilsMessengerEXT at %p was freed by state object at location %p", state->arrays.debugMessengers[i].handle, state);
-#           endif
+    // check if the given VkInstance pointer is already in the hash table of instances
+    // this is really just a precautionary measure as there should only ever be one instance anyway. It could be omitted in the future if necessary.
+    {
+        _oriVkInstance_t *queryStructure;
+        HASH_FIND_PTR(_orion.allocatees.vkInstances, instanceOut, queryStructure);
+        if (queryStructure) { // uthash will have set queryStructure to NULL if it wasn't found so we can rely on this check
+            _oriWarning("orion already allocated instance at %p (%s)", instanceOut, __func__);
+            return ORION_RETURN_STATUS_SKIPPED;
         }
     }
-    // note: this may have to be done inside the above if statement, but it seems to work fine here
-    _ori_FreeDArray(state->arrays.debugMessengers, state->arrays.debugMessengersCount);
 
-    // destroy logical devices
-    for (unsigned int i = 0; i < state->arrays.logicalDevicesCount; i++) {
-        if (*state->arrays.logicalDevices[i]) {
-            vkDestroyDevice(*state->arrays.logicalDevices[i], _orion.callbacks.vulkanAllocators);
-        }
-
-#       ifdef __oridebug
-            _ori_DebugLog("VkDevice at %p was freed by state object at location %p", state->arrays.logicalDevices[i], state);
-#       endif
-    }
-    _ori_FreeDArray(state->arrays.logicalDevices, state->arrays.logicalDevicesCount);
-
-    // destroy instances
-    for (unsigned int i = 0; i < state->arrays.instancesCount; i++) {
-        if (*state->arrays.instances[i]) {
-            vkDestroyInstance(*state->arrays.instances[i], _orion.callbacks.vulkanAllocators);
-        }
-
-#       ifdef __oridebug
-            _ori_DebugLog("VkInstance at %p was freed by state object at location %p", state->arrays.instances[i], state);
-#       endif
-    }
-    _ori_FreeDArray(state->arrays.instances, state->arrays.instancesCount)
-
-    // free other dynamically allocated arrays
-    _ori_FreeDArray(state->instanceCreateInfo.enabledExtensions, state->instanceCreateInfo.enabledExtCount);
-    _ori_FreeDArray(state->instanceCreateInfo.enabledLayers, state->instanceCreateInfo.enabledLayerCount);
-
-    // finally, free state pointer
-#   ifdef __oridebug
-        _ori_Notification("freed state at %p", state);
-#   endif
-
-    free(state);
-    state = NULL;
-}
-
-/**
- * @brief Set application info for a state object.
- *
- * The @c apiVersion parameter of the application info is set in oriCreateState().
- *
- * It is not required to use this function (and hence VkApplicationInfo), but it is recommended so as to support what Vulkan calls 'driver optimisations'.
- * Whatever that means.
- *
- * @param state the state the object is to be registered into
- * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
- * @param apiVersion the Vulkan version to use, as specified in the
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Specification</a>.
- * @param name NULL, or a string containing the name of the application.
- * @param version the version of the application.
- * @param engineName NULL, or a string containing the name of the engine used to create the application.
- * @param engineVersion the version of the engine used to to create the application.
- *
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkApplicationInfo.html">Vulkan Docs/VkApplicationInfo</a>
- *
- * @ingroup group_Meta
- *
- */
-void oriDefineStateApplicationInfo(oriState *state, const void *ext, unsigned int apiVersion, const char *name, unsigned int version, const char *engineName, unsigned int engineVersion) {
-    if (!state) {
-        _ori_ThrowError(ORERR_NULL_POINTER);
-        return;
-    }
-
-    // using a compound literal should (?) be far less expensive than constantly dereferencing state to redefine the properties separately.
-    state->appInfo = (VkApplicationInfo) {
-        VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        ext,
-        name,
-        version,
-        engineName,
-        engineVersion,
-        apiVersion
+    // create application info struct
+    VkApplicationInfo appInfo = {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pNext = NULL, // "pNext must be NULL" - from VkApplicationInfo(3)
+        .pApplicationName = applicationName,
+        .applicationVersion = applicationVersion,
+        .pEngineName = engineName,
+        .engineVersion = engineVersion,
+        .apiVersion = apiVersion
     };
 
+    // create instance create-info struct
+    VkInstanceCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pNext = instanceNext;
+    createInfo.flags = instanceFlags;
+    createInfo.pApplicationInfo = &appInfo;
+
 #   ifdef __oridebug
-        _ori_DebugLog(
-            "application info of state object at %p updated:\n"
-            "\tAPI version: %d.%d.%d\n"
-            "\tname : %s\n"
-            "\tversion : %d.%d.%d\n"
-            "\tengine name : %s\n"
-            "\tengine version : %d.%d.%d\n"
-            "\textensive structure : at %p",
-            state,
-            VK_VERSION_MAJOR(apiVersion), VK_VERSION_MINOR(apiVersion), VK_VERSION_PATCH(apiVersion),
-            name,
-            VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version),
-            engineName,
-            VK_VERSION_MAJOR(engineVersion), VK_VERSION_MINOR(engineVersion), VK_VERSION_PATCH(engineVersion),
-            ext
-        );
-#   endif
-}
-
-
-
-// ============================================================================
-// *****        LIBRARY MANAGEMENT                                        *****
-// ============================================================================
-
-/**
- * @brief Set a library-wide flag or value
- *
- * This function can be used to set a library-wide flag to configure your application.
- * The flags that can be set can be seen below. (in header)
- *
- * @param flag the flag to update
- * @param val the value to set the flag to
- *
- * @ingroup group_Meta
- *
- */
-oriReturnStatus oriSetFlag(oriLibraryFlag flag, unsigned int val) {
-#   ifdef __oridebug
-        char flagstr[128];
+        // debug message will be logged at the end of the function if successful
+        char logstr[MAX_LOG_LEN];
+        memset(logstr, 0, MAX_LOG_LEN);
+        snprintf(logstr, MAX_LOG_LEN, "%d instance%s created into %p (%s)", instanceCount, (instanceCount == 1) ? "" : "s", instanceOut, __func__);
 #   endif
 
-    switch (flag) {
-        default:
-#           ifdef __oridebug
-                _ori_Warning("%s", "an invalid flag was given to oriSetFlag(); nothing was updated.");
-#           endif
+    // static arrays that will hold the compatible layers and extensions
+    // we are storing these in the primary function scope because they are referenced by vkCreateInstance() and so must be preserved until then.
+    // as each specified layer/extension is validated, it is added to the respective array here (assuming it was found to be compatible.)
+    const char *actualEnabledLayers[enabledLayerCount];
+    const char *actualEnabledExts[enabledInstanceExtensionCount];
+    unsigned int actualEnabledLayerCount = 0;
+    unsigned int actualEnabledExtCount = 0;
 
-            return ORION_RETURN_STATUS_ERROR_INVALID_ENUM;
-        case ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS:
-#           ifdef __oridebug
-                strncpy(flagstr, "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS", 127);
-#           endif
+    // specify layers to be enabled
+    if (enabledLayerCount && enabledLayers) {
+#       ifdef __oridebug
+            // string will be concatenated onto logstr
+            char logstr_layerlist[MAX_LOG_LEN];
+            memset(logstr_layerlist, 0, MAX_LOG_LEN);
+#       endif
 
-            _orion.flags.createInstanceDebugMessengers = val;
-            break;
+        // check that each layer is compatible
+        for (unsigned int i = 0; i < enabledLayerCount; i++) {
+            if (oriCheckLayerAvailability(enabledLayers[i])) {
+                // add to 'actual' array of layers
+                actualEnabledLayers[i] = enabledLayers[i];
+                actualEnabledLayerCount++;
+
+#               ifdef __oridebug
+                    char s[MAX_LOG_LEN];
+                    snprintf(s, MAX_LOG_LEN, "\n\t\t[%u] name '%s'", i, enabledLayers[i]);
+                    strncat(logstr_layerlist, s, MAX_LOG_LEN);
+#               endif
+            }
+#           ifdef __oridebug
+                else {
+                    // print warning stating that the layer was not available
+                    _oriWarning("layer %s not provided by Vulkan implementation", enabledLayers[i]);
+                }
+#           endif
+        }
+
+        // pass filtered layer array to Vulkan
+        if (actualEnabledLayerCount) {
+            createInfo.enabledLayerCount = actualEnabledLayerCount;
+            createInfo.ppEnabledLayerNames = (const char *const *) actualEnabledLayers;
+
+#           ifdef __oridebug
+                // concatenate onto logstr
+                char s[MAX_LOG_LEN];
+                snprintf(s, MAX_LOG_LEN, "\n\t%u layers enabled:", actualEnabledLayerCount);
+                strncat(logstr, s, MAX_LOG_LEN);
+
+                strncat(logstr, logstr_layerlist, MAX_LOG_LEN);
+#           endif
+        }
     }
 
+    // specify extensions to be enabled
+    if (enabledInstanceExtensionCount && enabledInstanceExtensions) {
+#       ifdef __oridebug
+            // string will be concatenated onto logstr
+            char logstr_extlist[MAX_LOG_LEN];
+            memset(logstr_extlist, 0, MAX_LOG_LEN);
+#       endif
+
+        // iterate through extensions
+        for (unsigned int i = 0; i < enabledInstanceExtensionCount; i++) {
+            // we use this design instead of continuing so the debug message is ensured to be concatenated out if __oridebug is enabled*
+            bool provided = false;
+
+            // check if the current extension is provided by the Vulkan implementation
+            if (oriCheckInstanceExtensionAvailability(enabledInstanceExtensions[i], NULL)) {
+                actualEnabledExts[i] = enabledInstanceExtensions[i];
+                actualEnabledExtCount++;
+                provided = true;
+            }
+
+            // iterate through layers if not yet provided
+            if (!provided) {
+                for (unsigned int j = 0; j < actualEnabledLayerCount; j++) {
+                    // check if the current extension is provided by the current layer
+                    if (oriCheckInstanceExtensionAvailability(enabledInstanceExtensions[i], actualEnabledLayers[j])) {
+                        actualEnabledExts[i] = enabledInstanceExtensions[i];
+                        actualEnabledExtCount++;
+                        provided = true;
+                        break;
+                    }
+                }
+            }
+
+            // *this is where the extension name is concatenated (if the current extension turned out to be available)
+#           ifdef __oridebug
+                if (provided) {
+                    char s[MAX_LOG_LEN];
+                    snprintf(s, MAX_LOG_LEN, "\n\t\t[%u] name '%s'", i, enabledInstanceExtensions[i]);
+                    strncat(logstr_extlist, s, MAX_LOG_LEN);
+                } else {
+                    // print warning stating that the extension was not available
+                    _oriWarning("instance extension %s not provided by Vulkan implementation or any layers", enabledInstanceExtensions[i]);
+                }
+#           endif
+        }
+
+        // pass now-filtered extension array to Vulkan
+        if (actualEnabledExtCount) {
+            createInfo.enabledExtensionCount = actualEnabledExtCount;
+            createInfo.ppEnabledExtensionNames = (const char *const *) actualEnabledExts;
+
+#           ifdef __oridebug
+                // concatenate onto logstr
+                char s[MAX_LOG_LEN];
+                snprintf(s, MAX_LOG_LEN, "\n\t%u instance extensions enabled:", actualEnabledExtCount);
+                strncat(logstr, s, MAX_LOG_LEN);
+
+                strncat(logstr, logstr_extlist, MAX_LOG_LEN);
+#           endif
+        }
+    }
+
+    for (unsigned int i = 0; i < instanceCount; i++) {
+        if (vkCreateInstance(&createInfo, _orion.callbacks.vulkanAllocators, &instanceOut[i])) {
+            _oriError(ORIERR_INSTANCE_CREATION_FAIL, __func__);
+            return ORION_RETURN_STATUS_ERROR;
+        }
+    }
+
+    // create a wrapper for the instance which can be stored in _orion
+    _oriVkInstance_t *wrapper = malloc(sizeof(_oriVkInstance_t));
+    if (!wrapper) {
+        _oriFatalError(ORIFERR_MEMORY_ERROR, __func__);
+        return ORION_RETURN_STATUS_ERROR;
+    }
+    wrapper->handle = instanceOut;
+
+    // store the enabled layers
+    wrapper->layerCount = actualEnabledLayerCount;
+    wrapper->layers = malloc(sizeof(const char *) * actualEnabledLayerCount);
+    if (!wrapper->layers) {
+        _oriFatalError(ORIFERR_MEMORY_ERROR, __func__);
+        return ORION_RETURN_STATUS_ERROR;
+    }
+
+    for (unsigned int i = 0; i < actualEnabledLayerCount; i++) {
+        // since the array of enabled layers here is stack-allocated, we need to malloc each string in the wrapper object
+        wrapper->layers[i] = malloc(sizeof(char) * (1 + strlen(actualEnabledLayers[i]))); // we add 1 for the null terminator
+        if (!wrapper->layers[i]) {
+            _oriFatalError(ORIFERR_MEMORY_ERROR, __func__);
+            return ORION_RETURN_STATUS_ERROR;
+        }
+
+        strcpy(wrapper->layers[i], actualEnabledLayers[i]);
+    }
+
+    // store the enabled instance extensions
+    wrapper->extensionCount = actualEnabledExtCount;
+    wrapper->extensions = malloc(sizeof(const char *) * actualEnabledExtCount);
+    if (!wrapper->extensions) {
+        _oriFatalError(ORIFERR_MEMORY_ERROR, __func__);
+        return ORION_RETURN_STATUS_ERROR;
+    }
+
+    for (unsigned int i = 0; i < actualEnabledExtCount; i++) {
+        wrapper->extensions[i] = malloc(sizeof(char) * (1 + strlen(actualEnabledExts[i]))); // we add 1 for the null terminator
+        if (!wrapper->extensions[i]) {
+            _oriFatalError(ORIFERR_MEMORY_ERROR, __func__);
+            return ORION_RETURN_STATUS_ERROR;
+        }
+
+        strcpy(wrapper->extensions[i], actualEnabledExts[i]);
+    }
+
+    // internally store the wrapper
+    HASH_ADD_PTR(_orion.allocatees.vkInstances, handle, wrapper);
+
 #   ifdef __oridebug
-        _ori_DebugLog("flag %s set to %d", flagstr, val);
+        _oriNotification(logstr);
 #   endif
+
+    // the library has been initialised
+    _orion.initialised = true;
+    return ORION_RETURN_STATUS_OK;
+}
+
+const oriReturnStatus_t oriTerminate() {
+#   ifdef __oridebug
+        _oriNotification("lib term called (%s)", __func__);
+#   endif
+
+    // destroy instance(s)
+    {
+        // use buffer for deletion-safe iteration
+        _oriVkInstance_t *cur, *buffer;
+        HASH_ITER(hh, _orion.allocatees.vkInstances, cur, buffer) {
+            // destroy vulkan object
+            if (cur->handle) {
+                vkDestroyInstance(*cur->handle, _orion.callbacks.vulkanAllocators);
+            }
+
+            // free array of layers
+            for (unsigned int i = 0; i < cur->layerCount; i++) {
+                free(cur->layers[i]);
+                cur->layers[i] = NULL;
+            }
+            free(cur->layers);
+            cur->layers = NULL;
+
+            // free array of instance extensions
+            for (unsigned int i = 0; i < cur->extensionCount; i++) {
+                free(cur->extensions[i]);
+                cur->extensions[i] = NULL;
+            }
+            free(cur->extensions);
+            cur->extensions = NULL;
+
+            // free each wrapper struct
+            HASH_DEL(_orion.allocatees.vkInstances, cur);
+            free(cur);
+            cur = NULL;
+        }
+    }
+
+    // the library can be re-initialised after this point
+    memset(&_orion, 0, sizeof(_orion));
+    _orion.initialised = false;
+
+    // set debug callback as it (maybe?) could be called after this point despite _orion having been cleared
+    _orion.callbacks.debug.fun = _oriDefaultDebugCallback;
 
     return ORION_RETURN_STATUS_OK;
 }
 
-/**
- * @brief Optionally define the memory allocation functions to be used in Vulkan functions.
- *
- * This function sets the internally-held structure in which allocation function pointers can be defined.
- *
- * The structure passed to the @c callbacks parameter of this function will be referenced in any Vulkan function called internally by
- * the library with a @c pAllocator parameter.
- *
- * Passing @b NULL to this function will reset Vulkan to using default allocation callbacks as described by the implementation.
- *
- * @param callbacks the callbacks structure to use with Vulkan functions.
- *
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#memory-allocation">Vulkan Docs/Memory allocation</a>
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkAllocationCallbacks.html">Vulkan Docs/VkAllocationCallbacks</a>
- *
- * @ingroup group_Meta
- *
- */
-void oriSetVulkanAllocationCallbacks(VkAllocationCallbacks callbacks) {
-    _orion.callbacks.vulkanAllocators = &callbacks;
+const oriReturnStatus_t oriSetVulkanAllocators(VkAllocationCallbacks *callbacks) {
+#   ifdef __oridebug
+        _oriLog("vulkan allocators updated to loc %p (%s)", callbacks, __func__);
+#   endif
+
+    _orion.callbacks.vulkanAllocators = callbacks;
+    return ORION_RETURN_STATUS_OK;
+}
+
+const VkAllocationCallbacks *oriGetVulkanAllocators() {
+    return _orion.callbacks.vulkanAllocators;
 }

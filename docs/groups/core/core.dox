@@ -1,0 +1,67 @@
+/*!
+
+@defgroup grp_core Core Orion functionality
+
+@brief All functionality shipped with the core Orion library
+
+This is the module in which most of the library's content can be found. It
+holds all functions, types, members, etc. that are included in the base Orion
+library.
+
+This module is split up into further submodules, which can be seen in the
+@b Modules page section above.
+
+*/
+
+
+/*!
+
+@defgroup grp_core_errors Error handling
+@ingroup grp_core
+
+@brief Functions to help catch errors thrown by Orion.
+
+Content found in this module is related to catching and debugging errors
+thrown by the library at runtime. You should also see the
+[Debugging](@ref debugging) page for more information about general
+debugging.
+
+It is part of the [core Orion library interface](@ref grp_core).
+
+@sa @ref debugging
+@sa @ref errors
+
+*/
+
+
+/*!
+
+@defgroup grp_core_man Library management
+@ingroup grp_core
+
+@brief Functions that handle the initialisation, management, and eventual
+termination of the library.
+
+Content found in this module is related to initialising, configuring,
+managing, terminating, etc.
+
+It is part of the [core Orion library interface](@ref grp_core).
+
+*/
+
+
+/*!
+
+@defgroup grp_core_vkapi Vulkan API abstractions
+@ingroup grp_core
+
+@brief Abstractions of the Vulkan API
+
+Functionality found in this module is related to abstracting and simplifying
+the use of the Vulkan API.
+
+This module is split up into further submodules, which can be seen in the
+@b Modules page section above. It is part of the
+[core Orion library interface](@ref grp_core).
+
+*/

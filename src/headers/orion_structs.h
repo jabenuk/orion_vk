@@ -1,5 +1,5 @@
 /* *************************************************************************************** */
-/*                        ORION GRAPHICS LIBRARY AND RENDERING ENGINE                      */
+/*                       ORION GRAPHICS LIBRARY AND RENDERING ENGINE                       */
 /* *************************************************************************************** */
 /* Copyright (c) 2022 Jack Bennett                                                         */
 /* --------------------------------------------------------------------------------------- */
@@ -11,12 +11,17 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
+
+// ============================================================================ //
+// *****                     Doxygen file information                     ***** //
+// ============================================================================ //
+
 /**
  * @file orion_structs.h
  * @author jack bennett
  * @brief Internal header file defining public opaque structures.
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 jack bennett
  *
  * This is an internal header.
  * It is NOT to be included by the user, and is certainly not included as
@@ -41,84 +46,84 @@
 
 #include "orion.h"
 
+#include "uthash/include/uthash.h"
 
 
-// ============================================================================
-// ----------------------------------------------------------------------------
-// *****        ORION PRIVATE FUNCTIONALITY                               *****
-// ----------------------------------------------------------------------------
-// ============================================================================
+// ============================================================================ //
+// *****                     Private/internal systems                     ***** //
+// ============================================================================ //
 
-typedef struct _ori_Library {
+
+// ----[Private/internal systems]---------------------------------------------- //
+//                        Internal structure definitions                        //
+
+typedef struct _oriLibrary_t _oriLibrary_t;
+typedef struct _oriError_t _oriError_t;
+
+typedef struct _oriVkInstance_t _oriVkInstance_t;
+typedef struct _oriVkDevice_t _oriVkDevice_t;
+
+// Struct to hold global library data
+//
+typedef struct _oriLibrary_t {
+    bool initialised;
+
+    oriSeverityBit_t debugMessageSeverities;
+
     struct {
-        oriErrorCallback errorCallback;
-        void *errorCallbackUserData;
+        struct {
+            oriDebugCallbackfun fun;
+            void *pointer;
+        } debug;
 
         VkAllocationCallbacks *vulkanAllocators;
     } callbacks;
 
-    oriErrorSeverityBit displayedErrorSeverities;
-
+    // struct of hashtables of pointers to Orion-created Vulkan structures
     struct {
-        bool createInstanceDebugMessengers;
-    } flags;
-} _ori_Library;
-extern _ori_Library _orion;
+        _oriVkInstance_t *vkInstances;
+        _oriVkDevice_t *vkDevices;
+    } allocatees;
+} _oriLibrary_t;
 
-// structures used to internally store extra data about Vulkan objects
+// Global state
+//
+extern _oriLibrary_t _orion;
 
-// when debug messengers are created, we store a pointer to the instance that they were created for
-// this is required to destroy said debug messengers
-typedef struct _ori_DebugUtilsMessengerEXT {
-    VkDebugUtilsMessengerEXT *handle;
-    VkInstance *instance;
-} _ori_DebugUtilsMessengerEXT;
+// Struct to hold information about a standardised error for use in internal error-handling functions
+//
+typedef struct _oriError_t {
+    const char *name;
+    const char *description;
+} _oriError_t;
 
+// Hashable Vulkan wrapper struct to hold extra data about an instance
+// There should only ever be one instance anyway, but we are doing it this way for consistency between instances and other Vulkan structures.
+// There could also be an update to Vulkan in the future which makes it more useful to have multiple instances, in which
+// case having this design makes it easier to adapt to that.
+//
+typedef struct _oriVkInstance_t {
+    UT_hash_handle hh;
 
+    VkInstance *handle; // serves as both the location of the instance handle and the hash key
 
-// ============================================================================
-// ----------------------------------------------------------------------------
-// *****        ORION PUBLIC (OPAQUE) STRUCTURES                          *****
-// ----------------------------------------------------------------------------
-// ============================================================================
+    char **layers;
+    unsigned int layerCount;
+    char **extensions;
+    unsigned int extensionCount;
+} _oriVkInstance_t;
 
-/**
- * @brief An opaque structure that holds all public state.
- *
- * This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().
- *
- * However, it also holds state related to Vulkan, such as the application info.
- *
- * @sa oriCreateState()
- * @sa oriDestroyState()
- *
- * @ingroup group_Meta
- *
- */
-typedef struct oriState {
-    // struct of all global dynamic arrays (use realloc() to extend)
-    struct {
-        VkInstance **instances;                         unsigned int instancesCount;
-        _ori_DebugUtilsMessengerEXT *debugMessengers;   unsigned int debugMessengersCount;
-        VkDevice **logicalDevices;                      unsigned int logicalDevicesCount;
-    } arrays;
+// Hashable Vulkan logical device wrapper struct
+//
+typedef struct _oriVkDevice_t {
+    UT_hash_handle hh;
 
-    VkApplicationInfo appInfo;
+    VkDevice *handle;
 
-    struct {
-        // enabled Vulkan layers for instances created under this state
-        char **enabledLayers;       unsigned int enabledLayerCount;
+    char **extensions;
+    unsigned int extensionCount;
+} _oriVkDevice_t;
 
-        // enabled Vulkan instance extensions for instances created under this state
-        char **enabledExtensions;   unsigned int enabledExtCount;
-
-        // instance debug messenger create info
-        struct {
-            VkDebugUtilsMessageSeverityFlagsEXT severities;
-            VkDebugUtilsMessageTypeFlagsEXT types;
-        } dbgmsngrEnabledMessages;
-    } instanceCreateInfo;
-} oriState;
 
 #ifdef __cplusplus
     }

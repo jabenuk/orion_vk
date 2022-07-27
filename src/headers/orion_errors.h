@@ -17,9 +17,9 @@
 // ============================================================================ //
 
 /**
- * @file orion_funcs.h
+ * @file orion_errors.h
  * @author jack bennett
- * @brief Internal header file declaring internal functions and callbacks.
+ * @brief Internal header file declaring API error codes.
  *
  * @copyright Copyright (c) 2022 jack bennett
  *
@@ -27,23 +27,22 @@
  * It is NOT to be included by the user, and is certainly not included as
  * part of the interface orion.h header.
  *
- * This file declares all internal functions - not specifically 'helper' functions,
- * as those are declared in orion_helpers.h.
+ * This file declares standardised declarations of error codes commonly referenced
+ * throughout the Orion API.
  *
- * Callbacks are also declared here, and are all defined in lib/callback.c.
+ * The 'Error index' on the public documentation describes each error.
  *
  */
 
 #pragma once
-#ifndef __ORION_FUNCS_H
-#define __ORION_FUNCS_H
+#ifndef __ORION_ERRORS_H
+#define __ORION_ERRORS_H
 
 #ifdef __cplusplus
     extern "C" {
 #endif // __cplusplus
 
 #include "orion.h"
-#include "orion_errors.h"
 #include "orion_structs.h"
 
 
@@ -53,64 +52,36 @@
 
 
 // ----[Private/internal systems]---------------------------------------------- //
-//                              Default callbacks                               //
+//                           Error code declarations                            //
 
-// Default debug callback (signature of oriDebugCallbackfun pfn)
+// Enum definitions based on their ID/code
 //
-void _oriDefaultDebugCallback(
-    const char *name,
-    const unsigned int code,
-    const char *message,
-    const oriSeverityBit_t severity,
-    void *pointer
-);
+typedef enum _oriErrorCode_t {
+    // code 0xA1 is reserved for the recommended VULKAN_DEBUG_MESSENGER 'error'
+
+    ORIERR_NULL_POINTER = 0x01,
+    ORIERR_INSTANCE_CREATION_FAIL = 0x02,
+    ORIERR_NOT_INIT = 0x03,
+    ORIERR_INVALID_OBJECT = 0x04,
+    ORIERR_VULKAN_QUERY_FAIL = 0x05,
+    ORIERR_DEVICE_CREATION_FAIL = 0x06,
+
+    ORIFERR_MEMORY_ERROR = 0xD0
+} _oriErrorCode_t;
 
 
 // ----[Private/internal systems]---------------------------------------------- //
-//                        Error-throwing helper functions                       //
+//                      Error code-related helper function(s)                   //
 
-// Send a debug log to console (severity of ORION_DEBUG_SEVERITY_VERBOSE_BIT)
-//
-void _oriLog(
-    const char *format,
-    ...
-);
-
-// Send a notification to console (severity of ORION_DEBUG_SEVERITY_NOTIF_BIT)
-// Same format as log messages, but treated with higher severity.
-//
-void _oriNotification(
-    const char *format,
-    ...
-);
-
-// Send a warning to console (severity of ORION_DEBUG_SEVERITY_WARNING_BIT)
-// Same format as notifications, but treated with higher severity.
-//
-void _oriWarning(
-    const char *format,
-    ...
-);
-
-// Send an error to console (severity of ORION_DEBUG_SEVERITY_ERROR_BIT)
+// Helper function for use in internal error-throwing functions.
 // 'extra' can be used to provide extra information to be concatenated onto the error description. NULL if n/a.
 //
-void _oriError(
-    const _oriErrorCode_t id,
-    const char *extra
-);
-
-// Send an fatal error to console (severity of ORION_DEBUG_SEVERITY_FATAL_BIT)
-// Same format as errors, but treated with higher severity.
-// Will terminate the program after throwing!
-//
-void _oriFatalError(
-    const _oriErrorCode_t id,
-    const char *extra
+const _oriError_t _oriParseError(
+    const _oriErrorCode_t id
 );
 
 #ifdef __cplusplus
     }
 #endif // __cplusplus
 
-#endif // __ORION_FUNCS_H
+#endif // __ORION_ERRORS_H

@@ -1,5 +1,5 @@
 /* *************************************************************************************** */
-/*                        ORION GRAPHICS LIBRARY AND RENDERING ENGINE                      */
+/*                       ORION GRAPHICS LIBRARY AND RENDERING ENGINE                       */
 /* *************************************************************************************** */
 /* Copyright (c) 2022 Jack Bennett                                                         */
 /* --------------------------------------------------------------------------------------- */
@@ -11,16 +11,20 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
+
+// ============================================================================ //
+// *****                     Doxygen file information                     ***** //
+// ============================================================================ //
+
 /**
  * @file orion.h
  * @author jack bennett
  * @brief The public header of the core Orion library.
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 jack bennett
  *
- * This is the public header for including Orion.
- *
- * All core public library functionality is declared here.
+ * This is the public header for including Orion, in which all core public
+ * library functionality is declared.
  *
  */
 
@@ -32,716 +36,691 @@
     extern "C" {
 #endif // __cplusplus
 
-#include <vulkan/vulkan.h>
-#include <stdbool.h>
+#include <vulkan/vulkan.h> // Vulkan API
+#include <stdbool.h> // only about 30 lines, just defines the bool type
 
-// if ORION_OPTIMISED is defined, no debug output will be processed (no string manipulation functions)
-// this greatly reduces debugging capabilities. Errors will still be thrown.
-#ifndef ORION_OPTIMISED
+
+// ============================================================================ //
+// *****                           Preprocessing                          ***** //
+// ============================================================================ //
+
+// if radical optimisation (radop) was enabled at build, no debug output will be processed (no string manipulation functions)
+// this greatly reduces debugging capabilities (hence the 'radical'). Errors will still be thrown.
+#ifndef ORION_RADOP
 #   define __oridebug
 #endif
 
+// fallback definition for __func__ for maximum code portability
+// (see http://gcc.gnu.org/onlinedocs/gcc-4.8.1/gcc/Function-Names.html)
+#if __STDC_VERSION__ < 199901L
+#   if __GNUC__ >= 2
+#       define __func__ __FUNCTION__
+#   else
+#       define __func__ "<unknown>"
+#   endif
+#endif
 
 
-// ============================================================================
-// ----------------------------------------------------------------------------
-// *****        ORION PUBLIC INTERFACE                                    *****
-// ----------------------------------------------------------------------------
-// ============================================================================
+// ============================================================================ //
+// *****                  Orion library public interface                  ***** //
+// ============================================================================ //
 
 
-
-// ============================================================================
-// *****        STRUCTURES                                                *****
-// ============================================================================
-
-/**
- * @brief An opaque structure that holds all public state.
- *
- * This structure is mostly used to store lists of created Orion objects so they can be implicitly destroyed in oriTerminate().
- *
- * However, it also holds state related to Vulkan, such as the application info.
- *
- * Note that Vulkan objects, like <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">instances</a>,
- * are @b not stored inside oriState, but rather this struct contains @b handles to said Vulkan objects, so that it can manage them.
- * For example, you can create a Vulkan instance using data from an oriState object with oriCreateInstance(), but the function @b returns
- * the instance so you can deal with it on your end. However, the function also returns the instance to the state, so that, when you call
- * oriDestroyState(), the instance (and any other instances made with this state) will implicitly be freed.
- *
- * @sa oriCreateState()
- * @sa oriDestroyState()
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a>
- *
- * @ingroup group_Meta
- *
- */
-typedef struct oriState oriState;
-
-
-
-// ============================================================================
-// *****        ENUMS                                                     *****
-// ============================================================================
-
-/**
- * @brief Library flag that can be set to a desired value.
- *
- * Library flags can be updated with oriSetFlag() or an equivalent function for other types.
- *
- * For a comprehensive list of available library flags, see the @ref section_main_Config "Home/Configuration" section.
- *
- * @ingroup group_Meta
- *
- */
-typedef enum oriLibraryFlag {
-    ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS =    1
-} oriLibraryFlag;
+// ----[Orion library public interface]---------------------------------------- //
+//                                   Enums                                      //
 
 /**
  * @brief The severity of a debug message.
  *
- * See the @ref section_Debugging_ErrorCallback "Debugging/Error callback" section for more information about how
- * Orion errors and other debug messages are categorised.
+ * See the @ref sct_debugging_errorcodes_severities "Debugging/Error code specifications/Severities"
+ * section for more information about how Orion errors and other debug messages are categorised.
  *
- * @ingroup group_Errors
+ * @ingroup grp_core_errors
  *
  */
-typedef enum oriErrorSeverityBit {
-    ORION_ERROR_SEVERITY_ALL_BIT =      0xFF,   // 0b11111111
-    ORION_ERROR_SEVERITY_FATAL_BIT =    0x01,   // 0b00000001
-    ORION_ERROR_SEVERITY_ERROR_BIT =    0x02,   // 0b00000010
-    ORION_ERROR_SEVERITY_WARNING_BIT =  0x04,   // 0b00000100
-    ORION_ERROR_SEVERITY_NOTIF_BIT =    0x08,   // 0b00001000
-    ORION_ERROR_SEVERITY_VERBOSE_BIT =  0x10    // 0b00010000
-} oriErrorSeverityBit;
+typedef enum oriSeverityBit_t {
+    ORION_DEBUG_SEVERITY_ALL_BIT =      0xFF,   // 0b11111111
+    ORION_DEBUG_SEVERITY_FATAL_BIT =    0x01,   // 0b00000001
+    ORION_DEBUG_SEVERITY_ERROR_BIT =    0x02,   // 0b00000010
+    ORION_DEBUG_SEVERITY_WARNING_BIT =  0x04,   // 0b00000100
+    ORION_DEBUG_SEVERITY_NOTIF_BIT =    0x08,   // 0b00001000
+    ORION_DEBUG_SEVERITY_VERBOSE_BIT =  0x10    // 0b00010000
+} oriSeverityBit_t;
 
 /**
  * @brief The return status of an Orion function.
  *
- * All Orion functions (that could result in errors) return an oriReturnStatus enum.
+ * All Orion functions (that could result in errors) return an oriReturnStatus_t enum.
  * If the function returns any value other than @c ORION_RETURN_STATUS_OK (0), something has gone wrong. The name of the returned enum will
- * give some information, but this is generally vague and you should check the @ref group_Errors "debug output" for more information.
+ * give some information, but this is generally vague and you should check the @ref debugging "debug output" for more information.
  *
- * This can be used to manage errors in your program.
+ * This can be used to handle errors in your program.
  *
- * To see a list of all possible return statuses, see the @ref page_ErrorList "Error index".
+ * To see a list of all possible return statuses, see the @ref sct_errors_returns "Error index".
  *
- * @ingroup group_Errors
+ * @ingroup grp_core_errors
+ *
+ * @sa @ref oriStringifyReturnStatus()
  *
  */
-typedef enum oriReturnStatus {
-    ORION_RETURN_STATUS_ERROR_GOOD_LUCK = -1,
+typedef enum oriReturnStatus_t {
     ORION_RETURN_STATUS_OK = 0,
-    ORION_RETURN_STATUS_ERROR_NOT_FOUND = 1,
-    ORION_RETURN_STATUS_ERROR_VULKAN_ERROR = 2,
-    ORION_RETURN_STATUS_ERROR_INVALID_ENUM = 3,
-    ORION_RETURN_STATUS_MEMORY_ERROR = 4,
-    ORION_RETURN_STATUS_EXT_NOT_ENABLED = 5,
-    ORION_RETURN_STATUS_LAYER_NOT_ENABLED = 6,
-    ORION_RETURN_STATUS_ERROR_NULL_POINTER = 7
-} oriReturnStatus;
+    ORION_RETURN_STATUS_SKIPPED = 1,
+    ORION_RETURN_STATUS_NO_OUTPUT = 2,
+    ORION_RETURN_STATUS_NULL_POINTER = 3,
+    ORION_RETURN_STATUS_ERROR = 4,
+} oriReturnStatus_t;
 
 
-
-// ============================================================================
-// *****        CORE VULKAN API ABSTRACTIONS: INSTANCES                   *****
-// ============================================================================
+// ----[Orion library public interface]---------------------------------------- //
+//                          Function pointer typedefs                           //
 
 /**
- * @brief Apply all previous properties set to the given @c state and create a VkInstance object, managed by @c state.
+ * @brief Callback function for general runtime errors.
  *
- * Properties previously passed to @c state in functions such as oriDefineStateApplicationInfo(), and features specified in functions like oriFlagLayerEnabled(), will
- * be applied and used to create a <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">VkInstance</a> object.
+ * This function pointer defines a callback function for general runtime errors.
  *
- * The resulting instance object will be (memory) managed by the state.
+ * It function signature must be followed when setting a custom Orion debug callback, which can
+ * be done in oriSetDebugCallback().
  *
- * @param state the state object from which properties will be used, and to which the resulting VkInstance will be tied.
- * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
- * @param instanceOut a pointer to the structure to which the instance will be returned.
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
+ * A list of error severities (passed to the @c severity parameter) can be seen in the
+ * [Debugging/Severities](@ref sct_debugging_errorcodes_severities) section.
  *
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">Vulkan Docs/VkInstance</a>
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstanceCreateInfo.html">Vulkan Docs/VkInstanceCreateInfo</a>
+ * @param name the name of the error ID, if applicable\*
+ * @param code the error code, if applicable\*
+ * @param message a message for debugging
+ * @param severity the severity of the message
+ * @param pointer NULL or a user-specified pointer (can be specified in oriSetDebugCallback())
  *
- * @ingroup group_VkAbstractions_Core
+ * \*only applicable when @c severity is _ERROR_ or _FATAL._ Messages with severities of _WARNING_ or below are
+ * not standardised, and **do not have a set name or code.**
+ *
+ * @ingroup grp_core_errors
+ *
+ * @sa @ref oriSetDebugCallback()
+ * @sa @ref oriGetDebugCallback()
+ * @sa @ref oriGetDebugCallbackUserData()
  *
  */
-oriReturnStatus oriCreateInstance(
-    oriState *state,
-    const void *ext,
-    VkInstance *instanceOut
+typedef void (* oriDebugCallbackfun)(
+    const char *name,
+    const unsigned int code,
+    const char *message,
+    const oriSeverityBit_t severity,
+    void *pointer
 );
 
-
-
-// ============================================================================
-// *****        CORE VULKAN API ABSTRACTIONS: DEBUGGING                   *****
-// ============================================================================
-
 /**
- * @brief Create a Vulkan debug messenger that will be managed by @c state.
+ * @brief Suitability check function for physical graphics devices.
  *
- * The callback that will be used by this debug messenger is based on the Orion @ref section_Debugging_ErrorCallback "error callback"; that is to say,
- * a message will be generated by Orion with Vulkan-reported information, such as severity, message, type, etc, and will be reported to the Orion callback in
- * the @c message parameter. The code of the error will be @b 0x03, and the error name will be @b VULKAN_DEBUG_MESSENGER.
+ * A function of this signature is to be used to select suitable graphics device/s to be
+ * used in the application.
  *
- * The user pointer that will be reported to the callback is specified in oriSetErrorCallback(). You do not have to filter the messages yourself.
+ * Devices reported to this function will only include those with Vulkan support, so if
+ * there are no graphics devices with Vulkan support, this function will not be called.
  *
- * @note The @c VK_EXT_debug_utils extension @b must be enabled; if not, @ref section_ErrorList_FunctionReturns "ORION_RETURN_STATUS_EXT_NOT_ENABLED" will be
- * returned, and @c debugMessengerOut will be set to @b NULL.
- *
- * @param state the state object to which the resulting
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerEXT.html">VkDebugUtilsMessengerEXT</a> will be tied.
- * @param instance the Vulkan <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html">instance</a> that the messenger
- * will be used with.
- * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
- * @param severities (bitmask) severities of the messages to @b display.
- * @param types (bitmask) types of the messages to @b display.
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
- * @param debugMessengerOut a pointer to the structure to which the debug messenger will be returned.
- *
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerEXT.html">Vulkan Docs/VkDebugUtilsMessengerEXT</a>
- * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessengerCreateInfoEXT.html">Vulkan Docs/VkDebugUtilsMessengerCreateInfoEXT</a>
- *
- * @ingroup group_VkAbstractions_Core_Debugging
- *
- */
-oriReturnStatus oriCreateDebugMessenger(
-    oriState *state,
-    VkInstance *instance,
-    const void *ext,
-    VkDebugUtilsMessageSeverityFlagBitsEXT severities,
-    VkDebugUtilsMessageTypeFlagBitsEXT types,
-    VkDebugUtilsMessengerEXT *debugMessengerOut
-);
-
-
-
-// ============================================================================
-// *****        CORE VULKAN API ABSTRACTIONS: DEVICES                     *****
-// ============================================================================
-
-/**
- * @brief A user-defined function to check the suitability of a physical Vulkan device.
- *
- * A function of this signature is to be used to select suitable graphics device/s to be used in the application.
- *
- * Devices reported to this function will only include those with Vulkan support. If there are no graphics devices with
- * Vulkan support, this function <b>will not be called.</b>
- *
- * You should return @b true if the device supports the extensions you require, the device supports the required queue
- * families, etc. You can make the function as simple or as advanced as you need - just make sure you return true if the
- * device is suitable and false if it isn't.
+ * You should return @b true if the device supports the extensions you require, the
+ * device supports the required queue families, etc. You can make the function as
+ * simple or as advanced as you need - just make sure you return @b true if the device
+ * is suitable and @b false if it isn't.
  *
  * @param device the device to be queried
- * @return true if the device is suitable to be used.
- * @return false if the device is not suitable to be used.
  *
- * @ingroup group_VkAbstractions_Core_Devices
+ * @ingroup grp_core_vkapi_core_devices
  *
- */
-typedef bool (* oriPhysicalDeviceSuitabilityCheckFunc)(
-    VkPhysicalDevice device
-);
-
-/**
- * @brief Get a list of all devices that support Vulkan and are considered suitable for the application.
- *
- * This function retrieves an array of physical devices accessible to a Vulkan instance that are considered suitable
- * for the application.
- *
- * @note For a list of all @b available physical devices, pass @b NULL to the @c checkFunc parameter. This will mean that no suitability checks
- * will be done, and all devices with Vulkan support will be returned.
- *
- * @param instance Vulkan instance to query
- * @param checkFunc an @ref oriPhysicalDeviceSuitabilityCheckFunc function pointer that returns true if a device is suitable and false
- * if not.
- * @param countOut pointer to a variable into which the number of suitable physical devices will be returned.
- * @param devicesOut pointer to an array into which the list of suitable physical devices will be returned. <b>This array will be allocated by the function.</b>
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
- *
- * @ingroup group_VkAbstractions_Core_Devices
+ * @sa @ref oriEnumerateSuitablePhysicalDevices()
  *
  */
-oriReturnStatus oriEnumerateSuitablePhysicalDevices(
-    VkInstance instance,
-    oriPhysicalDeviceSuitabilityCheckFunc checkFunc,
-    unsigned int *countOut,
-    VkPhysicalDevice **devicesOut
-);
-
-/**
- * @brief Get a list of all available queue families for a specified physical device.
- *
- * This function retrieves an array of queue families available to a specified physical device.
- *
- * @param physicalDevice the physical device to query.
- * @param countOut pointer to a variable into which the amount of queue families will be returned.
- * @param familiesOut pointer to an array into which the list of queue families will be returned. <b>This array will be allocated by the function.</b>
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
- *
- * @ingroup group_VkAbstractions_Core_Devices
- *
- */
-oriReturnStatus oriEnumerateAvailableQueueFamilies(
-    VkPhysicalDevice *physicalDevice,
-    unsigned int *countOut,
-    VkQueueFamilyProperties **familiesOut
-);
-
-/**
- * @brief Create a logical device to connect to one or more physical devices.
- *
- * The resulting logical device will be managed by @c state.
- *
- * If @c physicalDeviceCount is 1, then @c physicalDevices is a pointer to the desired physical device.
- * If @c physicalDeviceCount is more than 1, then @c physicalDevices is an array of desired physical devices in the same device group.
- * @c physicalDeviceCount @b cannot be 0.
- *
- * See <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html">Vulkan Docs/VkDeviceCreateInfo</a> and, occasionally,
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html">Vulkan Docs/VkDeviceGroupDeviceCreateInfo</a>
- * for more info.
- *
- * @param state the state which will manage the resulting logical device.
- * @param physicalDeviceCount the amount of physical devices to create the logical device for.
- * @param physicalDevices either a pointer to the physical device or an array of physical devices (see above).
- * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
- * @param queueCreateInfoCount the size of the @c queueCreateInfos array.
- * @param queueCreateInfos array of
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html">VkDeviceQueueCreateInfo</a> structures describing
- * the queues that are requested along with the logical device.
- * @param extensionCount the size of the @c extensionNames array.
- * @param extensionNames array of null-terminated UTF-8 strings containing the names of device extensions to be enabled for the logical device.
- * @param enabledFeatures NULL or a pointer to a
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">VkPhysicalDeviceFeatures</a> structure containing
- * flags of device features to be enabled.
- * @param deviceOut pointer to the variable into which the resulting device will be returned.
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
- *
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html">Vulkan Docs/VkDeviceCreateInfo</a>
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html">Vulkan Docs/VkDeviceGroupDeviceCreateInfo</a>
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkCreateDevice.html">Vulkan Docs/vkCreateDevice()</a>
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html">Vulkan Docs/VkDeviceQueueCreateInfo</a>
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html">Vulkan Docs/VkPhysicalDeviceFeatures</a>
- *
- * @ingroup group_VkAbstractions_Core_Devices
- *
- */
-oriReturnStatus oriCreateLogicalDevice(
-    oriState *state,
-    unsigned int physicalDeviceCount,
-    VkPhysicalDevice *physicalDevices,
-    const void *ext,
-    unsigned int queueCreateInfoCount,
-    VkDeviceQueueCreateInfo *queueCreateInfos,
-    unsigned int extensionCount,
-    const char **extensionNames,
-    VkPhysicalDeviceFeatures *enabledFeatures,
-    VkDevice *deviceOut
+typedef bool (* oriPhysicalDeviceSuitabilityCheckfun)(
+    const VkPhysicalDevice device
 );
 
 
-
-// ============================================================================
-// *****        FEATURE LOADING AND ENABLING                              *****
-// ============================================================================
+// ----[Orion library public interface]---------------------------------------- //
+//                             Library management                               //
 
 /**
- * @brief Flag the specified Vulkan layer to be enabled when creating instances with oriCreateInstance() using @c state.
+ * @brief Initialise the library.
  *
- * @param state the state to enable the layer on.
- * @param layer a UTF-8, null-terminated string holding the name of the desired layer.
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
+ * This function initialises the Orion library.
  *
- * @sa oriCheckLayerAvailability()
+ * It also initialises a given [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) struct (or
+ * array of VkInstance structs, depending on the amount given in @c instanceCount.)
  *
- * @ingroup group_VkAbstractions_Layers
+ * The parameters @c apiVersion, @c applicationName, @c applicationVersion, @c engineName, and @c engineVersion will be passed to Vulkan via the creation
+ * of a [VkApplicationInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkApplicationInfo.html) structure.
+ *
+ * If @c enabledLayerCount is not 0, then @c enabledLayers must be an array of null-terminated strings containing the names of each layer to enable for
+ * the instance(s) (if @c enabledLayerCount is 1, then you can simply pass a pointer to a string). This logic also applies to the @c enabledInstanceExtensionCount
+ * and @c enabledInstanceExtensions parameters.
+ *
+ * @note Specifying the same layer or extension multiple times @b will cause problems, as duplicates are not accounted for. It is on you to avoid
+ * duplicates.
+ *
+ * @param instanceCount the amount of instances to create. This should be 1 in almost all cases, and <b>cannot be 0</b>.
+ * @param instanceOut if `instanceCount` was 1, then this is a pointer to the VkInstance struct to initialise. Otherwise, it is an array of VkInstance structs.
+ * @param instanceFlags a bitmask of [VkInstanceCreateFlagBits](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstanceCreateFlagBits.html)
+ * indicating the collective behaviour of the instances.
+ * @param apiVersion the Vulkan API version.
+ * @param applicationName NULL or the name of the application.
+ * @param applicationVersion the version of the application.
+ * @param engineName NULL or the name of the engine.
+ * @param engineVersion the version of the engine.
+ * @param enabledLayerCount the amount of layers to enable for the instances.
+ * @param enabledLayers an array of the names of the layers to enable for the instances.
+ * @param enabledInstanceExtensionCount the amount of extensions to enable for the instances.
+ * @param enabledInstanceExtensions an array of the names of the extensions to enable for the instances.
+ * @param instanceNext NULL or a pointer to a structure to extend the instance creation info structures.
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ * @return [SKIPPED](@ref oriReturnStatus_t) if the library was already initialised or if an instance was already created to @c instanceOut
+ * @return [NO_OUTPUT](@ref oriReturnStatus_t) if @c instanceOut is NULL
+ * @return [NULL_POINTER](@ref oriReturnStatus_t) if @c enabledLayers is NULL but @c enabledLayerCount is more than 0, or for the @c enabledInstanceExtension* equivalents
+ * @return [ERROR](@ref oriReturnStatus_t) if there was an unspecified error, or if memory for the instance failed to allocate
+ *
+ * @ingroup grp_core_man
+ *
+ * @sa [Vulkan Docs/VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html)
+ * @sa [Vulkan Docs/VkInstanceCreateFlagBits](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstanceCreateFlagBits.html)
+ * @sa @ref oriTerminate()
  *
  */
-oriReturnStatus oriFlagLayerEnabled(
-    oriState *state,
+const oriReturnStatus_t oriInit(
+    const unsigned int instanceCount,
+    VkInstance *instanceOut,
+    const VkInstanceCreateFlags instanceFlags,
+    const unsigned int apiVersion,
+    const char *applicationName,
+    const unsigned int applicationVersion,
+    const char *engineName,
+    const unsigned int engineVersion,
+    const unsigned int enabledLayerCount,
+    const char **enabledLayers,
+    const unsigned int enabledInstanceExtensionCount,
+    const char **enabledInstanceExtensions,
+    const void *instanceNext
+);
+
+/**
+ * @brief Terminate the library and destroy the instance that was created with @ref oriInit().
+ *
+ * This function terminates the Orion library as well as @b destroying the instance that was previously created
+ * using @ref oriInit().
+ *
+ * You should be able to initialise the library again after calling this function.
+ *
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ *
+ * @ingroup grp_core_man
+ *
+ * @sa @ref oriInit()
+ *
+ */
+const oriReturnStatus_t oriTerminate();
+
+/**
+ * @brief Optionally define the memory allocation functions to be used in Vulkan functions.
+ *
+ * This optional function sets the internally-held structure in which allocation function pointers can be defined.
+ *
+ * The structure passed to the @c callbacks parameter of this function will be referenced in any Vulkan function called internally by
+ * Orion with a @c pAllocator parameter.
+ *
+ * Passing @b NULL to this function will reset Vulkan to using default allocation callbacks as described by the implementation.
+ *
+ * You can retrieve these callbacks with @ref oriGetVulkanAllocators().
+ *
+ * @param callbacks NULL or the callbacks structure to use with Vulkan functions.
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ *
+ * @ingroup grp_core_man
+ *
+ * @sa [Vulkan Docs/Memory allocation](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#memory-allocation)
+ * @sa [Vulkan Docs/VkAllocationCallbacks](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkAllocationCallbacks.html)
+ * @sa @ref oriGetVulkanAllocators()
+ *
+ */
+const oriReturnStatus_t oriSetVulkanAllocators(
+    VkAllocationCallbacks *callbacks
+);
+
+/**
+ * @brief Retrieve the memory allocation functions used in Vulkan functions.
+ *
+ * This function gets the internally-held structure in which allocation function pointers are defined.
+ * This structure can be set with @ref oriSetVulkanAllocators().
+ *
+ * If no custom memory allocation functions have been set, this function will return NULL.
+ *
+ * @return the callbacks structure used internally with Vulkan functions.
+ *
+ * @ingroup grp_core_man
+ *
+ * @sa @ref oriSetVulkanAllocators()
+ *
+ */
+const VkAllocationCallbacks *oriGetVulkanAllocators();
+
+
+// ----[Orion library public interface]---------------------------------------- //
+//                                   Debugging                                  //
+
+/**
+ * @brief Enable Orion debug output and recieve any messages that fall under the specified criteria.
+ *
+ * This function enables Orion debug output with the specified criteria.
+ *
+ * A list of error severities can be seen in the
+ * [Debugging/Severities](@ref sct_debugging_errorcodes_severities) section.
+ *
+ * The debug callback specified with oriSetDebugCallback() (or the default one if this was not done)
+ * will be called when a debug message that matches the specified criteria is enqueued by the Orion library.
+ *
+ * You may call this function multiple times throughout runtime - the severities that will be shown
+ * will be overriden each time the function is executed.
+ *
+ * @param severities a bit field of @ref oriSeverityBit_t enumerators.
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ *
+ * @ingroup grp_core_errors
+ *
+ * @sa @ref oriDebugCallbackfun
+ *
+ */
+const oriReturnStatus_t oriConfigureDebugMessages(
+    const oriSeverityBit_t severities
+);
+
+/**
+ * @brief Set the global Orion [debug callback](@ref sct_debugging_callback) function.
+ *
+ * This function sets the global Orion [debug callback](@ref sct_debugging_callback) function.
+ *
+ * User data can be passed to the callback through the @c pointer parameter. This will be
+ * recieved in the callback with the parameter of the same name.
+ *
+ * Pass NULL to the @c callback parameter to use the default, built-in debug callback.
+ *
+ * Pass NULL to the @c pointer parameter if you do not want to pass any data to the callback.
+ *
+ * @param callback NULL or the callback function to use, definition specified as @ref oriDebugCallbackfun.
+ * @param pointer NULL or specified user data that will be sent to the callback.
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ *
+ * @ingroup grp_core_errors
+ *
+ * @sa @ref oriDebugCallbackfun
+ * @sa @ref oriGetDebugCallback()
+ * @sa @ref oriGetDebugCallbackUserData()
+ *
+ */
+const oriReturnStatus_t oriSetDebugCallback(
+    const oriDebugCallbackfun callback,
+    void *pointer
+);
+
+/**
+ * @brief Get the current Orion [debug callback](@ref sct_debugging_callback) function.
+ *
+ * This function retrieves the current Orion [debug callback](@ref sct_debugging_callback) function. You
+ * may use this in order to make direct calls to said callback function.
+ *
+ * If you have not set a debug callback (see @ref oriSetDebugCallback()), this function will return the built-in default debug callback.
+ *
+ * @return the current debug callback function
+ *
+ * @ingroup grp_core_errors
+ *
+ * @sa @ref oriDebugCallbackfun
+ * @sa @ref oriSetDebugCallback()
+ * @sa @ref oriGetDebugCallbackUserData()
+ *
+ */
+const oriDebugCallbackfun oriGetDebugCallback();
+
+/**
+ * @brief Get the current user data that was set to be passed to the Orion [debug callback](@ref sct_debugging_callback) function.
+ *
+ * This function retrieves the current user data that was set to be passed to the Orion [debug callback](@ref sct_debugging_callback).
+ *
+ * If you have not set any user data (see @ref oriSetDebugCallback()), this function will return NULL.
+ *
+ * @return the current debug callback user data
+ *
+ * @ingroup grp_core_errors
+ *
+ * @sa @ref oriDebugCallbackfun
+ * @sa @ref oriGetDebugCallback()
+ * @sa @ref oriSetDebugCallback()
+ *
+ */
+const void *oriGetDebugCallbackUserData();
+
+/**
+ * @brief Convert an oriReturnStatus_t enum into a more descriptive string.
+ *
+ * This function converts an @ref oriReturnStatus_t enum into a more descriptive string.
+ *
+ * Keep in mind that [return statuses](@ref sct_debugging_returns) are not meant to be very descriptive, as they serve simply to
+ * give a vague idea of whether or not a function succeeded in executing.
+ *
+ * An example of a described enum is `ORION_RETURN_STATUS_OK` = <i>"function executed successfully"</i>.
+ *
+ * @param status the @ref oriReturnStatus_t enumerator to stringify
+ * @return a string that describes the `status` enumerator
+ *
+ * @ingroup grp_core_errors
+ *
+ * @sa @ref oriReturnStatus_t
+ *
+ */
+const char *oriStringifyReturnStatus(
+    const oriReturnStatus_t status
+);
+
+
+// ----[Orion library public interface]---------------------------------------- //
+//                    Vulkan extensions and feature loading                     //
+
+/**
+ * @brief Check if the given layer is provided by the Vulkan implementation.
+ *
+ * This function queries if the given layer is provided by the Vulkan implementation, returns true if
+ * it is, and returns false if it is not.
+ *
+ * @b False will be returned in the event of an error.
+ *
+ * @param layer the name of the layer to check.
+ * @return true if the layer is provided.
+ * @return false if the layer is @b not provided, <b>or if there was an error.</b>
+ *
+ * @ingroup grp_core_vkapi_ext
+ *
+ * @sa @ref oriCheckLayerEnabled()
+ * @sa @ref oriEnumerateEnabledLayers()
+ *
+ */
+const bool oriCheckLayerAvailability(
     const char *layer
 );
 
 /**
- * @brief Flag the specified Vulkan instance extension to be enabled when creating instances with oriCreateInstance() using @c state.
+ * @brief Check if the given layer is enabled for the specified instance.
  *
- * For information regarding the difference between 'instance extensions' and 'device extensions' in Vulkan, you should see
- * <a href="https://stackoverflow.com/a/53050492/12980669">this</a> answer on StackOverflow.
+ * This function checks if the given layer is enabled for the specified
+ * [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) object.
  *
- * @note If the given extension is provided by a layer, make sure to flag the layer as enabled with oriFlagLayerEnabled() as well before creating
- * the state instance.
+ * @param instance the [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) object to query.
+ * @param layer the name of the layer to search for
+ * @return true if the layer was found
+ * @return false if the layer was @b not found, <b>or if there was an error.</b>
  *
- * @param state the state the enable the extension on.
- * @param extension a UTF-8, null-terminated string holding the name of the desired extension.
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
+ * @ingroup grp_core_vkapi_ext
  *
- * @ingroup group_VkAbstractions_Layers
- *
- */
-oriReturnStatus oriFlagInstanceExtensionEnabled(
-    oriState *state,
-    const char *extension
-);
-
-/**
- * @brief Validate any instance extensions in @c state against now-specified layers.
- *
- * This function validates and removes any unavailable or non-existant instance extensions that have been specified for the
- * oriState object @c state.
- *
- * This allows for you to specify instance extensions @b before the layers that provide them - essentially, Vulkan instance extensions are either
- * provided by the implementation or a layer.
- *
- * This function is implicitly called in oriCreateInstance() in case you forget.
- *
- * @warning If you specify instance extensions that are provided by a layer, and you call this function before specifying said layer, these instance
- * extensions will be @b removed from the state's internal list, and therefore will @b not be enabled, even if you specify the layer after this function.
- *
- * @param state the state to validate.
- * @return true if any extensions have been removed from the state's list.
- * @return false if no extensions have been removed.
- *
- * @ingroup group_VkAbstractions_Layers
+ * @sa [Vulkan Docs/VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html)
+ * @sa @ref oriCheckLayerAvailability()
+ * @sa @ref oriEnumerateEnabledLayers()
  *
  */
-bool oriPruneInstanceExtensions(
-    oriState *state
-);
-
-
-
-// ============================================================================
-// *****        COMPATIBILITY CHECKS                                      *****
-// ============================================================================
-
-/**
- * @brief Return the availability of the specified Vulkan layer.
- *
- * @param layer a UTF-8, null-terminated string holding the name of the desired layer.
- * @return true if the layer is available
- * @return false if the layer is not available
- *
- * @sa oriFlagLayerEnabled()
- *
- * @ingroup group_VkAbstractions_Layers
- *
- */
-bool oriCheckLayerAvailability(
+const bool oriCheckLayerEnabled(
+    const VkInstance *instance,
     const char *layer
 );
 
 /**
- * @brief Check if @c layer is enabled in the state object @c state.
+ * @brief Retrieve the array of enabled layers for the specified instance.
  *
- * The layer does not have to be actually 'enabled' yet; the function will still return true if the layer has at least been
- * @b specified (with oriFlagLayerEnabled()) - this means no instances have to have been created with @c state for the function
- * to work properly.
+ * This function retrieves the array of enabled layers for the specified instance.
  *
- * You don't need to worry about validating the list of layers; the availability of the specified layers is immediately checked
- * in oriFlagLayerEnabled().
+ * @param instance the [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) object to query.
+ * @param layerCountOut NULL or a pointer to the variable into which the amount of layers will be returned
+ * @param layerNamesOut NULL or a pointer to the array of strings into which the list of layer names will be returned
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ * @return [NULL_POINTER](@ref oriReturnStatus_t) if @c instance is NULL
+ * @return [NO_OUTPUT](@ref oriReturnStatus_t) if both @c layerCountOut @b and @c layerNamesOut are NULL
+ * @return [ERROR](@ref oriReturnStatus_t) if @c instance was invalid or if it was not created with Orion
  *
- * @warning If @c state is NULL, @b false will be returned.
+ * @ingroup grp_core_vkapi_ext
  *
- * @param state the oriState object to query.
- * @param layer the layer to search for.
- * @return true if the layer has been enabled.
- * @return false if the layer has not been enabled.
- *
- * @ingroup group_VkAbstractions_Layers
+ * @sa [Vulkan Docs/VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html)
+ * @sa @ref oriCheckLayerAvailability()
+ * @sa @ref oriCheckLayerEnabled()
  *
  */
-bool oriCheckLayerEnabled(
-    oriState *state,
-    const char *layer
+const oriReturnStatus_t oriEnumerateEnabledLayers(
+    const VkInstance *instance,
+    unsigned int *layerCountOut,
+    char ***layerNamesOut
 );
 
 /**
- * @brief Return the availability of the specified Vulkan instance extension.
+ * @brief Check if the given instance extension is provided by either the Vulkan implementation or the given layer.
  *
- * The @c layer parameter is equivalent to the @c pLayerName parameter in the
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/vkEnumerateInstanceExtensionProperties.html">VkEnumerateInstanceExtensionProperties</a>
- * Vulkan function. This is described in the Specification as the following:
- *  > When pLayerName parameter is NULL, only extensions provided by the Vulkan implementation or by implicitly enabled layers are returned. When pLayerName is the
- *  > name of a layer, the instance extensions provided by that layer are returned.
+ * This function queries if the given instance extension is provided by either the Vulkan implementation or the given layer,
+ * returns true if it is, and returns false if otherwise.
  *
- * @param extension a UTF-8, null-terminated string holding the name of the desired instance extension.
- * @param layer NULL or a UTF-8 null-terminated string holding the name of the layer to query the extension from.
- * @return true if the instance extension is available
- * @return false if the instance extension is not available
+ * If @c layer is NULL, Orion will check if the extension is provided by your machine's Vulkan implementation.
+ * Otherwise, Orion will check if the extension is provided by @c layer.
  *
- * @sa oriFlagInstanceExtensionEnabled()
+ * @b False will be returned in the event of an error, or if @c layer is invalid.
  *
- * @ingroup group_VkAbstractions_Layers
+ * @param extension the name of the instance extension to check.
+ * @param layer NULL or the name of the providing layer.
+ * @return true if the extension is provided.
+ * @return false if the extension is @b not provided, <b>or if there was an error.</b>
+ *
+ * @ingroup grp_core_vkapi_ext
+ *
+ * @sa @ref oriCheckInstanceExtensionEnabled()
+ * @sa @ref oriEnumerateEnabledInstanceExtensions()
  *
  */
-bool oriCheckInstanceExtensionAvailability(
+const bool oriCheckInstanceExtensionAvailability(
     const char *extension,
     const char *layer
 );
 
 /**
- * @brief Check if the instance extension @c extension is enabled in the state object @c state.
+ * @brief Check if the given instance extension is enabled for the specified instance.
  *
- * Similar to in oriCheckLayerEnabled(), the extension does not have to be actually 'enabled' yet; the function will
- * still return true if it has at least been @b specified (with oriFlagInstanceExtensionEnabled()) - this means no instances
- * have to have been created with @c state for the function to work properly.
+ * This function checks if the given instance extension is enabled for the specified
+ * [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) object.
  *
- * @b Unlike with layers, however, the validation of the specified instance extensions is not checked outside of
- * oriPruneInstanceExtensions() (which is implicitly called in oriCreateInstance()). If you are calling this function @e before
- * oriCreateInstance(), you should prune the instance extensions first to avoid false positives on invalid extensions. Note, though,
- * that any extensions that are provided by layers not yet specified (even if said layers are specified later) will be
- * @b removed from the state's list of instance extensions. See oriPruneInstanceExtensions() for more.
+ * @param instance the [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) object to query.
+ * @param extension the name of the instance extension to search for
+ * @return true if the instance extension was found
+ * @return false if the instance extension was @b not found, <b>or if there was an error.</b>
  *
- * @warning If @c state is NULL, @b false will be returned.
+ * @ingroup grp_core_vkapi_ext
  *
- * @param state the state object to query.
- * @param extension the instance extension to search for.
- * @return true if the instance extension has been enabled
- * @return false if the instance extension has not been enabled
- *
- * @ingroup group_VkAbstractions_Layers
+ * @sa [Vulkan Docs/VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html)
+ * @sa @ref oriCheckInstanceExtensionAvailability()
+ * @sa @ref oriEnumerateEnabledInstanceExtensions()
  *
  */
-bool oriCheckInstanceExtensionEnabled(
-    oriState *state,
+const bool oriCheckInstanceExtensionEnabled(
+    const VkInstance *instance,
     const char *extension
 );
 
-
-
-// ============================================================================
-// *****        LIBRARY ERROR HANDLING                                    *****
-// ============================================================================
-
 /**
- * @brief Callback function for general runtime errors
+ * @brief Retrieve the array of enabled instance extensions for the specified instance.
  *
- * This function signature must be followed when creating an error callback for debugging.
- * The global error callback is set in oriSetErrorCallback().
+ * This function retrieves the array of enabled instance extensions for the specified instance.
  *
- * For a list of possible error severities, see the @ref page_Debugging "debugging" page.
+ * @param instance the [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) object to query.
+ * @param extCountOut NULL or a pointer to the variable into which the amount of instance extensions will be returned
+ * @param extNamesOut NULL or a pointer to the array of strings into which the list of instance extension names will be returned
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ * @return [NULL_POINTER](@ref oriReturnStatus_t) if @c instance is NULL
+ * @return [NO_OUTPUT](@ref oriReturnStatus_t) if both @c extCountOut @b and @c extNamesOut are NULL
+ * @return [ERROR](@ref oriReturnStatus_t) if @c instance was invalid or if it was not created with Orion
  *
- * @param name the name of the error ID
- * @param code the error ID / code
- * @param message a message for debugging
- * @param severity the severity of the error
- * @param pointer NULL or a user-specified pointer (can be defined in oriSetErrorCallback())
+ * @ingroup grp_core_vkapi_ext
  *
- * @sa oriSetErrorCallback()
- *
- * @ingroup group_Errors
+ * @sa [Vulkan Docs/VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html)
+ * @sa @ref oriCheckInstanceExtensionAvailability()
+ * @sa @ref oriCheckInstanceExtensionEnabled()
  *
  */
-typedef void (* oriErrorCallback)(
-    const char *name,
-    unsigned int code,
-    const char *message,
-    oriErrorSeverityBit severity,
-    void *pointer
+const oriReturnStatus_t oriEnumerateEnabledInstanceExtensions(
+    const VkInstance *instance,
+    unsigned int *extCountOut,
+    char ***extNamesOut
 );
 
 /**
- * @brief Set the global Orion error callback function.
+ * @brief Check if the given device extension is provided by either the Vulkan implementation or the given layer.
  *
- * User data can be passed to the callback function (@ref oriErrorCallback) through the @c pointer
- * parameter. This will be recieved in the callback with the parameter of the same name.
+ * This function queries if the given device extension is provided by either the Vulkan implementation or the specified layer,
+ * returns true if it is, and returns false if otherwise.
  *
- * Pass NULL to the @c callback parameter to use the default, built-in error callback.
+ * If @c layer is NULL, Orion will check if the extension is provided by your machine's Vulkan implementation.
+ * Otherwise, Orion will check if the extension is provided by @c layer.
  *
- * Pass NULL to the @c pointer parameter if you do not want to pass any data to the callback.
+ * @b False will be returned in the event of an error, or if @c layer is invalid.
  *
- * @param callback NULL or the callback function to use.
- * @param pointer NULL or specified user data that will be sent to the callback.
+ * @param physicalDevice the [VkPhysicalDevice](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDevice.html)
+ * to which the extension may be available.
+ * @param extension the name of the instance extension to search for
+ * @param layer NULL or the name of the providing layer.
+ * @return true if the extension is available to @c physicalDevice.
+ * @return false if the extension is @b not available to @c physicalDevice, <b>or if there was an error.</b>
  *
- * @sa oriErrorCallback
+ * @ingroup grp_core_vkapi_ext
  *
- * @ingroup group_Errors
- *
- */
-void oriSetErrorCallback(
-    oriErrorCallback callback,
-    void *pointer
-);
-
-/**
- * @brief Recieve any debug messages that fall under the specified criteria.
- *
- * A list of error severities can be seen in the description of @ref oriErrorCallback.
- *
- * The specified error callback (if none is given, then the default one) will be called when a debug message
- * that matches the specified criteria is enqueued by the Orion library.
- *
- * You can pass the @c ORION_ERROR_SEVERITY_ALL_BIT enum to the @c severities parameter to enable all debug messages.
- *
- * @param severities a bit field of severities to enable
- *
- * @sa oriErrorCallback
- *
- * @ingroup group_Errors
+ * @sa [Vulkan Docs/VkPhysicalDevice](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDevice.html)
  *
  */
-void oriEnableLibDebugMessages(
-    oriErrorSeverityBit severities
+const bool oriCheckDeviceExtensionAvailability(
+    const VkPhysicalDevice physicalDevice,
+    const char *extension,
+    const char *layer
 );
 
 
-
-// ============================================================================
-// *****        LIBRARY MANAGEMENT                                        *****
-// ============================================================================
+// ----[Orion library public interface]---------------------------------------- //
+//                          Vulkan device management                            //
 
 /**
- * @brief Set a library-wide flag or value
+ * @brief Create a logical device to connect to one or more physical devices.
  *
- * This function can be used to set a library-wide flag to configure your application.
+ * This function creates a logical device ([VkDevice](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDevice.html))
+ * to connect to a physical device. The resulting logical device will be managed by Orion.
  *
- * For a comprehensive list of available library flags, see the @ref section_main_Config "Home/Configuration" section.
+ * The @c deviceNext parameter can be used to extend the device structure. For instance, you could use it to add a
+ * [VkDeviceGroupDeviceCreateInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html),
+ * which would allow you to connect the logical device to @b multiple physical devices.
  *
- * @param flag the flag to update
- * @param val the value to set the flag to
- * @return the return status of the function. If it is not 0 (ORION_RETURN_STATUS_OK) then a problem occurred in the function, and you should check the @ref group_Errors
- * "debug output" for more information.
+ * See [Vulkan Docs/VkDeviceCreateInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html)
+ * and, occasionally,
+ * [Vulkan Docs/VkDeviceGroupDeviceCreateInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html)
+ * for more info.
+ * @param deviceOut pointer to the [VkDevice](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDevice.html)
+ * into which the resulting device will be returned.
+ * @param deviceFlags a bitmask of [VkDeviceCreateFlags](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateFlags.html)
+ * indicating the behaviour of the logical device.
+ * @param physicalDevice the physical device to interface with.
+ * @param queueCreateInfoCount the size of the @c queueCreateInfos array.
+ * @param queueCreateInfos array of
+ * [VkDeviceQueueCreateInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html)
+ * structures describing the queues to be requested along with the logical device.
+ * @param extensionCount the size of the @c extensionNames array.
+ * @param extensionNames array of the names of device extensions to be enabled for the logical device.
+ * @param enabledFeatures NULL or a pointer to a
+ * [VkPhysicalDeviceFeatures](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html)
+ * structure containing flags of device features to be enabled.
+ * @param deviceNext NULL or a pointer to a structure to extend the device creation info structures.
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ * @return [NULL_POINTER](@ref oriReturnStatus_t) if @c physicalDevice is NULL or if @c queueCreateInfos is NULL but @c queueCreateInfoCount is more than 0, or
+ * the extension equivalents
+ * @return [SKIPPED](@ref oriReturnStatus_t) if a device has already been allocated by Orion at @c deviceOut.
+ * @return [ERROR](@ref oriReturnStatus_t) if the device failed to be created by Vulkan.
  *
- * @ingroup group_Meta
+ * @ingroup grp_core_vkapi_core_devices
+ *
+ * @sa [Vulkan Docs/VkDevice](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDevice.html)
+ * @sa [Vulkan Docs/VkDeviceCreateInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceCreateInfo.html)
+ * @sa [Vulkan Docs/VkDeviceGroupDeviceCreateInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceGroupDeviceCreateInfo.html)
+ * @sa [Vulkan Docs/VkDeviceQueueCreateInfo](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDeviceQueueCreateInfo.html)
+ * @sa [Vulkan Docs/VkPhysicalDeviceFeatures](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceFeatures.html)
  *
  */
-oriReturnStatus oriSetFlag(
-    oriLibraryFlag flag,
-    unsigned int val
+const oriReturnStatus_t oriCreateLogicalDevice(
+    VkDevice *deviceOut,
+    const VkDeviceCreateFlags deviceFlags,
+    const VkPhysicalDevice physicalDevice,
+    const unsigned int queueCreateInfoCount,
+    const VkDeviceQueueCreateInfo *queueCreateInfos,
+    const unsigned int extensionCount,
+    const char **extensionNames,
+    VkPhysicalDeviceFeatures *enabledFeatures,
+    const void *deviceNext
 );
 
 /**
- * @brief Optionally define the memory allocation functions to be used in Vulkan functions.
+ * @brief Retrieve an array of physical devices accessible to a Vulkan instance that are considered suitable for the application.
  *
- * This function sets the internally-held structure in which allocation function pointers can be defined.
+ * This function retrieves an array of physical devices accessible to a Vulkan instance that are considered
+ * suitable for the application, making use of the @c checkFun function to determine their suitability.
  *
- * The structure passed to the @c callbacks parameter of this function will be referenced in any Vulkan function called internally by
- * the library with a @c pAllocator parameter.
+ * If you set @c checkFun to NULL, <b>all available physical devices will be returned.</b>
  *
- * Passing @b NULL to this function will reset Vulkan to using default allocation callbacks as described by the implementation.
+ * @note If there are no suitable (or available if @c checkFun is NULL) devices, then @c devicesOut will be set to @b NULL.
+ * @c countOut will, of course, be set to 0.
  *
- * @param callbacks a pointer to the callbacks structure to use with Vulkan functions.
+ * @warning The @c devicesOut array will be @b allocated by this function and <b>it is up to you to free it.</b>
  *
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#memory-allocation">Vulkan Docs/Memory allocation</a>
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkAllocationCallbacks.html">Vulkan Docs/VkAllocationCallbacks</a>
+ * @param instance the [VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html) object to query.
+ * @param checkFun NULL, or a @ref oriPhysicalDeviceSuitabilityCheckfun function to determine device suitability on your terms.
+ * @param countOut NULL or a pointer to the variable into which the amount of devices will be returned
+ * @param devicesOut NULL or a pointer to the array into which the Vulkan physical device objects will be returned
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ * @return [NULL_POINTER](@ref oriReturnStatus_t) if @c instance is NULL
+ * @return [NO_OUTPUT](@ref oriReturnStatus_t) if both @c countOut @b and @c devicesOut are NULL
+ * @return [ERROR](@ref oriReturnStatus_t) if there was an unspecified error, or if memory for the device failed to allocate
  *
- * @ingroup group_Meta
+ * @ingroup grp_core_vkapi_core_devices
  *
- */
-void oriSetVulkanAllocationCallbacks(
-    VkAllocationCallbacks callbacks
-);
-
-
-
-// ============================================================================
-// *****        STATE                                                     *****
-// ============================================================================
-
-/**
- * @brief Create an Orion state object and return its handle.
- *
- * @return the resulting Orion state handle.
- *
- * @sa oriState
- * @sa oriDestroyState()
- *
- * @ingroup group_Meta
+ * @sa [Vulkan Docs/VkInstance](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkInstance.html)
+ * @sa @ref oriPhysicalDeviceSuitabilityCheckfun
  *
  */
-oriState *oriCreateState();
-
-/**
- * @brief Destroy the specified Orion state.
- *
- * Calling this function clears all data stored in @c state and destroys all Orion and Vulkan objects registered to it.
- *
- * @warning If you destroy a Vulkan object that was created with @c state before calling this function, make sure to set the
- * handle to the object to @b NULL (e.g. destroying a logical device -> set the VkDevice struct to NULL).
- * Otherwise, an exception will occur when this function is called.
- *
- * @param state handle to the state object to be destroyed.
- *
- * @sa oriState
- *
- * @ingroup group_Meta
- *
- */
-void oriDestroyState(
-    oriState *state
+const oriReturnStatus_t oriEnumerateSuitablePhysicalDevices(
+    const VkInstance *instance,
+    const oriPhysicalDeviceSuitabilityCheckfun checkFun,
+    unsigned int *countOut,
+    VkPhysicalDevice **devicesOut
 );
 
 /**
- * @brief Set application info to be used by all instances created with the given state object.
+ * @brief Retrieve an array of properties of queue families accessible to a physical device.
  *
- * The @c apiVersion parameter of the application info is set in oriCreateState().
+ * This function retrieves an array of properties of queue families accessible to the specified
+ * [VkPhysicalDevice](https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDevice.html) structure.
  *
- * @note The @c version and @c engineVersion parameters must be formatted as in the
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Vulkan Specification</a>.
+ * @note If there are no available queue families, then @c familiesOut will be set to @b NULL.
+ * @c countOut will, of course, be set to 0.
  *
- * @param state the state the object is to be registered into
- * @param ext equivalent to the @c pNext parameter in the Vulkan Specification (linked below): NULL or a pointer to a structure extending this structure.
- * @param apiVersion the Vulkan version to use, as specified in the
- * <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/vkspec.html#extendingvulkan-coreversions-versionnumbers">Specification</a>.
- * @param name NULL, or a string containing the name of the application.
- * @param version the version of the application.
- * @param engineName NULL, or a string containing the name of the engine used to create the application.
- * @param engineVersion the version of the engine used to to create the application.
+ * @warning The @c familiesOut array will be @b allocated by this function and <b>it is up to you to free it.</b>
  *
- * @sa <a href="https://www.khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkApplicationInfo.html">Vulkan Docs/VkApplicationInfo</a>
+ * @param physicalDevice the [VkPhysicalDevice](https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDevice.html) structure
+ * to query.
+ * @param countOut NULL or a pointer to the variable into which the amount of queue families will be returned
+ * @param familiesOut NULL or a pointer to the array into which the Vulkan queue family properties objects will be returned
+ * @return [OK](@ref oriReturnStatus_t) if executed successfully
+ * @return [NULL_POINTER](@ref oriReturnStatus_t) if @c physicalDevice is NULL
+ * @return [NO_OUTPUT](@ref oriReturnStatus_t) if both @c countOut @b and @c familiesOut are NULL
+ * @return [ERROR](@ref oriReturnStatus_t) if there was an unspecified or memory error
  *
- * @ingroup group_Meta
+ * @ingroup grp_core_vkapi_core_devices
  *
- */
-void oriDefineStateApplicationInfo(
-    oriState *state,
-    const void *ext,
-    unsigned int apiVersion,
-    const char *name,
-    unsigned int version,
-    const char *engineName,
-    unsigned int engineVersion
-);
-
-/**
- * @brief Define the properties of messages you want to be displayed by the debug messenger of all instances created with the given state object.
- *
- * This function defines part of the creation info of <b>instance debug messengers</b>, which - if
- * @ref section_main_Config "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS" is enabled and VK_EXT_debug_utils is specified - are automatically
- * created in oriCreateInstance().
- *
- * This function only has an effect if the VK_EXT_debug_utils extension has been specified. This doesn't necessarily have to be done before this
- * function is called (as long as it is before instance creation) but doing so @e will generate a warning nonetheless. The
- * @ref section_main_Config "ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS" flag must also be enabled - again, this doesn't need to be done before
- * but a warning will be generated if such a scenario were to occur.
- *
- * @note The message filters specified in this function are @b different to those specified in oriEnableLibDebugMessages().
- * Whilst those specified in that function are related to the Orion library, those specified here are related to the Vulkan API.
- *
- * @param state the state to modify.
- * @param severities (bitmask) severities of the messages to @b display. By default, no messages are displayed <i>(even if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
- * @param types (bitmask) types of the messages to @b display. By default, no messages are displayed <i>(even if ORION_FLAG_CREATE_INSTANCE_DEBUG_MESSENGERS is true)</i>
- *
- * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VK_EXT_debug_utils.html">Vulkan Docs/VK_EXT_debug_utils</a>
- * @sa
- * <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageSeverityFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageSeverityFlagBitsEXT</a>
- * @sa <a href="https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkDebugUtilsMessageTypeFlagBitsEXT.html">Vulkan Docs/VkDebugUtilsMessageTypeFlagBitsEXT</a>
- *
- * @ingroup group_VkAbstractions_Core_Debugging
+ * @sa [Vulkan Docs/VkPhysicalDevice](https://khronos.org/registry/vulkan/specs/1.3-extensions/man/html/VkPhysicalDevice.html)
  *
  */
-void oriSpecifyInstanceDebugMessages(
-    oriState *state,
-    VkDebugUtilsMessageSeverityFlagBitsEXT severities,
-    VkDebugUtilsMessageTypeFlagBitsEXT types
+const oriReturnStatus_t oriEnumerateAvailableQueueFamilies(
+    const VkPhysicalDevice *physicalDevice,
+    unsigned int *countOut,
+    VkQueueFamilyProperties **familiesOut
 );
 
 #ifdef __cplusplus

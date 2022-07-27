@@ -5,20 +5,17 @@
 #
 # add source files
 
-set(
-    SRC
-        "headers/orion_codes.h"
-        "headers/orion_funcs.h"
-        "headers/orion_helpers.h"
-        "headers/orion_structs.h"
+set(SRC
+    "headers/orion_errors.h"
+    "headers/orion_funcs.h"
+    "headers/orion_structs.h"
 
-        "lib/callback.c"
-        "lib/error.c"
-        "lib/init.c"
+    "lib/callback.c"
+    "lib/debug.c"
+    "lib/init.c"
 
-        "vulkan/vk_debug.c"
-        "vulkan/vk_extension.c"
-        "vulkan/vk_init.c"
+    "lib/vk_device.c"
+    "lib/vk_ext.c"
 )
 
 #
@@ -52,7 +49,7 @@ target_include_directories(
 #
 # add optimised flag if requested
 
-if (ORION_OPTIMISED)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE "ORION_OPTIMISED")
-    message(WARNING "Building with ORION_OPTIMISED enabled -- debug output will be limited.")
+if (ORION_RADOP)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE "ORION_RADOP")
+    message(WARNING "Building with radical optimisation (RADOP) -- debug output will be limited.")
 endif()

@@ -1,5 +1,5 @@
 /* *************************************************************************************** */
-/*                        ORION GRAPHICS LIBRARY AND RENDERING ENGINE                      */
+/*                       ORION GRAPHICS LIBRARY AND RENDERING ENGINE                       */
 /* *************************************************************************************** */
 /* Copyright (c) 2022 Jack Bennett                                                         */
 /* --------------------------------------------------------------------------------------- */
@@ -11,63 +11,52 @@
 /* THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                              */
 /* *************************************************************************************** */
 
+
+// ============================================================================ //
+// *****                     Doxygen file information                     ***** //
+// ============================================================================ //
+
 /**
- * @file orion_codes.h
+ * @file orion_errors.h
  * @author jack bennett
- * @brief Internal header file defining error codes, possibly amongst other things in the future.
+ * @brief Internal header file declaring API error codes.
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 jack bennett
  *
  * This is an internal header.
  * It is NOT to be included by the user, and is certainly not included as
  * part of the interface orion.h header.
  *
- * This file declares standardised macros for things commonly referenced in the
- * Orion library - mostly errors.
+ * This file declares standardised declarations of error codes commonly referenced
+ * throughout the Orion API.
+ *
+ * The 'Error index' on the public documentation describes each error.
  *
  */
 
 #pragma once
-#ifndef __ORION_CODES_H
-#define __ORION_CODES_H
+#ifndef __ORION_FLAGS_H
+#define __ORION_FLAGS_H
 
 #ifdef __cplusplus
     extern "C" {
 #endif // __cplusplus
 
-// standardised error kits:
-// these should be used when calling the _ori_ThrowError() function.
 
-#define ORERR_VULKAN_RETURN_ERROR \
-    "ERR_VULKAN_RETURN_ERROR", \
-    0x01, \
-    "A Vulkan function returned a VkResult other than VK_SUCCESS.", \
-    ORION_ERROR_SEVERITY_ERROR_BIT
-
-#define ORERR_MEMORY_ERROR \
-    "ERR_MEMORY_ERROR", \
-    0x02, \
-    "A function encountered a memory-related error.", \
-    ORION_ERROR_SEVERITY_FATAL_BIT
+// ============================================================================ //
+// *****                     Private/internal systems                     ***** //
+// ============================================================================ //
 
 
-// code 0x03 reserved for VULKAN_DEBUG_MESSENGER
+// ----[Private/internal systems]---------------------------------------------- //
+//                            Flag/macro definitions                            //
 
-
-#define ORERR_NULL_POINTER \
-    "ERR_NULL_POINTER", \
-    0x04, \
-    "A null pointer was passed to a function; the function returned early.", \
-    ORION_ERROR_SEVERITY_ERROR_BIT
-
-#define ORERR_EXT_NOT_ENABLED \
-    "ERR_EXT_NOT_ENABLED", \
-    0x05, \
-    "A required Vulkan extension was not enabled.", \
-    ORION_ERROR_SEVERITY_ERROR_BIT
+// Maximum amount of characters in debug log messages sent by functions like oriInit().
+//
+#define MAX_LOG_LEN 768
 
 #ifdef __cplusplus
     }
 #endif // __cplusplus
 
-#endif // __ORION_CODES_H
+#endif // __ORION_FLAGS_H

@@ -1,0 +1,33 @@
+/*!
+
+@defgroup grp_core_vkapi_core Core Vulkan API
+@ingroup grp_core_vkapi
+
+@brief Abstractions of the general Vulkan Core API
+
+This module covers most Orion abstractions, and most functions that simplify
+the use of the Core Vulkan API.
+It is part of the [core Vulkan abstractions](@ref grp_core_vkapi).
+
+This module is split up into further submodules, which can be seen in the
+@b Modules page section above. It is part of the
+[core Orion library interface](@ref grp_core).
+
+*/
+
+
+/*!
+
+@defgroup grp_core_vkapi_core_devices Device management
+@ingroup grp_core_vkapi_core
+
+@brief Vulkan physical and logical device management, and the selection of a
+suitable graphical device or devices for the application
+
+Functionality in this module is related to the management and usage of graphics
+devices with Vulkan, including the enumeration of available and suitable
+physical devices and choosing the best one for the application.
+
+This module is part of the [core Vulkan API](@ref grp_core_vkapi_core) module.
+
+*/

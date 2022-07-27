@@ -1,0 +1,19 @@
+/*!
+
+@defgroup grp_core_vkapi_ext Layers and extensions
+@ingroup grp_core_vkapi
+
+@brief Vulkan layer and extension functionality
+
+Functionality found in this module is related to layers and extensions in
+Vulkan. It is part of the [core Vulkan abstractions](@ref grp_core_vkapi).
+
+One guide to summarise the use of layers can be found in the
+[Vulkan-Guide](https://github.com/KhronosGroup/Vulkan-Guide/blob/master/chapters/layers.adoc)
+GitHub repo.
+[This answer on StackExchange](https://computergraphics.stackexchange.com/a/8171)
+suitably describes the use of Vulkan extensions.
+
+@sa [KhronosGroup/Vulkan-Guide](https://github.com/KhronosGroup/Vulkan-Guide/blob/master/chapters/layers.adoc)
+
+*/

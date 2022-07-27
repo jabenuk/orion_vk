@@ -1,3 +1,6 @@
 [submodule "deps/devel/glfw"]
 	path = deps/devel/glfw
 	url = https://github.com/glfw/glfw
+[submodule "deps/core/uthash"]
+	path = deps/core/uthash
+	url = https://github.com/troydhanson/uthash

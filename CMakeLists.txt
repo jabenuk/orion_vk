@@ -28,7 +28,7 @@ set(ORION_DOCS_DIR "${CMAKE_CURRENT_LIST_DIR}/docs/")
 set(ORION_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include/")
 
 set(ORION_CORE_VENDOR_DIR "${CMAKE_CURRENT_LIST_DIR}/deps/core/")
-set(ORION_DEVEL_VENDOR_DIR "${CMAKE_CURRENT_LIST_DIR}/deps/devel/") # dependencies for development (tests + examples
+set(ORION_DEVEL_VENDOR_DIR "${CMAKE_CURRENT_LIST_DIR}/deps/devel/") # dependencies for development (tests + examples )
 
 #
 # user options
@@ -40,7 +40,7 @@ option(ORION_BUILD_TESTS "Build Orion test executables" OFF)
 option(ORION_BUILD_EXAMPLES "Build Orion usage examples" OFF)
 option(ORION_GEN_DOCS "Generate HTML Orion documentation" ON)
 
-option(ORION_OPTIMISED "Optimise Orion, such as by removing debug output processing" OFF)
+option(ORION_RADOP "Orion radical optimisations" OFF)
 
 #
 # subdirectories
