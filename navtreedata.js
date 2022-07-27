@@ -26,13 +26,26 @@ var NAVTREE =
 [
   [ "Orion", "index.html", [
     [ "Home", "index.html", [
-      [ "Summary", "index.html#section_main_Summary", null ],
-      [ "Including", "index.html#section_main_IncludeFile", null ],
-      [ "Modules", "index.html#section_main_Modules", null ],
-      [ "Debugging", "index.html#section_main_Debugging", null ],
-      [ "Configuration", "index.html#section_main_Config", null ]
+      [ "Summary", "index.html#sct_mainpage_summary", null ],
+      [ "Including", "index.html#sct_mainpage_including", null ],
+      [ "Documentation contents", "index.html#sct_mainpage_toc", null ],
+      [ "Applying library-wide optimisations", "index.html#sct_mainpage_radop", null ]
     ] ],
-    [ "Debugging", "db/d82/page_Debugging.html", "db/d82/page_Debugging" ],
+    [ "Debugging", "dd/d68/debugging.html", [
+      [ "Debug callback", "dd/d68/debugging.html#sct_debugging_callback", [
+        [ "Directly calling the debug callback", "dd/d68/debugging.html#sct_debugging_directcall", null ],
+        [ "Using the debug callback with Vulkan debug utils", "dd/d68/debugging.html#sct_debugging_vkdebugutils", null ]
+      ] ],
+      [ "Error code specifications", "dd/d68/debugging.html#sct_debugging_errorcodes", [
+        [ "Severities", "dd/d68/debugging.html#sct_debugging_errorcodes_severities", null ]
+      ] ],
+      [ "Disabling debug output", "dd/d68/debugging.html#sct_debugging_disabling", null ],
+      [ "Function return statuses", "dd/d68/debugging.html#sct_debugging_returns", null ]
+    ] ],
+    [ "Error index", "db/d43/errors.html", [
+      [ "Error codes", "db/d43/errors.html#sct_errors_codes", null ],
+      [ "Function return statuses", "db/d43/errors.html#sct_errors_returns", null ]
+    ] ],
     [ "Modules", "modules.html", "modules" ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ],
@@ -48,7 +61,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"d2/d8c/group__group__Errors.html"
+"d1/dee/group__grp__core__man.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

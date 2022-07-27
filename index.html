@@ -104,56 +104,42 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
   <div class="headertitle"><div class="title">Home </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p >Source code: <a href="https://github.com/jabenuk/orion_vk">jabenuk/<b>orion</b></a></p>
-<h1><a class="anchor" id="section_main_Summary"></a>
+<div class="textblock"><p ><a class="anchor" id="mainpage"></a> Source code: <a href="https://github.com/jabenuk/orion_vk">jabenuk/orion</a></p>
+<h1><a class="anchor" id="sct_mainpage_summary"></a>
 Summary</h1>
 <p >The original goal of Orion was to run OpenGL without the annoyances of raw OpenGL code, but it wasn't (and still isn't) really intended to be used in production or actual development. It's just a fun project for me to work on in my own time.</p>
 <p >Now, I'm shifting my focus towards Vulkan, due to its (somewhat ridiculous, in a fun way) explicit-ness and its priority on performance and optimisation. I also think the Vulkan specification is lightyears ahead of the OpenGL specification - which is pretty abysmal at times - so hopefully development will be a little less painful. Plus, the new Vulkan design is nice for me - I prefer having structs with decent names and organisation than having a bunch of functions (although the OpenGL functions were definitely more simple).</p>
 <p >Something else I want to have is actually decent documentation - so we'll see how that goes.</p>
-<h1><a class="anchor" id="section_main_IncludeFile"></a>
+<h1><a class="anchor" id="sct_mainpage_including"></a>
 Including</h1>
 <p >There is one file to be included to make use of the 'core' library: <a class="el" href="d6/d3e/orion_8h.html">orion.h</a>.</p>
 <p >This is the public header for including Orion. All public library functionality is declared here, so the page for this header will have all core functionality documented, pretty much.</p>
-<h1><a class="anchor" id="section_main_Modules"></a>
-Modules</h1>
-<p ><a class="el" href="de/db6/group__group__Core.html">Core library</a> functions have been organised into the following modules:</p><ul>
-<li><a class="el" href="db/de0/group__group__Meta.html">Library management</a>: <em>functions that handle the initialisation, management, and eventual termination of the library.</em></li>
-<li><a class="el" href="d2/d8c/group__group__Errors.html">Error handling</a>: <em>functionality to catch errors thrown by Orion at runtime.</em></li>
-<li><a class="el" href="d8/dc3/group__group__VkAbstractions.html">Vulkan abstractions</a>: <em>abstractions of the Vulkan API.</em><ul>
-<li><a class="el" href="d3/d73/group__group__VkAbstractions__Core.html">Core Vulkan API</a>: <em>core, general Vulkan functionality.</em><ul>
-<li><a class="el" href="d9/d7f/group__group__VkAbstractions__Core__Debugging.html">Debugging</a>: <em>utilities to debug Vulkan.</em></li>
-<li><a class="el" href="de/d40/group__group__VkAbstractions__Core__Devices.html">Vulkan device management</a>: <em>Vulkan device management.</em></li>
+<h1><a class="anchor" id="sct_mainpage_toc"></a>
+Documentation contents</h1>
+<p >Functions within the <a class="el" href="d2/daf/group__grp__core.html">core library</a> have been organised into the following modules:</p><ul>
+<li><a class="el" href="d1/dee/group__grp__core__man.html">Library management</a>: <em>functions that handle the initialisation, management, and eventual termination of the library.</em></li>
+<li><a class="el" href="d6/def/group__grp__core__errors.html">Error handling</a>: <em>functionality to catch errors thrown by Orion at runtime.</em></li>
+<li><a class="el" href="d5/de9/group__grp__core__vkapi.html">Vulkan API abstractions</a> <em>abstractions of the Vulkan API.</em><ul>
+<li><a class="el" href="d6/dd3/group__grp__core__vkapi__core.html">Core Vulkan API</a> <em>core, general Vulkan functionality.</em><ul>
+<li><a class="el" href="d6/d3b/group__grp__core__vkapi__core__devices.html">Device management</a>: <em>Vulkan device management.</em></li>
 </ul>
 </li>
-<li><a class="el" href="d8/d23/group__group__VkAbstractions__Layers.html">Layers and extensions</a>: <em>Vulkan extensibility.</em></li>
+<li><a class="el" href="d8/d0b/group__grp__core__vkapi__ext.html">Layers and extensions</a> <em>Vulkan extensibility.</em></li>
 </ul>
 </li>
 </ul>
-<p >If you are developing the library and need a space to temporarily put undocumented members, please see the <a class="el" href="de/d26/group__group__Undocumented.html">Undocumented functionality</a> module.</p>
-<h1><a class="anchor" id="section_main_Debugging"></a>
-Debugging</h1>
-<blockquote class="doxtable">
-<p >&zwj;Orion provides the ability to set your own error callback, similar to OpenGL, Vulkan, GLFW, etc. Despite the name, this callback is not just used for errors, but also debug log messages, notifications, and warnings, so it's wise to consider it a 'debug callback' instead of specifically an 'error callback'. <em>(Although it is referred to as an 'error callback' in this documentation)</em>. </p>
-</blockquote>
-<p>See the <a class="el" href="db/d82/page_Debugging.html">debugging</a> page for more information. You should also see the <a class="el" href="db/d7a/page_ErrorList.html">error index</a> for a comprehensive list of library errors.</p>
-<h1><a class="anchor" id="section_main_Config"></a>
-Configuration</h1>
-<p >Global library <b>flags</b> can be set to change the behaviour of the library. To set these flags, use <a class="el" href="db/de0/group__group__Meta.html#ga9e3733f60d538fe551844217b594f622" title="Set a library-wide flag or value.">oriSetFlag()</a>.</p>
-<p >A list of library flags and what they do can be found below:</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Flag name   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Additional notes    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CREATE_INSTANCE_DEBUG_MESSENGERS   </td><td class="markdownTableBodyNone">Create an internal debug messenger for each instance (in oriCreateStateInstance()) so that calls to vkCreateInstance() and vkDestroyInstance() can be debugged.   </td><td class="markdownTableBodyNone">Defaults to FALSE. <b>Requires the <code>VK_EXT_debug_utils</code> instance extension to be enabled before oriCreateStateInstance() calls.</b>   </td></tr>
-</table>
-<p ><b>All these flags are prefixed with <code>ORION_FLAG_</code>.</b> </p>
+<p >For information about debugging, see the <a class="el" href="dd/d68/debugging.html">Debugging</a> page. It might also be helpful to see the full list of error codes and function return enums, which you can find in the <a class="el" href="db/d43/errors.html">Error index</a>.</p>
+<h1><a class="anchor" id="sct_mainpage_radop"></a>
+Applying library-wide optimisations</h1>
+<p >Optionally, you may build Orion with the <code>-DORION_RADOP=ON</code> CMake flag. This disables some features that may need more processing power despite not necessarily being used, such as library debug output (see <a class="el" href="dd/d68/debugging.html#sct_debugging_disabling">Debugging/Disabling debug output</a> for more information in this case).</p>
+<p >This can certainly be very limiting in some cases, hence the name 'RADOP'; <b>rad</b>ical <b>op</b>timisation - and it is normally not necessary. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
         <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
             <ul>
-                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Sat Jun 25 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
+                <li class="footer">( つ•̀ω•́)つ » doxygen <b>1.9.3</b> » documentation last built on <b>Wed Jul 27 2022</b> » <a href="https://github.com/jabenuk/orion_vk">orion/master</a></li>
             </ul>
         </div>
     </body>

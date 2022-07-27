@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['error_20handling_0',['Error handling',['../d2/d8c/group__group__Errors.html',1,'']]]
+  ['device_20management_0',['Device management',['../d6/d3b/group__grp__core__vkapi__core__devices.html',1,'']]]
 ];

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['orierrorseveritybit_0',['oriErrorSeverityBit',['../d2/d8c/group__group__Errors.html#ga46ca29226d89a2b852dc639fb351a61d',1,'orion.h']]],
-  ['orilibraryflag_1',['oriLibraryFlag',['../db/de0/group__group__Meta.html#ga05b4271896044a820b1ddc6fef0ef379',1,'orion.h']]],
-  ['orireturnstatus_2',['oriReturnStatus',['../d2/d8c/group__group__Errors.html#gabd16d3a672c8be2a02c93e26e7c8f8bd',1,'orion.h']]]
+  ['orireturnstatus_5ft_0',['oriReturnStatus_t',['../d6/def/group__grp__core__errors.html#ga8a39b7359ee6621e9b557f3f33d4cb80',1,'orion.h']]],
+  ['oriseveritybit_5ft_1',['oriSeverityBit_t',['../d6/def/group__grp__core__errors.html#ga3426e9a34335179e46f36915073c3f92',1,'orion.h']]]
 ];
