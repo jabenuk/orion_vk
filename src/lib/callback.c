@@ -43,7 +43,13 @@
 // ----[Private/internal systems]---------------------------------------------- //
 //                              Default callbacks                               //
 
-void _oriDefaultDebugCallback(const char *name, const unsigned int code, const char *message, const oriSeverityBit_t severity, void *pointer) {
+void _oriDefaultDebugCallback(
+    const char *name,
+    const unsigned int code,
+    const char *message,
+    const oriSeverityBit_t severity,
+    void *pointer
+) {
     // if the error message has been reported by a Vulkan debug messenger, we don't want to bother printing this other
     // stuff, as it is irrelevant.
     if (!strcmp(name, "VULKAN_DEBUG_MESSENGER")) {

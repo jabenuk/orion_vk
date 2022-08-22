@@ -59,7 +59,21 @@ _oriLibrary_t _orion = {
 // ----[Orion library public interface]---------------------------------------- //
 //                             Library management                               //
 
-const oriReturnStatus_t oriInit(const unsigned int instanceCount, VkInstance *instanceOut, const VkInstanceCreateFlags instanceFlags, const unsigned int apiVersion, const char *applicationName, const unsigned int applicationVersion, const char *engineName, const unsigned int engineVersion, const unsigned int enabledLayerCount, const char **enabledLayers, const unsigned int enabledInstanceExtensionCount, const char **enabledInstanceExtensions, const void *instanceNext) {
+const oriReturnStatus_t oriInit(
+    const unsigned int instanceCount,
+    VkInstance *instanceOut,
+    const VkInstanceCreateFlags instanceFlags,
+    const unsigned int apiVersion,
+    const char *applicationName,
+    const unsigned int applicationVersion,
+    const char *engineName,
+    const unsigned int engineVersion,
+    const unsigned int enabledLayerCount,
+    const char **enabledLayers,
+    const unsigned int enabledInstanceExtensionCount,
+    const char **enabledInstanceExtensions,
+    const void *instanceNext
+) {
     if (_orion.initialised) { // already initialised
         return ORION_RETURN_STATUS_SKIPPED;
     }
@@ -343,7 +357,9 @@ const oriReturnStatus_t oriTerminate() {
     return ORION_RETURN_STATUS_OK;
 }
 
-const oriReturnStatus_t oriSetVulkanAllocators(VkAllocationCallbacks *callbacks) {
+const oriReturnStatus_t oriSetVulkanAllocators(
+    VkAllocationCallbacks *callbacks
+) {
 #   ifdef __oridebug
         _oriLog("vulkan allocators updated to loc %p (%s)", callbacks, __func__);
 #   endif

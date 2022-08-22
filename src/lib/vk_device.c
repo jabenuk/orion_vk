@@ -41,7 +41,17 @@
 // ----[Orion library public interface]---------------------------------------- //
 //                          Vulkan device management                            //
 
-const oriReturnStatus_t oriCreateLogicalDevice(VkDevice *deviceOut, const VkDeviceCreateFlags deviceFlags, const VkPhysicalDevice physicalDevice, const unsigned int queueCreateInfoCount, const VkDeviceQueueCreateInfo *queueCreateInfos, const unsigned int extensionCount, const char **extensionNames, VkPhysicalDeviceFeatures *enabledFeatures, const void *deviceNext) {
+const oriReturnStatus_t oriCreateLogicalDevice(
+    VkDevice *deviceOut,
+    const VkDeviceCreateFlags deviceFlags,
+    const VkPhysicalDevice physicalDevice,
+    const unsigned int queueCreateInfoCount,
+    const VkDeviceQueueCreateInfo *queueCreateInfos,
+    const unsigned int extensionCount,
+    const char **extensionNames,
+    VkPhysicalDeviceFeatures *enabledFeatures,
+    const void *deviceNext
+) {
     if (!deviceOut) { // no outputs given
         _oriWarning("all output variables NULL in call to %s", __func__);
         return ORION_RETURN_STATUS_NO_OUTPUT;
@@ -182,7 +192,12 @@ const oriReturnStatus_t oriCreateLogicalDevice(VkDevice *deviceOut, const VkDevi
     return ORION_RETURN_STATUS_OK;
 }
 
-const oriReturnStatus_t oriEnumerateSuitablePhysicalDevices(const VkInstance *instance, const oriPhysicalDeviceSuitabilityCheckfun checkFun, unsigned int *countOut, VkPhysicalDevice **devicesOut) {
+const oriReturnStatus_t oriEnumerateSuitablePhysicalDevices(
+    const VkInstance *instance,
+    const oriPhysicalDeviceSuitabilityCheckfun checkFun,
+    unsigned int *countOut,
+    VkPhysicalDevice **devicesOut
+) {
     if (!instance) { // instance is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return ORION_RETURN_STATUS_NULL_POINTER;
@@ -286,7 +301,11 @@ const oriReturnStatus_t oriEnumerateSuitablePhysicalDevices(const VkInstance *in
     return ORION_RETURN_STATUS_OK;
 }
 
-const oriReturnStatus_t oriEnumerateAvailableQueueFamilies(const VkPhysicalDevice *physicalDevice, unsigned int *countOut, VkQueueFamilyProperties **familiesOut) {
+const oriReturnStatus_t oriEnumerateAvailableQueueFamilies(
+    const VkPhysicalDevice *physicalDevice,
+    unsigned int *countOut,
+    VkQueueFamilyProperties **familiesOut
+) {
     if (!physicalDevice) { // physicalDevice is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return ORION_RETURN_STATUS_NULL_POINTER;

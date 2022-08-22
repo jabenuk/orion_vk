@@ -41,7 +41,9 @@
 // ----[Orion library public interface]---------------------------------------- //
 //                    Vulkan extensions and feature loading                     //
 
-const bool oriCheckLayerAvailability(const char *layer) {
+const bool oriCheckLayerAvailability(
+    const char *layer
+) {
     if (!layer) { // layer is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return false;
@@ -80,7 +82,10 @@ const bool oriCheckLayerAvailability(const char *layer) {
     return found;
 }
 
-const bool oriCheckLayerEnabled(const VkInstance *instance, const char *layer) {
+const bool oriCheckLayerEnabled(
+    const VkInstance *instance,
+    const char *layer
+) {
     if (!instance || !layer) { // necessary parameter is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return false;
@@ -105,7 +110,11 @@ const bool oriCheckLayerEnabled(const VkInstance *instance, const char *layer) {
     return false;
 }
 
-const oriReturnStatus_t oriEnumerateEnabledLayers(const VkInstance *instance, unsigned int *layerCountOut, char ***layerNamesOut) {
+const oriReturnStatus_t oriEnumerateEnabledLayers(
+    const VkInstance *instance,
+    unsigned int *layerCountOut,
+    char ***layerNamesOut
+) {
     if (!instance) { // instance is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return ORION_RETURN_STATUS_NULL_POINTER;
@@ -134,7 +143,10 @@ const oriReturnStatus_t oriEnumerateEnabledLayers(const VkInstance *instance, un
     return ORION_RETURN_STATUS_OK;
 }
 
-const bool oriCheckInstanceExtensionAvailability(const char *extension, const char *layer) {
+const bool oriCheckInstanceExtensionAvailability(
+    const char *extension,
+    const char *layer
+) {
     if (!extension) { // extension is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return false;
@@ -173,7 +185,10 @@ const bool oriCheckInstanceExtensionAvailability(const char *extension, const ch
     return found;
 }
 
-const bool oriCheckInstanceExtensionEnabled(const VkInstance *instance, const char *extension) {
+const bool oriCheckInstanceExtensionEnabled(
+    const VkInstance *instance,
+    const char *extension
+) {
     if (!instance || !extension) { // necessary parameter is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return false;
@@ -198,7 +213,11 @@ const bool oriCheckInstanceExtensionEnabled(const VkInstance *instance, const ch
     return false;
 }
 
-const oriReturnStatus_t oriEnumerateEnabledInstanceExtensions(const VkInstance *instance, unsigned int *extCountOut, char ***extNamesOut) {
+const oriReturnStatus_t oriEnumerateEnabledInstanceExtensions(
+    const VkInstance *instance,
+    unsigned int *extCountOut,
+    char ***extNamesOut
+) {
     if (!instance) { // instance is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return ORION_RETURN_STATUS_NULL_POINTER;
@@ -227,7 +246,11 @@ const oriReturnStatus_t oriEnumerateEnabledInstanceExtensions(const VkInstance *
     return ORION_RETURN_STATUS_OK;
 }
 
-const bool oriCheckDeviceExtensionAvailability(const VkPhysicalDevice physicalDevice, const char *extension, const char *layer) {
+const bool oriCheckDeviceExtensionAvailability(
+    const VkPhysicalDevice physicalDevice,
+    const char *extension,
+    const char *layer
+) {
     if (!physicalDevice || !extension) { // a required parameter is NULL
         _oriError(ORIERR_NULL_POINTER, __func__);
         return false;

@@ -47,7 +47,9 @@
 //                      Error code-related helper function(s)                   //
 
 // The error enums are defined in headers/orion_errors.h.
-const _oriError_t _oriParseError(const _oriErrorCode_t id) {
+const _oriError_t _oriParseError(
+    const _oriErrorCode_t id
+) {
     switch (id) {
         default:
             return (_oriError_t) { NULL };
@@ -137,27 +139,42 @@ const _oriError_t _oriParseError(const _oriErrorCode_t id) {
     } \
 }
 
-void _oriLog(const char *format, ...) {
+void _oriLog(
+    const char *format,
+    ...
+) {
     DBGCB_VERIFY_SEV(ORION_DEBUG_SEVERITY_VERBOSE_BIT);
     DBGCB_CALL_NOTERR(ORION_DEBUG_SEVERITY_VERBOSE_BIT);
 }
 
-void _oriNotification(const char *format, ...) {
+void _oriNotification(
+    const char *format,
+    ...
+) {
     DBGCB_VERIFY_SEV(ORION_DEBUG_SEVERITY_NOTIF_BIT);
     DBGCB_CALL_NOTERR(ORION_DEBUG_SEVERITY_NOTIF_BIT);
 }
 
-void _oriWarning(const char *format, ...) {
+void _oriWarning(
+    const char *format,
+    ...
+) {
     DBGCB_VERIFY_SEV(ORION_DEBUG_SEVERITY_WARNING_BIT);
     DBGCB_CALL_NOTERR(ORION_DEBUG_SEVERITY_WARNING_BIT);
 }
 
-void _oriError(const _oriErrorCode_t id, const char *extra) {
+void _oriError(
+    const _oriErrorCode_t id,
+    const char *extra
+) {
     // errors will always be shown regardless of debug message configuration
     DBGCB_CALL_ERR(ORION_DEBUG_SEVERITY_ERROR_BIT);
 }
-#
-void _oriFatalError(const _oriErrorCode_t id, const char *extra) {
+
+void _oriFatalError(
+    const _oriErrorCode_t id,
+    const char *extra
+) {
     // fatal errors will always be shown regardless of debug message configuration
     DBGCB_CALL_ERR(ORION_DEBUG_SEVERITY_FATAL_BIT);
 
@@ -175,7 +192,9 @@ void _oriFatalError(const _oriErrorCode_t id, const char *extra) {
 // ----[Orion library public interface]---------------------------------------- //
 //                                  Debugging                                   //
 
-const oriReturnStatus_t oriConfigureDebugMessages(const oriSeverityBit_t severities) {
+const oriReturnStatus_t oriConfigureDebugMessages(
+    const oriSeverityBit_t severities
+) {
 #   ifdef __oridebug
         _oriLog("debug message configuration updated (severities: bit field 0x%02X) (%s)", severities, __func__);
 #   endif
@@ -184,7 +203,10 @@ const oriReturnStatus_t oriConfigureDebugMessages(const oriSeverityBit_t severit
     return ORION_RETURN_STATUS_OK;
 }
 
-const oriReturnStatus_t oriSetDebugCallback(const oriDebugCallbackfun callback, void *pointer) {
+const oriReturnStatus_t oriSetDebugCallback(
+    const oriDebugCallbackfun callback,
+    void *pointer
+) {
 #   ifdef __oridebug
         _oriLog("debug callback updated (user data %p) (%s)", pointer, __func__);
 #   endif
@@ -211,7 +233,9 @@ const void *oriGetDebugCallbackUserData() {
     return _orion.callbacks.debug.pointer;
 }
 
-const char *oriStringifyReturnStatus(const oriReturnStatus_t status) {
+const char *oriStringifyReturnStatus(
+    const oriReturnStatus_t status
+) {
     switch (status) {
         case ORION_RETURN_STATUS_OK:            return "function executed successfully (OK)";
         case ORION_RETURN_STATUS_SKIPPED:       return "function skipped (SKIPPED)";
